@@ -1,0 +1,79 @@
+$primary: #000;
+$secondary: #fff;
+$secondary1:#F2F2F2;
+$secondary2:#ff0000;
+//...........................sidebar
+#sidebar {
+  min-width: 200px;
+  max-width: 200px;
+  color: $secondary;
+  transition: all 0.3s ease;
+
+  ul {
+    li {
+      i {
+        color: $secondary;
+      }
+      a {
+        border-radius: 0;
+        background-color: $primary;
+        color: $secondary;
+
+        &.active {
+          background-color: $secondary;
+          color: $primary;
+          i {
+            color: $primary;
+          }
+        }
+      }
+    }
+  }
+  &.no-transition {
+    transition: none !important;
+  }
+  &.collapsed {
+    margin-left: -200px;
+  }
+}
+
+//...........................body
+#content {
+  background-color:$secondary1;
+  transition: all 0.3s;
+  table{
+    background-color:$secondary;
+    padding:15px;
+  }
+}
+
+#loader{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:20px;
+  display:none;
+}
+
+
+.btn-close-custom{
+   border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  color: $primary;
+  &:hover{
+    color: $secondary2;
+  transform: scale(1.1);
+  }
+}
+input[type=text]{
+  border:1px solid $primary;
+  &:focus{
+    border-color:$primary;
+    outline:none;
+    box-shadow:none;
+  }
+}
+
+//...........................Header

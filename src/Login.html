@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Puavenshwaran" />
+    <meta name="keywords" content="Html, css, javascript" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Jacques+Francois&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+    <link rel="icon" href="../assets/logo.png" type="image/ico" />
+    <title>Puvi LMS</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-image: url("../assets/library.jpg");
+            background-size: cover;
+            background-position: center;
+            animation:body 2s ease forwards;
+            color: #ffffff;
+        }
+        @keyframes body {
+            from{
+                 background-color: rgba(255, 255, 255,0.3 );
+                 opacity: 0;
+            background-blend-mode: lighten;
+            }
+            to{
+                 background-color: rgba(255, 255, 255,0.5 );
+                   opacity: 1;
+            background-blend-mode: lighten;
+            }
+        }
+        .text {
+            font-family: "Merriweather", serif;
+            font-optical-sizing: auto;
+            font-weight: 300;
+            font-style: normal;
+            font-variation-settings: "wdth" 100;
+        }
+
+        span {
+            font-family: "Jacques Francois", serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .container {
+            background-color: #66c3f4;
+            box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.5);
+            border-radius: 0% 20%;
+            	
+        }
+       
+        input[type="text"],
+        input[type="password"] {
+            box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="text"]:focus,
+        [type="password"]:focus {
+            box-shadow: inset 4px -4px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #toggle_password {
+            display: none;
+        }
+
+        #toggle_password:focus {
+            box-shadow: none;
+        }
+
+        button[type="submit"] {
+            background-color: #198754;
+            color: #ffffff;
+            box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1ca968;
+            color: #ffffff;
+            box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="password"]::-ms-reveal {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="text align-content-center">
+    <div class="container d-flex justify-content-center col-8 col-sm-6 col-md-4 col-lg-3">
+        <form action="" method="get">
+            <div align="center">
+                <img src="../assets/logo.png" width="60%" height="auto" />
+                <h1>Puvi <span>LMS</span></h1>
+            </div>
+            <div class="form-group mb-3">
+                <label class="from-label mb-1" for="user_name">Username</label>
+                <input type="text" class="form-control" id="user_name" />
+            </div>
+            <div class="mb-3 position-relative">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control pe-5" id="password" />
+                <button type="button" class="btn position-absolute top-50 end-0" id="toggle_password">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
+            <button class="btn btn-group mb-5 w-100 d-flex justify-content-center" type="submit">
+                Sign In
+            </button>
+        </form>
+    </div>
+    <script>
+        document
+            .getElementById("toggle_password")
+            .addEventListener("click", function () {
+                const passwordInput = document.getElementById("password");
+                const icon = this.querySelector("i");
+
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    icon.classList.remove("bi-eye");
+                    icon.classList.add("bi-eye-slash");
+                } else {
+                    passwordInput.type = "password";
+                    icon.classList.remove("bi-eye-slash");
+                    icon.classList.add("bi-eye");
+                }
+            });
+        $(document).ready(function () {
+            $("#password").click(function () {
+                $("#toggle_password").css("display", "block");
+            });
+            let $password = $("#password");
+            let $toggleBtn = $("#toggle_password"); 
+
+            $password.add($toggleBtn).on("focus", function () {
+                $password.css("box-shadow", "inset 4px -4px 4px rgba(0, 0, 0, 0.5)");
+            });
+
+            $password.add($toggleBtn).on("blur", function () {
+                setTimeout(function () {
+                    if (!$password.is(":focus") && !$toggleBtn.is(":focus")) {
+                        $password.css("box-shadow", "none");
+                        $toggleBtn.css("display", "none");
+                    }
+                }, 0);
+            });
+        });
+    </script>
+</body>
+
+</html>
