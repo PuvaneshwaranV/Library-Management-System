@@ -13,7 +13,10 @@ $(document).ready(function () {
   }, 100);
 
   $(document).on("click", "#sidebarToggle", function () {
+    // alert("lkkk")
     $("#sidebar").toggleClass("collapsed");
+    // $("#sidebar").css("width","10px !important")
+    // $("#sidebar").toggle(500)
   });
 
   $(document).on("click", "#sidebar .nav-link", function (e) {
@@ -36,7 +39,7 @@ $(document).ready(function () {
       if (page === "books.html") {
         $.getScript("js/book.js");
       }
-      else if (page === "user.html") {
+      else if (page === "users.html") {
         $.getScript("js/users.js");
       }
     });
