@@ -36,6 +36,9 @@ $(document).ready(function () {
       if (page === "books.html") {
         $.getScript("js/book.js");
       }
+      else if (page === "user.html") {
+        $.getScript("js/users.js");
+      }
     });
   }
 
