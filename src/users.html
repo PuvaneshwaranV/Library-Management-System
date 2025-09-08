@@ -78,9 +78,10 @@
                     placeholder="Membership End Date"
                   /><span
                     class="input-group-text border-1 border-black border-start-0"
-                    id="calendar_icon"
+                    
                     ><i
                       class="fa fa-calendar"
+                      id="calendar_icon"
                       style="color: #000; cursor: pointer"
                     ></i
                   ></span>
@@ -151,6 +152,18 @@
                 <input
                   type="text"
                   class="form-control"
+                  id="update_member_id"
+                  placeholder="Member Id" disabled
+                />
+                <div
+                  id="update_member_id_error"
+                  class="text-danger small"
+                ></div>
+              </div>
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
                   id="update_member_name"
                   placeholder="Member Name"
                 />
@@ -188,10 +201,10 @@
                   ></div>
                 </div>
                 <div class="mb-3 col-6">
-                  <select id="update_member_status" class="form-select w-auto">
+                  <select id="update_member_status" class="form-select w-auto" disabled>
                     <option value="" disabled selected>Select Status</option>
-                    <option value="active">Active</option>
-                    <option value="deactive">Deactive</option>
+                    <option value="ACTIVE">Active</option>
+                    <option value="DEACTIVE">Deactive</option>
                   </select>
                   <div
                     id="update_member_status_error"
@@ -212,26 +225,42 @@
                 ></div>
               </div>
 
-              <div class="mb-3">
+              <div class="mb-3 input-group">
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control border-1 border-black border-end-0"
                   id="update_membership_start_date"
-                  placeholder="Membership Start Date"
-                />
+                  placeholder="Membership Start Date" disabled
+                /><span
+                    class="input-group-text border-1 border-black border-start-0 "
+                    
+                    ><i
+                      class="fa fa-calendar"
+                      id=""
+                      style="color: #000; cursor: pointer"
+                    ></i
+                  ></span>
                 <div
                   id="update_membership_start_date_error"
                   class="text-danger small"
                 ></div>
               </div>
-
-              <div class="mb-3">
+              <div class="mb-3" id="update_end_date_picker">  <div class="input-group">
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control border border-black border-end-0"
                   id="update_membership_end_date"
                   placeholder="Membership End Date"
-                />
+                /><span
+                    class="input-group-text border-1 border-black border-start-0"
+                    
+                    ><i
+                      class="fa fa-calendar"
+                      id="update_calendar_icon"
+                      style="color: #000; cursor: pointer"
+                    ></i
+                  ></span>
+              </div>
                 <div
                   id="update_membership_end_date_error"
                   class="text-danger small"
@@ -253,7 +282,7 @@
                 <div class="col-6">
                   <button
                     id="cancel"
-                    type="button"
+                    type="button" data-bs-dismiss="modal"
                     class="btn btn-secondary w-100"
                   >
                     cancel
@@ -330,7 +359,7 @@
     </div>
     <div class="d-flex justify-content-end gap-2">
       <button id="apply_member_filters" class="btn btn-dark">Submit</button>
-      <button id="reset__member_filters" class="btn btn-secondary">
+      <button id="reset_member_filters" class="btn btn-secondary">
         Cancel
       </button>
     </div>

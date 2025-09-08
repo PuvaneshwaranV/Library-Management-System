@@ -61,4 +61,12 @@ input[type=text]:focus {
   border-color: #000;
   outline: none;
   box-shadow: none;
+}
+
+.iti {
+  width: 100%;
+}
+
+.iti input {
+  width: 100% !important;
 }/*# sourceMappingURL=index.css.map */
