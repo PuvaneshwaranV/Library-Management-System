@@ -42,6 +42,9 @@ $(document).ready(function () {
       else if (page === "users.html") {
         $.getScript("js/users.js");
       }
+      else if (page === "catalog.html") {
+        $.getScript("js/catalog.js");
+      }
     });
   }
 

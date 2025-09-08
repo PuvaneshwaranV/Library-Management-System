@@ -1,3 +1,266 @@
 <div class="container-fluid">
-    <h1>Welcome to Catalog</h1>
+  <div class="d-flex flex-column mb-3">
+    <div
+      class="modal fade"
+      id="borrow_modal"
+      tabindex="-1"
+      aria-labelledby="borrow_modal_label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          
+          <div class="modal-body position-relative mx-3">
+            <h3 class="modal-title" id="borrow_modal_label">
+              <i class="fa-solid fa-database me-3"></i>Borrow Book
+            </h3>
+            <button
+              type="button"
+              class="btn-close-custom position-absolute top-0 end-0 m-3"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              <i class="fa-regular fa-circle-xmark"></i>
+            </button>
+            <hr class="border border-1 border-dark opacity-100" />
+            <form class="mx-5 my-4">
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="borrow_bookid"
+                  placeholder="Book Id"
+                /><div id="borrow_bookid_error" class="text-danger small"></div>
+              </div> 
+            
+             
+              
+               
+              <div class=" mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="borrow_quantity"
+                  placeholder="Quantity"
+                />
+                <div id="borrow_quantity_error" class="text-danger small"></div>
+              </div> 
+               <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="due_date"
+                  placeholder="YYYY-MM-DD"
+                />
+                <div id="due_date_error" class="text-danger small"></div>
+              </div> 
+          
+              <div class="row">
+                <div class="col-6">
+            <button id="cancel"
+              type="button"
+              class="btn btn-secondary w-100"
+              
+            >
+              Reset
+            </button></div><div class="col-6">
+            <button id="add_btn" type="button" class="btn btn-dark w-100">ADD</button></div>
+          </div>
+            </form>
+            
+          </div>
+          
+        </div>
+      </div>
+    </div>
+     <div
+      class="modal fade"
+      id="update_modal"
+      tabindex="-1"
+      aria-labelledby="update_modal_label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          
+          <div class="modal-body position-relative mx-3">
+            <h3 class="modal-title" id="update_modal_label">
+              <i class="fa-solid fa-book-open me-3"></i>Update Book
+            </h3>
+            <button
+              type="button"
+              class="btn-close-custom position-absolute top-0 end-0 m-3"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              <i class="fa-regular fa-circle-xmark"></i>
+            </button>
+            <hr class="border border-1 border-dark opacity-100" />
+            <form class="mx-5 my-4">
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="book_id_update"
+                  placeholder="Book ID" disabled
+                /><div id="update_book_error" class="text-danger small"></div>
+              </div> 
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title_update"
+                  placeholder="Title"
+                /><div id="update_title_error" class="text-danger small"></div>
+              </div> 
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="author_update"
+                  placeholder="Author"
+                /><div id="update_author_error" class="text-danger small"></div>
+              </div> 
+              <div class="row">
+              <div class="mb-3 col-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="language_update"
+                  placeholder="Language"
+                />
+                <div id="update_language_error" class="text-danger small"></div>
+              </div> 
+              
+               
+              <div class=" mb-3 col-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="total_count"
+                  placeholder="Total Count"
+                />
+                <div id="update_total_error" class="text-danger small"></div>
+              </div> 
+              
+            </div>
+            <div class="row">
+              <div class="mb-3 col-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="reg_date"
+                  placeholder="Reg. Date" disabled
+                />
+                <div id="update_reg_error" class="text-danger small"></div>
+              </div> 
+              
+               
+              <div class=" mb-3 col-6">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="del_date"
+                  placeholder="Del. Date" disabled
+                />
+                <div id="update_del_error" class="text-danger small"></div>
+              </div> 
+              
+            </div>
+            <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="book_status"
+                  placeholder="Book Status" disabled
+                /><div id="update_status_error" class="text-danger small"></div>
+              </div> 
+              <div class="row">
+                <div class="col-6">
+            <button id="cancel"
+              type="button" data-bs-dismiss="modal"
+              class="btn btn-secondary w-100"
+              
+            >
+              Cancel
+            </button></div><div class="col-6">
+            <button id="update_btn" type="button" class="btn btn-dark w-100">Upadte</button></div>
+          </div>
+            </form>
+            
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mb-3">
+      <button
+        class="btn btn-dark"
+        data-bs-toggle="modal"
+        data-bs-target="#borrow_modal"
+      >
+        <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i
+        >Borrow
+      </button>
+      <button  data-bs-toggle="modal"
+        data-bs-target="#return_modal" class="btn btn-dark">
+        <i class="fa-solid fa-circle-minus" style="color: #fff;"></i></i
+        >Return
+      </button>
+    </div>
+    <div id="rental_filters" class="d-flex justify-content-between mb-3">
+      <!-- Show Dropdown (aligned left) -->
+      <div class="d-flex flex-column">
+        <label for="rental_length" class="ms-2">Show </label>
+        <select id="rental_length" class="form-select w-auto">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+
+      <!-- Other Filters (aligned right) -->
+      <div class="d-flex gap-2">
+        <div class="d-flex flex-column">
+          <label for="rental_status" class="ms-2">Status</label>
+          <select id="rental_status" class="form-select w-auto">
+            <option value="all">All</option>
+            <option value="returned">Returned</option>
+            <option value="borrowed">Borrowed</option>
+          </select>
+        </div>
+        <div class="d-flex flex-column">
+          <label for="rental_filter_type" class="ms-2">Search By</label>
+          <select id="rental_filter_type" class="form-select w-auto">
+            <option value="all">All</option>
+            <option value="language">Language</option>
+            <option value="author">Author</option>
+            <option value="title">Title</option>
+            <option value="id">Book ID</option>
+          </select>
+        </div>
+        <div class="d-flex flex-column">
+          <label for="rental_filter_value" class="ms-2">Enter Value</label>
+          <input
+            type="text"
+            id="rental_filter_value"
+            class="form-control w-auto"
+            placeholder="🔍 Enter Value"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2">
+      <button id="apply_rental_filters" class="btn btn-dark">Submit</button>
+      <button id="reset_rental_filters" class="btn btn-secondary">Cancel</button>
+    </div>
+  </div>
+
+  <div id="loader">⏳ Loading data...</div>
+
+  <table id="user_table" class="display" style="width: 100%; display: none">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
 </div>
