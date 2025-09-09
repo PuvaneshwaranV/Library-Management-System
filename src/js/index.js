@@ -45,6 +45,9 @@ $(document).ready(function () {
       else if (page === "catalog.html") {
         $.getScript("js/catalog.js");
       }
+      else if (page === "penalty.html") {
+        $.getScript("js/penalty.js");
+      }
     });
   }
 

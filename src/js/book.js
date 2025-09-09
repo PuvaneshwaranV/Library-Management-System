@@ -420,10 +420,10 @@ $(document).on("click",".delete-book", function () {
         let requestData = {
           title: $("#title").val().trim(),
           author: $("#author").val().trim(),
-          quantity: $("#quantity").val().trim(),
+          totalCount: parseInt($("#quantity").val().trim()),
           language: $("#language").val().trim(),
         };
-
+        alert($("#quantity").val().trim())
         $.ajax({
           url: "http://localhost:8080/LibraryManagementSystem/Books/addNewBook",
           type: "POST",

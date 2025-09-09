@@ -1,91 +1,149 @@
 <div class="container-fluid">
   <div class="d-flex flex-column mb-3">
-    <div
-      class="modal fade"
-      id="borrow_modal"
-      tabindex="-1"
-      aria-labelledby="borrow_modal_label"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-          
-          <div class="modal-body position-relative mx-3">
-            <h3 class="modal-title" id="borrow_modal_label">
-              <i class="fa-solid fa-database me-3"></i>Borrow Book
-            </h3>
-            <button
-              type="button"
-              class="btn-close-custom position-absolute top-0 end-0 m-3"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            >
-              <i class="fa-regular fa-circle-xmark"></i>
-            </button>
-            <hr class="border border-1 border-dark opacity-100" />
-            <form class="mx-5 my-4">
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="borrow_bookid"
-                  placeholder="Book Id"
-                /><div id="borrow_bookid_error" class="text-danger small"></div>
-              </div> 
-            
-             
-              
-               
-              <div class=" mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="borrow_quantity"
-                  placeholder="Quantity"
-                />
-                <div id="borrow_quantity_error" class="text-danger small"></div>
-              </div> 
-               <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="due_date"
-                  placeholder="YYYY-MM-DD"
-                />
-                <div id="due_date_error" class="text-danger small"></div>
-              </div> 
-          
-              <div class="row">
-                <div class="col-6">
-            <button id="cancel"
-              type="button"
-              class="btn btn-secondary w-100"
-              
-            >
-              Reset
-            </button></div><div class="col-6">
-            <button id="add_btn" type="button" class="btn btn-dark w-100">ADD</button></div>
+   <div
+  class="modal fade"
+  id="borrow_modal"
+  tabindex="-1"
+  aria-labelledby="borrow_modal_label"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-body position-relative mx-3">
+        <h3 class="modal-title" id="borrow_modal_label">
+          <i class="fa-solid fa-database me-3"></i>Borrow Book
+        </h3>
+        <button
+          type="button"
+          class="btn-close-custom position-absolute top-0 end-0 m-3"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        >
+          <i class="fa-regular fa-circle-xmark"></i>
+        </button>
+        <hr class="border border-1 border-dark opacity-100" />
+
+        <form id="borrow_form" class="mx-5 my-4">
+          <!-- Member ID -->
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="member_id"
+              placeholder="Member Id"
+            />
+            <div id="member_id_error" class="text-danger small"></div>
           </div>
-            </form>
-            
+
+          <!-- Book fields container -->
+          <div id="books_container">
+            <div class="book-entry mb-3 border p-3 rounded position-relative">
+              <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn" style="display:none;">
+                ✖
+              </button>
+              <input
+                type="text"
+                class="form-control mb-2"
+                placeholder="Book Id"
+                name="book_id"
+              />
+              <div class="text-danger small error_book_id"></div>
+
+              <input
+                type="text"
+                class="form-control mb-2"
+                placeholder="Quantity"
+                name="quantity"
+              />
+              <div class="text-danger small error_quantity"></div>
+
+              <input
+                type="text"
+                class="form-control mb-2"
+                placeholder="YYYY-MM-DD"
+                name="due_date"
+              />
+              <div class="text-danger small error_due_date"></div>
+            </div>
           </div>
-          
-        </div>
+
+          <!-- Add another book button -->
+          <button
+            id="add_book_btn"
+            type="button"
+            class="btn btn-outline-primary mb-3"
+          >
+            + Add Another Book
+          </button>
+
+          <div class="row">
+            <div class="col-6">
+              <button id="cancel" type="button" class="btn btn-secondary w-100">
+                Reset
+              </button>
+            </div>
+            <div class="col-6">
+              <button id="add_btn" type="button" class="btn btn-dark w-100">
+                ADD
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
+</div>
+<div class="modal fade" id="update_rental_modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-body position-relative mx-3">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-pen-to-square me-3"></i>Update Rental
+        </h3>
+        <button type="button" class="btn-close-custom position-absolute top-0 end-0 m-3"
+          data-bs-dismiss="modal" aria-label="Close">
+          <i class="fa-regular fa-circle-xmark"></i>
+        </button>
+        <hr class="border border-1 border-dark opacity-100" />
+
+        <form class="mx-5 my-4">
+          <div class="mb-3">
+            <input type="text" class="form-control" id="update_transactionId" placeholder="Transaction ID" disabled />
+          </div>
+          <div class="mb-3">
+            <input type="text" class="form-control" id="update_bookId" placeholder="Book ID" disabled />
+          </div>
+          <div class="mb-3">
+            <input type="text" class="form-control" id="update_quantity" placeholder="Quantity" />
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Cancel</button>
+            </div>
+            <div class="col-6">
+              <button id="update_rental_btn" type="button" class="btn btn-dark w-100">Update</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
      <div
       class="modal fade"
-      id="update_modal"
+      id="return_modal"
       tabindex="-1"
-      aria-labelledby="update_modal_label"
+      aria-labelledby="return_modal_label"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
           
           <div class="modal-body position-relative mx-3">
-            <h3 class="modal-title" id="update_modal_label">
-              <i class="fa-solid fa-book-open me-3"></i>Update Book
+            <h3 class="modal-title" id="return_modal_label">
+              <i class="fa-solid fa-database me-3"></i>Return Book
             </h3>
             <button
               type="button"
@@ -96,97 +154,46 @@
               <i class="fa-regular fa-circle-xmark"></i>
             </button>
             <hr class="border border-1 border-dark opacity-100" />
-            <form class="mx-5 my-4">
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="book_id_update"
-                  placeholder="Book ID" disabled
-                /><div id="update_book_error" class="text-danger small"></div>
-              </div> 
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="title_update"
-                  placeholder="Title"
-                /><div id="update_title_error" class="text-danger small"></div>
-              </div> 
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="author_update"
-                  placeholder="Author"
-                /><div id="update_author_error" class="text-danger small"></div>
-              </div> 
-              <div class="row">
-              <div class="mb-3 col-6">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="language_update"
-                  placeholder="Language"
-                />
-                <div id="update_language_error" class="text-danger small"></div>
-              </div> 
-              
-               
-              <div class=" mb-3 col-6">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="total_count"
-                  placeholder="Total Count"
-                />
-                <div id="update_total_error" class="text-danger small"></div>
-              </div> 
-              
-            </div>
-            <div class="row">
-              <div class="mb-3 col-6">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="reg_date"
-                  placeholder="Reg. Date" disabled
-                />
-                <div id="update_reg_error" class="text-danger small"></div>
-              </div> 
-              
-               
-              <div class=" mb-3 col-6">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="del_date"
-                  placeholder="Del. Date" disabled
-                />
-                <div id="update_del_error" class="text-danger small"></div>
-              </div> 
-              
-            </div>
-            <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="book_status"
-                  placeholder="Book Status" disabled
-                /><div id="update_status_error" class="text-danger small"></div>
-              </div> 
-              <div class="row">
-                <div class="col-6">
-            <button id="cancel"
-              type="button" data-bs-dismiss="modal"
-              class="btn btn-secondary w-100"
-              
-            >
-              Cancel
-            </button></div><div class="col-6">
-            <button id="update_btn" type="button" class="btn btn-dark w-100">Upadte</button></div>
-          </div>
-            </form>
+            <form id="return_form" class="mx-5 my-4">
+  <div id="book_groups">
+    <!-- Book Group Template -->
+    <div class="book-group border rounded p-3 mb-3 position-relative">
+      <div class="mb-2">
+        <input type="text" class="form-control book-id" placeholder="Book ID" />
+        <div class="text-danger small error-book-id"></div>
+      </div>
+      <div class="mb-2">
+        <input type="text" class="form-control quantity" placeholder="Quantity" />
+        <div class="text-danger small error-quantity"></div>
+      </div>
+      <div class="mb-2">
+        <input type="text" class="form-control transaction-id" placeholder="Transaction ID" />
+        <div class="text-danger small error-transaction-id"></div>
+      </div>
+      <!-- Delete button (hidden for first group) -->
+      <button type="button" class="btn btn-danger btn-sm remove-group position-absolute top-0 end-0 m-2" style="display:none;">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Add new group button -->
+  <button type="button" id="add_group" class="btn btn-outline-primary w-100 mb-3">
+    + Add Book
+  </button>
+
+  <div class="row">
+    <div class="col-6">
+      <button id="return_cancel" type="button" data-bs-dismiss="modal" class="btn btn-secondary w-100">
+        Cancel
+      </button>
+    </div>
+    <div class="col-6">
+      <button id="return_btn" type="button" class="btn btn-dark w-100">Return</button>
+    </div>
+  </div>
+</form>
+
             
           </div>
           
@@ -252,6 +259,10 @@
       </div>
     </div>
     <div class="d-flex justify-content-end gap-2">
+      <button id="transaction_pdf" class="btn btn-dark">
+        <i class="fa-solid fa-file-lines fa-lg me-1" style="color: #ffffff"></i
+        >Generate All Transaction Pdf
+      </button>
       <button id="apply_rental_filters" class="btn btn-dark">Submit</button>
       <button id="reset_rental_filters" class="btn btn-secondary">Cancel</button>
     </div>
