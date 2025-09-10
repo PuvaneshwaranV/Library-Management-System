@@ -98,12 +98,12 @@ function renderBooksTable() {
                   orderable: false,
                   render: function (data, type, row) {
                     return `
-        <button class="btn btn-sm btn-dark me-2 update-book" data-bs-toggle="modal"
+        <button class="btn btn-sm btn-warning me-2 update-book" data-bs-toggle="modal"
         data-bs-target="#update_modal" data-id="${row.bookId}">
-          <i class="fa-solid fa-pen-to-square" style="color: #fff;"></i>
+          <i class="fa-solid fa-pen-to-square"style="color:#fff" ></i>
         </button>
-        <button class="btn btn-sm btn-dark delete-book" data-id="${row.bookId}">
-          <i class="fa-solid fa-trash" style="color: #ff0000;"></i>
+        <button class="btn btn-sm btn-danger delete-book" data-id="${row.bookId}">
+          <i class="fa-solid fa-trash" ></i>
         </button>
       `;
                   },

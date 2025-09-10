@@ -75,7 +75,7 @@ function renderUserTable() {
                 orderable: false,
                 render: function (data, type, row) {
                   return `
-        <button class="btn btn-sm btn-dark me-2 mb-2 update-member" data-bs-toggle="modal"
+        <button class="btn btn-sm btn-warning me-2 mb-2 update-member" data-bs-toggle="modal"
         data-bs-target="#update_member_modal" data-id="${row.memberId}">
           <i class="fa-solid fa-pen-to-square" style="color: #fff;"></i>
         </button>`;

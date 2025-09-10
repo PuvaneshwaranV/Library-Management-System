@@ -80,7 +80,7 @@ $("#apply_penalty_filters")
                   let status =row.status ==="Pending";
                   if(status)
                   return `
-        <button class="btn btn-sm btn-dark me-2 mb-2 penalty-pay" data-bs-toggle="modal"
+        <button class="btn btn-sm btn-warning me-2 mb-2 penalty-pay" data-bs-toggle="modal"
         data-bs-target="#penalty_pay_modal" data-id="${row.penaltyId}" data-amount="${row.amount}">
           <i class="fa-solid fa-indian-rupee-sign" style="color: #fff;"></i>
         </button>`;

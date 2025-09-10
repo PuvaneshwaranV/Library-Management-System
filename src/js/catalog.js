@@ -66,18 +66,18 @@ $("#apply_rental_filters")
                   let isBorrowed = row.bookRentalStatus === "Borrowed";
    if (isBorrowed) {
       return `
-        <button class="btn btn-sm btn-dark me-2 mb-2 update-rental"
+        <button class="btn btn-sm btn-warning me-2 mb-2 update-rental"
           data-id="${row.transactionId}"
           data-bookid="${row.bookId}"
           data-quantity="${row.quantity}">
-          <i class="fa-solid fa-pen-to-square" style="color: #fff;"></i>
+          <i class="fa-solid fa-pen-to-square" style="color:#fff"></i>
         </button>
       `;
     } else {
       return `
         <button class="btn btn-sm btn-secondary me-2 mb-2" disabled
           data-bs-toggle="tooltip" title="Already Returned">
-          <i class="fa-solid fa-pen-to-square"></i>
+          <i class="fa-solid fa-pen-to-square"style="color:#fff"></i>
         </button>
       `;
     }
@@ -419,6 +419,7 @@ $("#apply_rental_filters")
         type: "GET",
         dataType:"json",
         success: function (response) {
+          $("#loader").hide();
           Swal.fire({
             icon: "success",
             title: "Generated",

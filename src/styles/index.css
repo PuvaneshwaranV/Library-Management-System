@@ -1,22 +1,38 @@
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: #f3f4f6;
+  color: #111827;
+  font-family: "Segoe UI", sans-serif;
+}
+
 #sidebar {
   width: 200px;
   color: #fff;
   transition: all 0.3s ease;
+  background-color: #1e3a8a;
 }
 #sidebar ul li i {
   color: #fff;
 }
 #sidebar ul li a {
   border-radius: 0;
-  background-color: #000;
-  color: #fff;
+  background-color: #1e3a8a;
+  color: #d1d5db;
 }
 #sidebar ul li a.active {
-  background-color: #fff;
-  color: #000;
+  background-color: #fbbf24;
+  color: #1e3a8a;
 }
 #sidebar ul li a.active i {
-  color: #000;
+  color: #1e3a8a;
+}
+#sidebar ul li a:hover {
+  color: #1e3a8a;
+  background-color: #fff;
+}
+#sidebar ul li a:hover i {
+  color: #1e3a8a;
 }
 #sidebar.no-transition {
   transition: none !important;
@@ -32,13 +48,22 @@
 #content table {
   background-color: #fff;
   padding: 15px;
+  border-radius: 40px;
+}
+
+.modal-title {
+  color: #1e3a8a;
+}
+
+.border-dark {
+  border-color: #1e3a8a !important;
 }
 
 .btn-close-custom {
   border: none;
   background: transparent;
   font-size: 1.5rem;
-  color: #000;
+  color: #1e3a8a;
 }
 .btn-close-custom:hover {
   color: #ff0000;
@@ -46,12 +71,28 @@
 }
 
 input[type=text] {
-  border: 1px solid #000;
+  border: 1px solid #1e3a8a;
 }
 input[type=text]:focus {
-  border-color: #000;
+  border-color: #1e3a8a;
   outline: none;
   box-shadow: none;
+}
+
+#header {
+  background: #1e3a8a;
+  color: white;
+}
+
+/* Buttons */
+.btn-dark {
+  background-color: #1e3a8a;
+  border: none;
+}
+.btn-dark:hover {
+  background-color: #10b981;
+  color: #fff;
+  transition: 0.3s;
 }
 
 .iti {

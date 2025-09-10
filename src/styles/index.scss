@@ -1,14 +1,21 @@
-$primary: #000;
+$primary: #1e3a8a;
 $secondary: #fff;
 $secondary1:#F2F2F2;
 $secondary2:#ff0000;
 //...........................sidebar
+body {
+  margin: 0;
+            height: 100vh;
+  background-color: #f3f4f6;
+  color:#111827;
+  font-family: "Segoe UI", sans-serif;
+}
 #sidebar {
   
   width: 200px;
   color: $secondary;
   transition: all 0.3s ease;
-
+background-color:$primary;
   ul {
     li {
       i {
@@ -17,12 +24,19 @@ $secondary2:#ff0000;
       a {
         border-radius: 0;
         background-color: $primary;
-        color: $secondary;
+        color: #d1d5db;
 
         &.active {
-          background-color: $secondary;
+          background-color: #fbbf24;
           color: $primary;
           i {
+            color: $primary;
+          }
+        }
+        &:hover{
+          color: $primary;
+            background-color: $secondary;
+            i {
             color: $primary;
           }
         }
@@ -44,7 +58,14 @@ $secondary2:#ff0000;
   table{
     background-color:$secondary;
     padding:15px;
+    border-radius:40px;
   }
+}
+.modal-title{
+  color:$primary;
+}
+.border-dark{
+  border-color:$primary !important;
 }
 
 
@@ -68,8 +89,29 @@ input[type=text]{
     box-shadow:none;
   }
 }
+//...........................Header
 
 //...........................Users
+
+#header {
+  background: #1e3a8a; 
+  color: white;
+  
+}
+
+/* Buttons */
+.btn-dark {
+  background-color: #1e3a8a;
+  border: none;
+  &:hover{
+    background-color: #10b981;
+  color: #fff;
+  transition: 0.3s;
+  }
+}
+
+
+
 .iti {
   width: 100%;
 }
