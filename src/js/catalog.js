@@ -229,15 +229,14 @@ $("#apply_rental_filters")
       books: books,
     };
 
-    console.log(borrowData);
-    alert(JSON.stringify(borrowData,null,2));
-
+ $("#loader").show();
     $.ajax({
         url: "http://localhost:8080/LibraryManagementSystem/RentalTransactions/borrowBooks",
         type: "POST",
         data: JSON.stringify(borrowData),
         contentType: "application/json",
         success: function (response) {
+           $("#loader").hide();
           $("#borrow_modal").modal("hide");
           //resetForm();
           Swal.fire({
@@ -262,6 +261,7 @@ $("#apply_rental_filters")
               message = errors;
             }
           }
+           $("#loader").hide();
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -362,17 +362,19 @@ $("#apply_rental_filters")
 
     if (!isValid) return; // stop if validation fails
 
-    console.log("✅ Final JSON:", JSON.stringify(booksArray, null, 2));
+
 
     // 👉 send booksArray to backend with AJAX if needed
 
     // Reset + close modal after success
+     $("#loader").show();
      $.ajax({
         url: "http://localhost:8080/LibraryManagementSystem/RentalTransactions/returnBooks",
         type: "POST",
         data: JSON.stringify(booksArray),
         contentType: "application/json",
         success: function (response) {
+           $("#loader").hide();
            resetReturnModal();
     $("#return_modal").modal("hide");
           //resetForm();
@@ -398,6 +400,7 @@ $("#apply_rental_filters")
               message = errors;
             }
           }
+           $("#loader").hide();
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -410,6 +413,7 @@ $("#apply_rental_filters")
   });
 
   $("#transaction_pdf").on("click",function(){
+     $("#loader").show();
     $.ajax({
         url: "http://localhost:8080/LibraryManagementSystem/RentalTransactions/getTransactionPDF",
         type: "GET",
@@ -435,6 +439,7 @@ $("#apply_rental_filters")
               message = errors;
             }
           }
+           $("#loader").hide();
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -470,12 +475,14 @@ $("#apply_rental_filters")
       transactionId:parseInt(transactionId)
     }
   ]
+   $("#loader").show();
   $.ajax({
     url:"http://localhost:8080/LibraryManagementSystem/RentalTransactions/returnBooks",
     method:"POST",
     data: JSON.stringify(params),
         contentType: "application/json",
         success: function (response) {
+           $("#loader").hide();
           $("#update_rental_modal").modal("hide");
           //resetForm();
           Swal.fire({
@@ -500,6 +507,7 @@ $("#apply_rental_filters")
               message = errors;
             }
           }
+           $("#loader").hide();
           Swal.fire({
             icon: "error",
             title: "Oops...",

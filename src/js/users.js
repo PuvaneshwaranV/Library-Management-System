@@ -277,6 +277,7 @@ function renderUserTable() {
       validMemberAddress &&
       validMemberName
     ) {
+       $("#loader").show();
       let requestData = {
         memberName: $("#member_name").val().trim(),
         memberShipEndDate: $("#membership_end_date").val().trim(),
@@ -292,6 +293,7 @@ function renderUserTable() {
         data: JSON.stringify(requestData),
         contentType: "application/json",
         success: function (response) {
+           $("#loader").hide();
           $("#example_modal").modal("hide");
           resetForm();
           Swal.fire({
@@ -316,6 +318,7 @@ function renderUserTable() {
               message = errors;
             }
           }
+           $("#loader").hide();
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -386,6 +389,7 @@ function renderUserTable() {
       validMemberAddress &&
       validMemberName
     ) {
+       $("#loader").show();
       let requestData = {
         memberId:$("#update_member_id").val().trim(),
         memberName: $("#update_member_name").val().trim(),
@@ -402,6 +406,7 @@ function renderUserTable() {
         data: JSON.stringify(requestData),
         contentType: "application/json",
         success: function (response) {
+           $("#loader").hide();
           $("#update_member_modal").modal("hide");
           Swal.fire({
             icon: "success",
@@ -426,6 +431,7 @@ function renderUserTable() {
               message = errors;
             }
           }
+           $("#loader").hide();
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -443,12 +449,13 @@ let updateEndDp = null;
 
 $(document).on("click", ".update-member", function () {
   const memberId = $(this).data("id");
-
+ $("#loader").show();
   $.ajax({
     url: `http://localhost:8080/LibraryManagementSystem/Members/getMemberById/${memberId}`,
     method: "GET",
     dataType: "json",
     success: function (res) {
+      
       const m = res.object;
 
       // Fill static fields
@@ -503,9 +510,11 @@ $(document).on("click", ".update-member", function () {
       
 
       // Show the modal
+       $("#loader").hide();
       $("#update_member_modal").modal("show");
     },
     error: function () {
+       $("#loader").hide();
       Swal.fire({
         icon: "error",
         title: "Error",

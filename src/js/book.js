@@ -154,11 +154,13 @@ function renderBooksTable() {
 
 
 $(document).on("click","#book_pdf", function(){
+   $("#loader").show();
   $.ajax({
     url:"http://localhost:8080/LibraryManagementSystem/Books/getBookPDF",
     method:"GET",
     dataType: "json",
     success:function(res){
+       $("#loader").hide();
       Swal.fire({
             icon: "success",
             title: "Generated",
@@ -168,6 +170,7 @@ $(document).on("click","#book_pdf", function(){
           });
     },
     error:function(){
+       $("#loader").hide();
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -185,12 +188,13 @@ $(document).on("click","#book_pdf", function(){
       let total__count="";
       $(document).on("click", ".update-book", function () {
   let bookId = $(this).data("id");
-  console.log("Update Book ID:", bookId);
+  $("#loader").show();
 $.ajax({
     url: `http://localhost:8080/LibraryManagementSystem/Books/getBookById/${bookId}`,
     method: "GET",
     dataType: "json",
     success: function (res) {
+       $("#loader").hide();
       let book = res.object; // based on your API response structure
 
       // Fill modal fields
@@ -214,7 +218,9 @@ $.ajax({
       $("#update_modal").modal("show");
     },
     error: function () {
+       $("#loader").hide();
       Swal.fire({
+        
         icon: "error",
         title: "Error",
         text: "Failed to fetch book details.",
@@ -231,7 +237,7 @@ $.ajax({
 
 $(document).on("click",".delete-book", function () {
   let bookId = $(this).data("id");
-  console.log("Delete Book ID:", bookId);
+  
 
   Swal.fire({
     icon: "warning",
@@ -242,11 +248,12 @@ $(document).on("click",".delete-book", function () {
     cancelButtonText: "Cancel"
   }).then((result) => {
     if (result.isConfirmed) {
-      
+       $("#loader").show();
       $.ajax({
         url: `http://localhost:8080/LibraryManagementSystem/Books/deleteBook/${bookId}`,
         method: "PUT",
         success: function () {
+           $("#loader").hide();
           Swal.fire({
             icon: "success",
             title: "Deleted!",
@@ -257,6 +264,7 @@ $(document).on("click",".delete-book", function () {
           $("#apply_filters").click(); // refresh table
         },
         error: function () {
+           $("#loader").hide();
           Swal.fire({
             icon: "error",
             title: "Failed",
@@ -344,13 +352,14 @@ $(document).on("click",".delete-book", function () {
           language: $("#language_update").val().trim(),
           totalCount:$("#total_count").val().trim(),
         };
-
+ $("#loader").show();
       $.ajax({
           url: "http://localhost:8080/LibraryManagementSystem/Books/updateBookDetails",
           type: "PUT",
           data: JSON.stringify(requestData),
           contentType: "application/json",
           success: function (response) {
+             $("#loader").hide();
             $("#update_modal").modal("hide");
             resetForm();
             Swal.fire({
@@ -376,7 +385,7 @@ $(document).on("click",".delete-book", function () {
       let errors = Object.values(xhr.responseJSON.object).join("\n");
       message = errors;
     }
-  }
+  } $("#loader").hide();
             Swal.fire({
               icon: "error",
               title: "Oops...",
@@ -423,13 +432,14 @@ $(document).on("click",".delete-book", function () {
           totalCount: parseInt($("#quantity").val().trim()),
           language: $("#language").val().trim(),
         };
-        alert($("#quantity").val().trim())
+         $("#loader").show();
         $.ajax({
           url: "http://localhost:8080/LibraryManagementSystem/Books/addNewBook",
           type: "POST",
           data: JSON.stringify(requestData),
           contentType: "application/json",
           success: function (response) {
+             $("#loader").hide();
             $("#example_modal").modal("hide");
             resetForm();
             Swal.fire({
@@ -455,7 +465,7 @@ $(document).on("click",".delete-book", function () {
       let errors = Object.values(xhr.responseJSON.object).join("\n");
       message = errors;
     }
-  }
+  } $("#loader").hide();
             Swal.fire({
               icon: "error",
               title: "Oops...",

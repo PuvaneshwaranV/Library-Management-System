@@ -1,3 +1,4 @@
+
 $("#apply_penalty_filters")
     .off("click")
     .on("click", function () {
@@ -76,11 +77,19 @@ $("#apply_penalty_filters")
                 data: null,
                 orderable: false,
                 render: function (data, type, row) {
+                  let status =row.status ==="Pending";
+                  if(status)
                   return `
-        <button class="btn btn-sm btn-dark me-2 mb-2 update-member" data-bs-toggle="modal"
-        data-bs-target="#update_member_modal" data-id="${row.memberId}">
-          <i class="fa-solid fa-pen-to-square" style="color: #fff;"></i>
+        <button class="btn btn-sm btn-dark me-2 mb-2 penalty-pay" data-bs-toggle="modal"
+        data-bs-target="#penalty_pay_modal" data-id="${row.penaltyId}" data-amount="${row.amount}">
+          <i class="fa-solid fa-indian-rupee-sign" style="color: #fff;"></i>
         </button>`;
+          else{
+                return `
+        <button class="btn btn-sm btn-dark me-2 mb-2 penalty-pay"  disabled>
+          <i class="fa-solid fa-indian-rupee-sign" style="color: #fff;"></i>
+        </button>`;
+          }
                 },
               },
             ],
@@ -131,6 +140,7 @@ $("#apply_penalty_filters")
     });
 
     $("#penalty_add_btn").on("click",function(){
+       $("#loader").show();
         let transactionId=parseInt($("#penalty_transactionid").val().trim());
         let Amount=parseInt($("#penalty_amount").val().trim());
         let Reason=$("#penalty_reason").val().trim();
@@ -147,12 +157,13 @@ $("#apply_penalty_filters")
           data: params,
 
           success: function (response) {
+             $("#loader").hide();
             $("#penalty_modal").modal("hide");
             
             Swal.fire({
               icon: "success",
-              title: "Book Saved",
-              text: "✅ Your book was added successfully!",
+              title: "Added",
+              text: "✅ Penalty Added Successfully",
               showConfirmButton: false,
               timer: 2000,
             }).then(() => {
@@ -172,7 +183,7 @@ $("#apply_penalty_filters")
       let errors = Object.values(xhr.responseJSON.object).join("\n");
       message = errors;
     }
-  }
+  } $("#loader").hide();
             Swal.fire({
               icon: "error",
               title: "Oops...",
@@ -184,3 +195,67 @@ $("#apply_penalty_filters")
         });
       
     });
+
+    
+  $(document).on("click", ".penalty-pay", function () {
+  let penaltyid= $(this).data("id");
+  let amount = $(this).data("amount");
+  
+
+  $("#penalty_pay_penaltyid").val(penaltyid);
+  $("#penalty_pay_amount").val(amount);
+  
+
+  $("#penalty_pay_modal").modal("show");
+});
+  $(document).on("click", "#penalty_pay_btn", function () {
+     $("#loader").show();
+    let penalty=parseInt($("#penalty_pay_penaltyid").val());
+    let amount=parseInt($("#penalty_pay_amount").val())
+  let params=
+    {
+      penaltyId:penalty,
+      amount:amount,
+    }
+  $.ajax({
+    
+    url:"http://localhost:8080/LibraryManagementSystem/Penalty/pay",
+    method:"POST",
+    data: params,
+        
+        success: function (response) {
+          $("#loader").hide();
+          Swal.fire({
+            icon: "success",
+            title: "Paid",
+            text: "✅ " + response.object,
+            showConfirmButton: false,
+            timer: 2000,
+          }).then(() => {
+            $("#apply_penalty_filters").click();
+          });
+        },
+        error: function (xhr, status, error) {
+
+          let message = "Something went wrong.";
+
+          if (xhr.responseJSON) {
+            if (xhr.responseJSON.message) {
+              message = xhr.responseJSON.message;
+            }
+            if (xhr.responseJSON.object) {
+              let errors = Object.values(xhr.responseJSON.object).join("\n");
+              message = errors;
+            }
+          }
+          $("#loader").hide ();
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "❌ " + message,
+            showConfirmButton: false,
+            timer: 2000,
+          });
+        },
+  })
+  });
