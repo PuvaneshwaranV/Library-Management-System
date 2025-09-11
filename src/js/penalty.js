@@ -70,7 +70,17 @@ $("#apply_penalty_filters")
 
               { title: "Reason", data: "reason" },
 
-              { title: "Status", data: "status" },
+              { title: "Status", data: "status",
+                render:function(data,type,row){
+                    if(row.status === "Paid"){
+                        return`<div><p class="bg-success rounded-5 text-white">${row.status}</p></div>`;
+                    }
+                    else{
+                        return`<div><p class="bg-danger rounded-5 text-white">${row.status}</p></div>`; 
+                    }
+                    
+                  }
+               },
                { title: "Payment Date", data: "paymentDate" },
               {
                 title: "Actions",
@@ -125,7 +135,7 @@ $("#apply_penalty_filters")
 
               { title: "Reason", data: "reason" },
 
-              { title: "Status", data: "status" },
+              { title: "Status", data: "status"},
                { title: "Payment Date", data: "paymentDate" },
               {
                 title: "Actions",
@@ -150,7 +160,7 @@ $("#apply_penalty_filters")
             reason:Reason
         }
        
-      alert(JSON.stringify(params));
+   
         $.ajax({
           url: "http://localhost:8080/LibraryManagementSystem/Penalty/add",
           type: "POST",
@@ -208,7 +218,7 @@ $("#apply_penalty_filters")
 
   $("#penalty_pay_modal").modal("show");
 });
-  $(document).on("click", "#penalty_pay_btn", function () {
+  $("#penalty_pay_btn").click( function () {
      $("#loader").show();
     let penalty=parseInt($("#penalty_pay_penaltyid").val());
     let amount=parseInt($("#penalty_pay_amount").val())
@@ -225,6 +235,7 @@ $("#apply_penalty_filters")
         
         success: function (response) {
           $("#loader").hide();
+          $("#penalty_pay_modal").modal("hide");
           Swal.fire({
             icon: "success",
             title: "Paid",
@@ -253,8 +264,8 @@ $("#apply_penalty_filters")
             icon: "error",
             title: "Oops...",
             text: "❌ " + message,
-            showConfirmButton: false,
-            timer: 2000,
+            showConfirmButton: true,
+            
           });
         },
   })

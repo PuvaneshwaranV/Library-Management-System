@@ -60,15 +60,25 @@ function renderUserTable() {
 
               { title: "MemberShip End Date", data: "memberShipEndDate" },
 
-              { title: "Member Ship Status", data: "memberShipStatus" },
+              { title: "Member Ship Status", data: "memberShipStatus",
+                render:function(data,type,row){
+                    if(row.memberShipStatus === "ACTIVE"){
+                        return`<div><p class="bg-success rounded-5 text-white">${row.memberShipStatus}</p></div>`;
+                    }
+                    else{
+                        return`<div><p class="bg-danger rounded-5 text-white">${row.memberShipStatus}</p></div>`; 
+                    }
+                    
+                  }
+               },
 
-              { title: "Address", data: "memberaddress" },
+             
 
-              { title: "Mobile Number", data: "memberMobileNumber" },
+             
 
               { title: "Work Status", data: "memberWorkStatus" },
 
-              { title: "Email", data: "memberEmail" },
+             
               {
                 title: "Actions",
                 data: null,
@@ -78,6 +88,10 @@ function renderUserTable() {
         <button class="btn btn-sm btn-warning me-2 mb-2 update-member" data-bs-toggle="modal"
         data-bs-target="#update_member_modal" data-id="${row.memberId}">
           <i class="fa-solid fa-pen-to-square" style="color: #fff;"></i>
+        </button><button class="btn btn-sm btn-dark me-2 mb-2 view-member" data-bs-toggle="modal"
+        data-bs-target="#member_profile_modal" data-id="${row.memberId}">
+        <i class="fa-solid fa-eye" style="color: #fff;"></i>
+          
         </button>`;
                 },
               },
@@ -85,7 +99,7 @@ function renderUserTable() {
           });
           $("#loader").hide();
           $("#user_table").show();
-        },
+        }, 
         error: function () {
           if ($.fn.DataTable.isDataTable("#user_table")) {
             $("#user_table").DataTable().destroy();
@@ -147,7 +161,7 @@ function renderUserTable() {
 
     // Reinitialize
     window.intlTelInput(input[0], {
-      initialCountry: "", // no default country
+      initialCountry: "in", // no default country
       separateDialCode: true, // show code separately
       nationalMode: true, // allow local number input
       utilsScript:
@@ -575,6 +589,84 @@ $("#update_member_modal").on("hidden.bs.modal", function () {
   $("#member_modal").on("hidden.bs.modal", function () {
     resetForm();
   });
+
+
+  $(document).on("click", ".view-member", function () {
+  const memberId = $(this).data("id");
+  $("#loader").show();
+
+  $.ajax({
+    url: `http://localhost:8080/LibraryManagementSystem/Members/getMemberById/${memberId}`,
+    method: "GET",
+    dataType: "json",
+    success: function (res) {
+  
+      const m = res.object;
+      // ---- Avatar letter & color ----
+      const firstLetter = (m.memberName || "?").charAt(0).toUpperCase();
+      const colors = ["#4f46e5", "#16a34a", "#db2777", "#f97316", "#0ea5e9"];
+      const bgColor = colors[firstLetter.charCodeAt(0) % colors.length];
+      $("#profile_avatar")
+        .text(firstLetter)
+        .css("background-color", bgColor);
+
+      // ---- Fill profile fields ----
+      $("#profile_name").text(m.memberName || "N/A");
+      $("#profile_status").text(`Status: ${m.memberShipStatus || "N/A"}`);
+      $("#profile_email").text(m.memberEmail || "N/A");
+      $("#profile_mobile").text(m.memberMobileNumber || "N/A");
+      $("#profile_work").text(m.memberWorkStatus || "N/A");
+
+      const start = m.memberShipStartDate ? `Start: ${m.memberShipStartDate}` : "";
+      const end   = m.memberShipEndDate   ? ` | End: ${m.memberShipEndDate}`   : "";
+      $("#profile_membership").text(`${start}${end}`);
+      $("#profile_address").text(m.memberaddress || "N/A");
+
+       $("#profile_books").empty();
+      $("#fav_books_section").hide();
+      // Show modal
+      let params={
+        memberId:m.memberId
+      }
+     $.ajax({
+        url: `http://localhost:8080/LibraryManagementSystem/RentalTransactions/getTop3FavoriteAuthorsBooks`,
+        data:params,
+        method: "GET",
+        dataType: "json",
+        success: function (bookRes) {
+          const books = Array.isArray(bookRes.object) ? bookRes.object : [];
+          if (books.length > 0) {
+            books.forEach(b => {
+              $("#profile_books").append(`
+                <li class="list-group-item px-0">
+                  <strong>${b.title}</strong><br>
+                  <small class="text-muted">by ${b.author}</small>
+                </li>
+              `);
+            });
+            $("#fav_books_section").show();
+          }
+        },
+        error: function () {
+          console.warn("Favourite books fetch failed");
+        }
+      });
+
+      $("#loader").hide();
+      $("#member_profile_modal").modal("show");
+    },
+    error: function () {
+      $("#loader").hide();
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to fetch Member details.",
+        showConfirmButton: false,
+        timer: 2000
+      });
+    },
+  });
+});
 }
 $(document).ready(function () {
   renderUserTable();

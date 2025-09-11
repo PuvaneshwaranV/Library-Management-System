@@ -89,9 +89,19 @@ function renderBooksTable() {
                 { title: "Language", data: "language" },
                 { title: "Author", data: "author" },
                 { title: "Book Reg. Date", data: "bookRegistrationDate" },
-                { title: "Book Del Date", data: "bookDeletedDate" },
+         
                 { title: "Total Count", data: "totalCount" },
-                { title: "Status", data: "bookStatus" },
+                { title: "Status", data: "bookStatus",
+                  render:function(data,type,row){
+                    if(row.bookStatus === "Available"){
+                        return`<div><p class="bg-success rounded-5 text-white">${row.bookStatus}</p></div>`;
+                    }
+                    else{
+                        return`<div><p class="bg-danger rounded-5 text-white">${row.bookStatus}</p></div>`; 
+                    }
+                    
+                  }
+                 },
                 {
                   title: "Actions",
                   data: null,
@@ -133,7 +143,7 @@ function renderBooksTable() {
                 { title: "Language", data: "language" },
                 { title: "Author", data: "author" },
                 { title: "Book Reg. Date", data: "bookRegistrationDate" },
-                { title: "Book Del Date", data: "bookDeletedDate" },
+               
                 { title: "Total Count", data: "totalCount" },
                 { title: "Status", data: "bookStatus" },
                 { title: "Borrowed Count", data: "borrowedCount" },
@@ -261,6 +271,7 @@ $(document).on("click",".delete-book", function () {
             showConfirmButton: false,
             timer: 2000
           });
+           $("#reset_filters").click();
           $("#apply_filters").click(); // refresh table
         },
         error: function () {

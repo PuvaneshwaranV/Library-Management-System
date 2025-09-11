@@ -2,6 +2,30 @@ $(document).ready(function () {
   $("#header").load("header.html");
   $("#sidebar").load("sidebar.html", function () {
     setActiveLink();
+     $(document).on("click", "#logout a", function (e) {
+      e.preventDefault();
+
+      Swal.fire({
+        icon: "warning",
+        title: "Logout",
+        text: "Are you sure you want to log out?",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "No"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            icon: "success",
+            title: "Logged out",
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+          setTimeout(function () {
+            window.location.href = "Login.html";
+          }, 1600);
+        }
+      });});
   });
 
   const lastPage = localStorage.getItem("lastPage") || "dashboard.html";
@@ -21,7 +45,7 @@ $(document).ready(function () {
 
   $(document).on("click", "#sidebar .nav-link", function (e) {
     e.preventDefault();
-
+    if($(this).attr("href")!=="#"){
     const targetFile = $(this).attr("href");
 
     localStorage.setItem("lastPage", targetFile);
@@ -31,7 +55,7 @@ $(document).ready(function () {
     updateHeader($(this).text().trim());
     setActiveLink($(this));
 
-    $("#sidebar").addClass("collapsed");
+    $("#sidebar").addClass("collapsed");}
   });
 
   function loadPage(page) {
@@ -65,5 +89,6 @@ $(document).ready(function () {
     $("#header h3").text(title);
   }
 
-  
+
+
 });

@@ -1,9 +1,21 @@
-body {
+.tilt-neon-body {
   margin: 0;
   height: 100vh;
   background-color: #f3f4f6;
   color: #111827;
-  font-family: "Segoe UI", sans-serif;
+  font-family: "Tilt Neon", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "XROT" 0, "YROT" 0;
+}
+
+.text-secondary {
+  color: #1e3a8a !important;
+}
+
+td, th {
+  text-align: center !important;
 }
 
 #sidebar {
@@ -19,6 +31,7 @@ body {
   border-radius: 0;
   background-color: #1e3a8a;
   color: #d1d5db;
+  cursor: pointer;
 }
 #sidebar ul li a.active {
   background-color: #fbbf24;
@@ -90,7 +103,7 @@ input[type=text]:focus {
   border: none;
 }
 .btn-dark:hover {
-  background-color: #10b981;
+  background-color: #fbbf24;
   color: #fff;
   transition: 0.3s;
 }

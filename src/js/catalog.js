@@ -13,8 +13,8 @@ $("#apply_rental_filters")
       let params = { start: 0, length: length, order: asec };
       console.log(length);
       console.log(bookRentalStatus);
-    
-      if (bookRentalStatus === "borrowed" || bookRentalStatus === "returned") {
+      
+       if (bookRentalStatus === "borrowed" || bookRentalStatus === "returned") {
         params = {
           start: 0,
           length: length,
@@ -57,7 +57,17 @@ $("#apply_rental_filters")
               { title: "Return Due Date", data: "returnDueDate" },
 
               { title: "Actual Return Date", data: "actualReturnedDate" },
-              { title: "Book Rental Status", data: "bookRentalStatus" },
+              { title: "Book Rental Status", data: "bookRentalStatus" ,
+                 render:function(data,type,row){
+                    if(row.bookRentalStatus === "Returned"){
+                        return`<div><p class="bg-success rounded-5 text-white">${row.bookRentalStatus}</p></div>`;
+                    }
+                    else{
+                        return`<div><p class="bg-danger rounded-5 text-white">${row.bookRentalStatus}</p></div>`; 
+                    }
+                    
+                  }
+              },
               {
                 title: "Actions",
                 data: null,
@@ -176,6 +186,24 @@ $("#apply_rental_filters")
     `;
   });
 
+
+  function resetBorrowModal() {
+  document.getElementById("borrow_form").reset();
+  booksContainer.innerHTML = `
+    <div class="book-entry mb-3 border p-3 rounded position-relative">
+      <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn" style="display:none;">✖</button>
+      <input type="text" class="form-control mb-2" placeholder="Book Id" name="book_id" />
+      <div class="text-danger small error_book_id"></div>
+
+      <input type="text" class="form-control mb-2" placeholder="Quantity" name="quantity" />
+      <div class="text-danger small error_quantity"></div>
+
+      <input type="text" class="form-control mb-2" placeholder="YYYY-MM-DD" name="due_date" />
+      <div class="text-danger small error_due_date"></div>
+    </div>
+  `;
+  updateRemoveButtons(); // make sure first row remove button stays hidden
+}
   // Validation and collect data
   document.getElementById("add_btn").addEventListener("click", function () {
     let isValid = true;
@@ -238,7 +266,7 @@ $("#apply_rental_filters")
         success: function (response) {
            $("#loader").hide();
           $("#borrow_modal").modal("hide");
-          //resetForm();
+          resetBorrowModal();
           Swal.fire({
             icon: "success",
             title: "Borrowed",
@@ -485,11 +513,10 @@ $("#apply_rental_filters")
         success: function (response) {
            $("#loader").hide();
           $("#update_rental_modal").modal("hide");
-          //resetForm();
           Swal.fire({
             icon: "success",
             title: "Returned",
-            text: "✅ " + response.object,
+            text: "✅ Book Returned Successfully",
             showConfirmButton: false,
             timer: 2000,
           }).then(() => {
@@ -519,3 +546,16 @@ $("#apply_rental_filters")
         },
   })
   });
+   $("#reset_rental_filters")
+      .off("click")
+      .on("click", function () {
+        $("#rental_filter_type").val("all");
+        $("#rental_filter_value").val("");
+        $("#rental_status").val("all");
+        $("#rental_length").val("10");
+
+        if ($.fn.DataTable.isDataTable("#user_table")) {
+          $("#user_table").DataTable().clear().destroy();
+          $("#user_table").hide();
+        }
+      });

@@ -3,12 +3,24 @@ $secondary: #fff;
 $secondary1:#F2F2F2;
 $secondary2:#ff0000;
 //...........................sidebar
-body {
+.tilt-neon-body {
   margin: 0;
-            height: 100vh;
+  height: 100vh;
   background-color: #f3f4f6;
   color:#111827;
-  font-family: "Segoe UI", sans-serif;
+   font-family: "Tilt Neon", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "XROT" 0,
+    "YROT" 0;
+}
+.text-secondary{
+  color:$primary !important;
+}
+td,th{
+  text-align:center !important;
 }
 #sidebar {
   
@@ -25,6 +37,7 @@ background-color:$primary;
         border-radius: 0;
         background-color: $primary;
         color: #d1d5db;
+        cursor:pointer;
 
         &.active {
           background-color: #fbbf24;
@@ -104,7 +117,7 @@ input[type=text]{
   background-color: #1e3a8a;
   border: none;
   &:hover{
-    background-color: #10b981;
+    background-color: #fbbf24;
   color: #fff;
   transition: 0.3s;
   }
