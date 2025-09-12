@@ -2,30 +2,30 @@ $(document).ready(function () {
   $("#header").load("header.html");
   $("#sidebar").load("sidebar.html", function () {
     setActiveLink();
-     $(document).on("click", "#logout a", function (e) {
+    $(document).on("click", "#logout a", function (e) {
       e.preventDefault();
-
       Swal.fire({
         icon: "warning",
         title: "Logout",
         text: "Are you sure you want to log out?",
         showCancelButton: true,
         confirmButtonText: "Yes",
-        cancelButtonText: "No"
+        cancelButtonText: "No",
       }).then((result) => {
         if (result.isConfirmed) {
           Swal.fire({
             icon: "success",
             title: "Logged out",
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
           });
 
           setTimeout(function () {
             window.location.href = "Login.html";
           }, 1600);
         }
-      });});
+      });
+    });
   });
 
   const lastPage = localStorage.getItem("lastPage") || "dashboard.html";
@@ -45,31 +45,29 @@ $(document).ready(function () {
 
   $(document).on("click", "#sidebar .nav-link", function (e) {
     e.preventDefault();
-    if($(this).attr("href")!=="#"){
-    const targetFile = $(this).attr("href");
+    if ($(this).attr("href") !== "#") {
+      const targetFile = $(this).attr("href");
 
-    localStorage.setItem("lastPage", targetFile);
+      localStorage.setItem("lastPage", targetFile);
 
-    loadPage(targetFile);
+      loadPage(targetFile);
 
-    updateHeader($(this).text().trim());
-    setActiveLink($(this));
+      updateHeader($(this).text().trim());
+      setActiveLink($(this));
 
-    $("#sidebar").addClass("collapsed");}
+      $("#sidebar").addClass("collapsed");
+    }
   });
 
   function loadPage(page) {
     $("#main_body").load(page, function () {
       if (page === "books.html") {
         $.getScript("js/book.js");
-      }
-      else if (page === "users.html") {
+      } else if (page === "users.html") {
         $.getScript("js/users.js");
-      }
-      else if (page === "catalog.html") {
+      } else if (page === "catalog.html") {
         $.getScript("js/catalog.js");
-      }
-      else if (page === "penalty.html") {
+      } else if (page === "penalty.html") {
         $.getScript("js/penalty.js");
       }
     });
@@ -88,7 +86,4 @@ $(document).ready(function () {
   function updateHeader(title) {
     $("#header h3").text(title);
   }
-
-
-
 });
