@@ -197,18 +197,13 @@ function renderBooksTable() {
       success: function (res) {
         $("#loader").hide();
         let book = res.object;
-        $("#book_id_update").val(book.bookId);
-
         $("#title_update").val(book.title);
         $("#author_update").val(book.author);
         $("#language_update").val(book.language);
         $("#total_count").val(book.totalCount);
-        total__count = book.totalCount;
-        console.log(total__count);
-        $("#reg_date").val(book.bookRegistrationDate);
-        $("#del_date").val(book.bookDeletedDate);
+ 
         $("#book_status").val(book.bookStatus);
-        $("#quantity").val(book.totalCount);
+
         $("#update_modal").modal("show");
       },
       error: function () {

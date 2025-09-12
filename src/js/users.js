@@ -170,6 +170,7 @@ function renderUserTable() {
   }
 
   $("#member_modal").on("shown.bs.modal", function () {
+    $("#membership_end_date").inputmask("9999-99-99");
     initPhoneInput();
 
     $("#calendar_icon").on("click", function () {
@@ -261,7 +262,7 @@ function renderUserTable() {
     //     console.log(endDatePicker)
     //   });
     let dateVal = "";
-    // Validation if user types manually
+    // Validation  manually
     $("#membership_end_date").on("blur", function () {
       dateVal = $(this).val().trim();
       console.log(dateVal);

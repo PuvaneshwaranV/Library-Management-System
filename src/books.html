@@ -72,7 +72,7 @@
             >
               Reset
             </button></div><div class="col-6">
-            <button id="add_btn" type="button" class="btn btn-dark w-100">ADD</button></div>
+            <button id="add_btn" type="button" class="btn btn-dark w-100">Save</button></div>
           </div>
             </form>
             
@@ -105,14 +105,7 @@
             </button>
             <hr class="border border-1 border-dark opacity-100" />
             <form class="mx-5 my-4">
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="book_id_update"
-                  placeholder="Book ID" disabled
-                /><div id="update_book_error" class="text-danger small"></div>
-              </div> 
+              
               <div class="mb-3">
                 <input
                   type="text"
@@ -152,29 +145,6 @@
               </div> 
               
             </div>
-           
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="reg_date"
-                  placeholder="Reg. Date" disabled
-                />
-                <div id="update_reg_error" class="text-danger small"></div>
-              </div> 
-              
-               
-               
-              
-            
-            <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="book_status"
-                  placeholder="Book Status" disabled
-                /><div id="update_status_error" class="text-danger small"></div>
-              </div> 
               <div class="row">
                 <div class="col-6">
             <button id="cancel"
@@ -208,9 +178,13 @@
         >Generate Available Books Pdf
       </button>
     </div>
-    <div id="custom_filters" class="d-flex justify-content-between mb-3">
+    <div id="custom_filters" class="d-flex justify-content-start mb-3">
       <!-- Show Dropdown (aligned left) -->
-      <div class="d-flex flex-column">
+      
+
+      <!-- Other Filters (aligned right) -->
+      <div class="d-flex gap-2">
+         <div class="d-flex flex-column">
         <label for="custom_length" class="ms-2">Show </label>
         <select id="custom_length" class="form-select w-auto">
           <option value="10">10</option>
@@ -219,9 +193,6 @@
           <option value="100">100</option>
         </select>
       </div>
-
-      <!-- Other Filters (aligned right) -->
-      <div class="d-flex gap-2">
         <div class="d-flex flex-column">
           <label for="filter_status" class="ms-2">Status</label>
           <select id="filter_status" class="form-select w-auto">

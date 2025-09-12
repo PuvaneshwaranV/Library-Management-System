@@ -66,7 +66,7 @@
                     type="button"
                     class="btn btn-dark w-100"
                   >
-                    ADD
+                    Save
                   </button>
                 </div>
               </div>
@@ -154,7 +154,11 @@
     </div>
     <div id="penalty_filters" class="d-flex justify-content-between mb-3">
       <!-- Show Dropdown (aligned left) -->
-      <div class="d-flex flex-column">
+    
+
+      <!-- Other Filters (aligned right) -->
+      <div class="d-flex gap-2">
+          <div class="d-flex flex-column">
         <label for="penalty_length" class="ms-2">Show </label>
         <select id="penalty_length" class="form-select w-auto">
           <option value="10">10</option>
@@ -163,9 +167,6 @@
           <option value="100">100</option>
         </select>
       </div>
-
-      <!-- Other Filters (aligned right) -->
-      <div class="d-flex gap-2">
         <div class="d-flex flex-column">
           <label for="penalty_filter_status" class="ms-2">Penalty Status</label>
           <select id="penalty_filter_status" class="form-select w-auto">

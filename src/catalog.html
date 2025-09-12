@@ -84,7 +84,7 @@
             </div>
             <div class="col-6">
               <button id="add_btn" type="button" class="btn btn-dark w-100">
-                ADD
+                Save
               </button>
             </div>
           </div>
@@ -156,7 +156,6 @@
             <hr class="border border-1 border-dark opacity-100" />
             <form id="return_form" class="mx-5 my-4">
   <div id="book_groups">
-    <!-- Book Group Template -->
     <div class="book-group border rounded p-3 mb-3 position-relative">
       <div class="mb-2">
         <input type="text" class="form-control book-id" placeholder="Book ID" />
@@ -170,7 +169,7 @@
         <input type="text" class="form-control transaction-id" placeholder="Transaction ID" />
         <div class="text-danger small error-transaction-id"></div>
       </div>
-      <!-- Delete button (hidden for first group) -->
+
       <button type="button" class="btn btn-danger btn-sm remove-group position-absolute top-0 end-0 m-2" style="display:none;">
         <i class="fa-solid fa-trash"></i>
       </button>
@@ -217,7 +216,11 @@
     </div>
     <div id="rental_filters" class="d-flex justify-content-between mb-3">
       <!-- Show Dropdown (aligned left) -->
-      <div class="d-flex flex-column">
+      
+
+      <!-- Other Filters (aligned right) -->
+      <div class="d-flex gap-2">
+        <div class="d-flex flex-column">
         <label for="rental_length" class="ms-2">Show </label>
         <select id="rental_length" class="form-select w-auto">
           <option value="10">10</option>
@@ -226,9 +229,6 @@
           <option value="100">100</option>
         </select>
       </div>
-
-      <!-- Other Filters (aligned right) -->
-      <div class="d-flex gap-2">
         <div class="d-flex flex-column">
           <label for="rental_status" class="ms-2">Status</label>
           <select id="rental_status" class="form-select w-auto">
