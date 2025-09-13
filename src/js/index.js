@@ -63,7 +63,8 @@ $(document).ready(function () {
     $("#main_body").load(page, function () {
       if (page === "books.html") {
         $.getScript("js/book.js");
-      } else if (page === "users.html") {
+      } else
+         if (page === "users.html") {
         $.getScript("js/users.js");
       } else if (page === "catalog.html") {
         $.getScript("js/catalog.js");
