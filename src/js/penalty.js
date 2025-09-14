@@ -1,265 +1,239 @@
-$("#apply_penalty_filters")
-  .off("click")
-  .on("click", function () {
-    $("#loader").show();
-    $("#user_table").hide();
+const Penalty = function () {
+    // ------------------ selectors in one place ------------------
+    this.selectors = {
+        loader:        "#loader",
+        userTable:     "#user_table",
+        applyFilters:  "#apply_penalty_filters",
+        addBtn:        "#penalty_add_btn",
+        transactionId: "#penalty_transactionid",
+        amount:        "#penalty_amount",
+        reason:        "#penalty_reason",
+        payBtn:        "#penalty_pay_btn",
+        payModal:      "#penalty_pay_modal",
+        payPenaltyId:  "#penalty_pay_penaltyid",
+        payAmount:     "#penalty_pay_amount",
+        length:        "#penalty_length",
+        status:        "#penalty_filter_status",
+        filterType:    "#penalty_filter_type",
+        filterValue:   "#penalty_filter_value"
+    };
 
-    let length = $("#penalty_length").val();
-    let status = $("#penalty_filter_status").val();
-    let searchColumn = $("#penalty_filter_type").val();
-    let searchValue = $("#penalty_filter_value").val().trim();
-    let asc = "asc";
-    let apiUrl =
-      "http://localhost:8080/LibraryManagementSystem/Penalty/getPenalty";
-    let params = { start: 0, length: length, order: asc };
-    console.log(length);
-    console.log(status);
+    // ------------------ public methods ------------------
+    this.init = function () {
+        const s = this.selectors;
 
-    if ((status === "paid" || status === "pending") && searchValue !== "") {
-      params = {
-        start: 0,
-        length: length,
-        order: asc,
-        paymentStatus: status,
-        searchColumn: searchColumn,
-        searchValue: searchValue,
-      };
-    } else if (status === "paid" || status === "pending") {
-      params = {
-        start: 0,
-        length: length,
-        order: asc,
-        paymentStatus: status,
-      };
-    } else if (searchValue !== "") {
-      params = {
-        start: 0,
-        length: length,
-        order: asc,
-        searchColumn: searchColumn,
-        searchValue: searchValue,
-      };
-    }
+        $(document)
+            .off("click", s.applyFilters)
+            .on("click", s.applyFilters, this.applyFilters.bind(this));
 
-    $.ajax({
-      url: apiUrl,
-      method: "GET",
-      data: params,
-      dataType: "json",
-      success: function (res) {
-        if ($.fn.DataTable.isDataTable("#user_table")) {
-          $("#user_table").DataTable().destroy();
+        $(document)
+            .off("click", s.addBtn)
+            .on("click", s.addBtn, this.addPenalty.bind(this));
+
+        $(document)
+            .off("click", ".penalty-pay")
+            .on("click", ".penalty-pay", this.openPayModal.bind(this));
+
+        $(document)
+            .off("click", s.payBtn)
+            .on("click", s.payBtn, this.payPenalty.bind(this));
+    };
+
+    this.applyFilters = function () {
+        const s = this.selectors;
+        $(s.loader).show();
+        $(s.userTable).hide();
+
+        let length       = $(s.length).val();
+        let status       = $(s.status).val();
+        let searchColumn = $(s.filterType).val();
+        let searchValue  = $(s.filterValue).val().trim();
+        let asc          = "asc";
+
+        let params = { start: 0, length: length, order: asc };
+
+        if ((status === "paid" || status === "pending") && searchValue !== "") {
+            params = { ...params, paymentStatus: status, searchColumn, searchValue };
+        } else if (status === "paid" || status === "pending") {
+            params = { ...params, paymentStatus: status };
+        } else if (searchValue !== "") {
+            params = { ...params, searchColumn, searchValue };
         }
-        table = $("#user_table").DataTable({
-          data: res.object.data,
-          sort: false,
-          destroy: true,
-          dom: '<"top"lp>t<"bottom"ip>',
-          lengthMenu: [10, 25, 50, 100],
-          language: {
-            emptyTable: "No data found",
-          },
-          columns: [
-            { title: "Penalty ID", data: "penaltyId" },
-            { title: "Transaction ID", data: "transactionId" },
 
-            { title: "Member ID", data: "memberId" },
-
-            { title: "Book ID", data: "bookId" },
-
-            { title: "Amount", data: "amount" },
-
-            { title: "Penalty Added Flag", data: "penaltyAddedFlag" },
-
-            { title: "Penalty Amount", data: "penaltyAmount" },
-
-            { title: "Reason", data: "reason" },
-
-            {
-              title: "Status",
-              data: "status",
-              render: function (data, type, row) {
-                if (row.status === "Paid") {
-                  return `<div><p class="bg-success rounded-5 text-white">${row.status}</p></div>`;
-                } else {
-                  return `<div><p class="bg-danger rounded-5 text-white">${row.status}</p></div>`;
+        $.ajax({
+            url:  "http://localhost:8080/LibraryManagementSystem/Penalty/getPenalty",
+            type: "GET",
+            data: params,
+            dataType: "json",
+            success: (res) => {
+                if ($.fn.DataTable.isDataTable(s.userTable)) {
+                    $(s.userTable).DataTable().destroy();
                 }
-              },
+                $(s.userTable).DataTable({
+                    data: res.object.data,
+                    sort: false,
+                    destroy: true,
+                    dom: '<"top"lp>t<"bottom"ip>',
+                    lengthMenu: [10, 25, 50, 100],
+                    language: { emptyTable: "No data found" },
+                    columns: this.columnsConfig(true)
+                });
+                $(s.loader).hide();
+                $(s.userTable).show();
             },
-            { title: "Payment Date", data: "paymentDate" },
-            {
-              title: "Actions",
-              data: null,
-              orderable: false,
-              render: function (data, type, row) {
-                let status = row.status === "Pending";
-                if (status)
-                  return `
-        <button class="btn btn-sm btn-warning me-2 mb-2 penalty-pay" data-bs-toggle="modal"
-        data-bs-target="#penalty_pay_modal" data-id="${row.penaltyId}" data-amount="${row.amount}">
-          <i class="fa-solid fa-indian-rupee-sign" style="color: #fff;"></i>
-        </button>`;
-                else {
-                  return `
-        <button class="btn btn-sm btn-dark me-2 mb-2 penalty-pay"  disabled>
-          <i class="fa-solid fa-indian-rupee-sign" style="color: #fff;"></i>
-        </button>`;
+            error: () => {
+                if ($.fn.DataTable.isDataTable(s.userTable)) {
+                    $(s.userTable).DataTable().destroy();
                 }
-              },
-            },
-          ],
+                $(s.userTable).DataTable({
+                    data: [],
+                    sort: false,
+                    destroy: true,
+                    dom: '<"top"p>t<"bottom"ip>',
+                    language: { emptyTable: "No data found" },
+                    columns: this.columnsConfig(false)
+                });
+                $(s.loader).hide();
+                $(s.userTable).show();
+            }
         });
-        $("#loader").hide();
-        $("#user_table").show();
-      },
-      error: function () {
-        if ($.fn.DataTable.isDataTable("#user_table")) {
-          $("#user_table").DataTable().destroy();
+    };
+
+    this.addPenalty = function () {
+        const s = this.selectors;
+        $(s.loader).show();
+
+        let params = {
+            TransactionId: parseInt($(s.transactionId).val().trim()),
+            amount:        parseInt($(s.amount).val().trim()),
+            reason:        $(s.reason).val().trim()
+        };
+
+        $.ajax({
+            url:  "http://localhost:8080/LibraryManagementSystem/Penalty/add",
+            type: "POST",
+            data: params,
+            success: () => {
+                $(s.loader).hide();
+                $("#penalty_modal").modal("hide");
+                Swal.fire({
+                    icon: "success",
+                    title: "Added",
+                    text: "✅ Penalty Added Successfully",
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => $(s.applyFilters).click());
+            },
+            error: (xhr) => this.showError(xhr)
+        });
+    };
+
+    this.openPayModal = function (e) {
+        const s = this.selectors;
+        const btn = $(e.currentTarget);
+        $(s.payPenaltyId).val(btn.data("id"));
+        $(s.payAmount).val(btn.data("amount"));
+        $(s.payModal).modal("show");
+    };
+
+    this.payPenalty = function () {
+        const s = this.selectors;
+        $(s.loader).show();
+
+        let params = {
+            penaltyId: parseInt($(s.payPenaltyId).val()),
+            amount:    parseInt($(s.payAmount).val())
+        };
+
+        $.ajax({
+            url:    "http://localhost:8080/LibraryManagementSystem/Penalty/pay",
+            method: "POST",
+            data:   params,
+            success: (response) => {
+                $(s.loader).hide();
+                $(s.payModal).modal("hide");
+                Swal.fire({
+                    icon: "success",
+                    title: "Paid",
+                    text: "✅ " + response.object,
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => $(s.applyFilters).click());
+            },
+            error: (xhr) => this.showError(xhr)
+        });
+    };
+
+    this.showError = function (xhr) {
+        const s = this.selectors;
+        let message = "Something went wrong.";
+
+        if (xhr.responseJSON) {
+            if (xhr.responseJSON.message) message = xhr.responseJSON.message;
+            if (xhr.responseJSON.object) {
+                message = Object.values(xhr.responseJSON.object).join("\n");
+            }
         }
-        $("#user_table").DataTable({
-          data: [],
-          sort: false,
-          destroy: true,
-          dom: '<"top"p>t<"bottom"ip>',
-          language: {
-            emptyTable: "No data found",
-          },
-          columns: [
-            { title: "Penalty ID", data: "penaltyId" },
-            { title: "Transaction ID", data: "transactionId" },
+        $(s.loader).hide();
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "❌ " + message,
+            showConfirmButton: true
+        });
+    };
 
-            { title: "Member ID", data: "memberId" },
-
-            { title: "Book ID", data: "bookId" },
-
-            { title: "Amount", data: "amount" },
-
-            { title: "Penalty Added Flag", data: "penaltyAddedFlag" },
-
-            { title: "Penalty Amount", data: "penaltyAmount" },
-
-            { title: "Reason", data: "reason" },
-
-            { title: "Status", data: "status" },
-            { title: "Payment Date", data: "paymentDate" },
+    this.columnsConfig = function (withActions) {
+        const baseCols = [
+            { title: "Penalty ID",        data: "penaltyId" },
+            { title: "Transaction ID",    data: "transactionId" },
+            { title: "Member ID",         data: "memberId" },
+            { title: "Book ID",           data: "bookId" },
+            { title: "Amount",            data: "amount" },
+            { title: "Penalty Added Flag",data: "penaltyAddedFlag" },
+            { title: "Penalty Amount",    data: "penaltyAmount" },
+            { title: "Reason",            data: "reason" },
             {
-              title: "Actions",
-              data: null,
+                title: "Status",
+                data: "status",
+                render: (data, type, row) =>
+                    row.status === "Paid"
+                        ? `<div><p class="bg-success rounded-5 text-white">${row.status}</p></div>`
+                        : `<div><p class="bg-danger rounded-5 text-white">${row.status}</p></div>`
             },
-          ],
-        });
-        $("#loader").hide();
-        $("#user_table").show();
-      },
-    });
-  });
+            { title: "Payment Date", data: "paymentDate" }
+        ];
 
-$("#penalty_add_btn").on("click", function () {
-  $("#loader").show();
-  let transactionId = parseInt($("#penalty_transactionid").val().trim());
-  let Amount = parseInt($("#penalty_amount").val().trim());
-  let Reason = $("#penalty_reason").val().trim();
-  let params = {
-    TransactionId: transactionId,
-    amount: Amount,
-    reason: Reason,
-  };
-
-  $.ajax({
-    url: "http://localhost:8080/LibraryManagementSystem/Penalty/add",
-    type: "POST",
-    data: params,
-
-    success: function (response) {
-      $("#loader").hide();
-      $("#penalty_modal").modal("hide");
-
-      Swal.fire({
-        icon: "success",
-        title: "Added",
-        text: "✅ Penalty Added Successfully",
-        showConfirmButton: false,
-        timer: 2000,
-      }).then(() => {
-        $("#apply_penalty_filters").click();
-      });
-    },
-    error: function (xhr, status, error) {
-      let message = "Something went wrong.";
-
-      if (xhr.responseJSON) {
-        if (xhr.responseJSON.message) {
-          message = xhr.responseJSON.message;
+        if (withActions) {
+            baseCols.push({
+                title: "Actions",
+                data: null,
+                orderable: false,
+                render: (data, type, row) => {
+                    if (row.status === "Pending") {
+                        return `
+                            <button class="btn btn-sm btn-warning me-2 mb-2 penalty-pay"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#penalty_pay_modal"
+                                    data-id="${row.penaltyId}"
+                                    data-amount="${row.amount}">
+                                <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
+                            </button>`;
+                    } else {
+                        return `
+                            <button class="btn btn-sm btn-dark me-2 mb-2" disabled>
+                                <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
+                            </button>`;
+                    }
+                }
+            });
         }
-        if (xhr.responseJSON.object) {
-          let errors = Object.values(xhr.responseJSON.object).join("\n");
-          message = errors;
-        }
-      }
-      $("#loader").hide();
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "❌ " + message,
-        showConfirmButton: false,
-        timer: 2000,
-      });
-    },
-  });
-});
+        return baseCols;
+    };
+};
 
-$(document).on("click", ".penalty-pay", function () {
-  let penaltyid = $(this).data("id");
-  let amount = $(this).data("amount");
-  $("#penalty_pay_penaltyid").val(penaltyid);
-  $("#penalty_pay_amount").val(amount);
-  $("#penalty_pay_modal").modal("show");
-});
-$("#penalty_pay_btn").click(function () {
-  $("#loader").show();
-  let penalty = parseInt($("#penalty_pay_penaltyid").val());
-  let amount = parseInt($("#penalty_pay_amount").val());
-  let params = {
-    penaltyId: penalty,
-    amount: amount,
-  };
-  $.ajax({
-    url: "http://localhost:8080/LibraryManagementSystem/Penalty/pay",
-    method: "POST",
-    data: params,
-
-    success: function (response) {
-      $("#loader").hide();
-      $("#penalty_pay_modal").modal("hide");
-      Swal.fire({
-        icon: "success",
-        title: "Paid",
-        text: "✅ " + response.object,
-        showConfirmButton: false,
-        timer: 2000,
-      }).then(() => {
-        $("#apply_penalty_filters").click();
-      });
-    },
-    error: function (xhr, status, error) {
-      let message = "Something went wrong.";
-
-      if (xhr.responseJSON) {
-        if (xhr.responseJSON.message) {
-          message = xhr.responseJSON.message;
-        }
-        if (xhr.responseJSON.object) {
-          let errors = Object.values(xhr.responseJSON.object).join("\n");
-          message = errors;
-        }
-      }
-      $("#loader").hide();
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "❌ " + message,
-        showConfirmButton: true,
-      });
-    },
-  });
+// ------------------ create and initialize ------------------
+$(document).ready(function () {
+    const penalty = new Penalty();
+    penalty.init();
 });

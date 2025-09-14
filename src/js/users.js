@@ -1,674 +1,424 @@
-function renderUserTable() {
-  $("#apply_member_filters")
-    .off("click")
-    .on("click", function () {
-      $("#loader").show();
-      $("#user_table").hide();
+// =====================  User Management  =====================
+const UserManagement = function () {
 
-      let length = $("#member_length").val();
-      let status = $("#member_filter_status").val();
-      let search = $("#member_filter_value").val().trim();
-      let asec = "asec";
-      let apiUrl =
-        "http://localhost:8080/LibraryManagementSystem/Members/getAllMembers";
-      let params = { start: 0, length: length, order: asec };
-      console.log(length);
-      console.log(status);
-      console.log(search);
-      if ((status === "active" || status === "deactive") && search !== "") {
-        params = {
-          start: 0,
-          length: length,
-          order: asec,
-          memberStatusFilter: status,
-          search: search,
-        };
-      } else if (status === "active" || status === "deactive") {
-        params = {
-          start: 0,
-          length: length,
-          order: asec,
-          memberStatusFilter: status,
-        };
-      } else if (search !== "") {
-        params = { start: 0, length: length, order: asec, search: search };
-      }
+    // ---------- 1️⃣  Selectors ----------
+    this.selectors = {
+        // Buttons
+        applyFiltersBtn:        "#apply_member_filters",
+        resetFiltersBtn:        "#reset_member_filters",
+        memberAddBtn:           "#member_add_btn",
+        memberUpdateBtn:        "#update_member_btn",
+        memberCancelBtn:        "#cancel",
 
-      $.ajax({
-        url: apiUrl,
-        method: "GET",
-        data: params,
-        dataType: "json",
-        success: function (res) {
-          if ($.fn.DataTable.isDataTable("#user_table")) {
-            $("#user_table").DataTable().destroy();
-          }
-          table = $("#user_table").DataTable({
-            data: res.object.data,
-            sort: false,
-            destroy: true,
-            dom: '<"top"lp>t<"bottom"ip>',
-            lengthMenu: [10, 25, 50, 100],
-            language: {
-              emptyTable: "No data found",
+        // Tables / Modals
+        userTable:              "#user_table",
+        memberModal:            "#member_modal",
+        updateMemberModal:      "#update_member_modal",
+        viewMemberModal:        "#member_profile_modal",
+
+        // Loader
+        loader:                 "#loader",
+
+        // Add-form fields
+        memberName:             "#member_name",
+        memberEmail:            "#member_email",
+        memberWorkStatus:       "#member_work_status",
+        memberAddress:          "#member_address",
+        mobileNumber:           "#mobile_number",
+        membershipEndDate:      "#membership_end_date",
+
+        // Update-form fields
+        updateMemberId:         "#update_member_id",
+        updateMemberName:       "#update_member_name",
+        updateMemberEmail:      "#update_member_email",
+        updateMemberWorkStatus: "#update_member_work_status",
+        updateMemberStatus:     "#update_member_status",
+        updateMembershipStart:  "#update_membership_start_date",
+        updateMemberAddress:    "#update_member_address",
+        updateMobileNumber:     "#update_mobile_number",
+        updateMembershipEnd:    "#update_membership_end_date",
+        updateCalendarIcon:     "#update_calendar_icon",
+
+        // Profile view
+        profileAvatar:          "#profile_avatar",
+        profileName:            "#profile_name",
+        profileStatus:          "#profile_status",
+        profileEmail:           "#profile_email",
+        profileMobile:          "#profile_mobile",
+        profileWork:            "#profile_work",
+        profileMembership:      "#profile_membership",
+        profileAddress:         "#profile_address",
+        profileBooks:           "#profile_books",
+        favBooksSection:        "#fav_books_section"
+    };
+
+    // ---------- 2️⃣  Regex ----------
+    this.regex = {
+        name:    /^[A-Za-z0-9\s]{3,30}$/,
+        address: /^[A-Za-z0-9,\s]{3,30}$/,
+        number:  /^[6-9][0-9]{9}$/,
+        email:   /^[a-z0-9]{8,20}[@][a-z]{1,15}[.][a-z]{1,3}$/
+    };
+
+    // ---------- 3️⃣  Init ----------
+    this.init = function () {
+        const s = this.selectors;
+
+        // DataTable render
+        this.renderUserTable();
+
+        // Bind buttons
+        $(document).on("click", s.applyFiltersBtn, () => this.renderUserTable());
+        $(document).on("click", s.resetFiltersBtn, () => this.resetFilters());
+        $(document).on("click", s.memberAddBtn,  () => this.addMember());
+        $(document).on("click", s.memberCancelBtn, () => this.resetForm());
+        $(document).on("click", s.memberUpdateBtn, () => this.updateMember());
+        $(document).on("click", ".update-member", (e) => this.openUpdateModal(e));
+        $(document).on("click", ".view-member",   (e) => this.openProfile(e));
+        $(document).on("click", s.updateCalendarIcon, () => {
+            if (this.updateEndDp) this.updateEndDp.show();
+        });
+
+        $(s.memberModal).on("hidden.bs.modal", () => this.resetForm());
+        $(s.updateMemberModal).on("hidden.bs.modal", () => this.cleanupUpdateModal());
+
+        // ----------  Add-modal widgets ----------
+        // Phone input (region-aware)
+        this.addMobileIti = window.intlTelInput($(s.mobileNumber)[0], {
+            initialCountry: "in",
+            separateDialCode: true,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+        });
+
+        // Tempus-Dominus date picker
+        this.addEndDp = new tempusDominus.TempusDominus($(s.membershipEndDate)[0], {
+            localization: { format: "yyyy-MM-dd" },
+            display: { components: { calendar: true, date: true, month: true, year: true } }
+        });
+    };
+
+    // ---------- 4️⃣  Helpers ----------
+    this.showLoader = function (show) {
+        show ? $(this.selectors.loader).show() : $(this.selectors.loader).hide();
+    };
+
+    this.validateField = function (id, regex, errorId, errorMessage) {
+        let value = $(id).val().trim();
+        if (value === "") {
+            $(errorId).text("Required Field.");
+            return false;
+        } else if (regex && !regex.test(value)) {
+            $(errorId).text(errorMessage);
+            return false;
+        }
+        $(errorId).text("");
+        return true;
+    };
+
+    this.resetForm = function () {
+        const s = this.selectors;
+        $(`${s.memberName}, ${s.memberEmail}, ${s.memberWorkStatus},
+           ${s.mobileNumber}, ${s.membershipEndDate}, ${s.memberAddress}`).val("");
+        $("#member_name_error, #member_email_error, #member_work_status_error, \
+          #mobile_number_error, #membership_end_date_error, #member_address_error").text("");
+    };
+
+    // ---------- 5️⃣  Table ----------
+    this.renderUserTable = function () {
+        const s = this.selectors;
+        this.showLoader(true);
+        $(s.userTable).hide();
+
+        let length = $("#member_length").val();
+        let status = $("#member_filter_status").val();
+        let search = $("#member_filter_value").val().trim();
+        let params = { start: 0, length: length, order: "asec" };
+
+        if ((status === "active" || status === "deactive") && search !== "") {
+            params.memberStatusFilter = status;
+            params.search = search;
+        } else if (status === "active" || status === "deactive") {
+            params.memberStatusFilter = status;
+        } else if (search !== "") {
+            params.search = search;
+        }
+
+        $.ajax({
+            url: "http://localhost:8080/LibraryManagementSystem/Members/getAllMembers",
+            method: "GET",
+            data: params,
+            dataType: "json",
+            success: (res) => {
+                if ($.fn.DataTable.isDataTable(s.userTable)) {
+                    $(s.userTable).DataTable().destroy();
+                }
+                $(s.userTable).DataTable({
+                    data: res.object.data,
+                    sort: false,
+                    destroy: true,
+                    dom: '<"top"lp>t<"bottom"ip>',
+                    lengthMenu: [10, 25, 50, 100],
+                    language: { emptyTable: "No data found" },
+                    columns: [
+                        { title: "Member ID", data: "memberId" },
+                        { title: "Member Name", data: "memberName" },
+                        { title: "MemberShip Start Date", data: "memberShipStartDate" },
+                        { title: "MemberShip End Date", data: "memberShipEndDate" },
+                        { title: "Member Ship Status", data: "memberShipStatus",
+                          render: (d,t,row) => row.memberShipStatus === "ACTIVE"
+                                ? `<p class="bg-success rounded-5 text-white">${row.memberShipStatus}</p>`
+                                : `<p class="bg-danger rounded-5 text-white">${row.memberShipStatus}</p>`
+                        },
+                        { title: "Work Status", data: "memberWorkStatus" },
+                        { title: "Actions", data: null, orderable: false,
+                          render: (d,t,row) => `
+                            <button class="btn btn-sm btn-warning me-2 mb-2 update-member" 
+                                    data-bs-toggle="modal"
+                                    data-bs-target="${s.updateMemberModal}"
+                                    data-id="${row.memberId}">
+                              <i class="fa-solid fa-pen-to-square" style="color:#fff;"></i>
+                            </button>
+                            <button class="btn btn-sm btn-dark me-2 mb-2 view-member"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="${s.viewMemberModal}"
+                                    data-id="${row.memberId}">
+                              <i class="fa-solid fa-eye" style="color:#fff;"></i>
+                            </button>`
+                        }
+                    ]
+                });
+                this.showLoader(false);
+                $(s.userTable).show();
             },
-            columns: [
-              { title: "Member ID", data: "memberId" },
-              { title: "Member Name", data: "memberName" },
+            error: () => {
+                this.showLoader(false);
+                Swal.fire({ icon:"error", title:"Error", text:"Failed to fetch members" });
+            }
+        });
+    };
 
-              { title: "MemberShip Start Date", data: "memberShipStartDate" },
+    // ---------- 6️⃣  Add Member ----------
+    this.addMember = function () {
+        const s = this.selectors;
+        let validName   = this.validateField(s.memberName,   this.regex.name,   "#member_name_error",   "Only letters and numbers allowed.");
+        let validAddr   = this.validateField(s.memberAddress,this.regex.address,"#member_address_error","Only letters and numbers allowed.");
+        let validEmail  = this.validateField(s.memberEmail,  this.regex.email,  "#member_email_error",  "Email format not matched.");
+        let statusVal   = $(s.memberWorkStatus).val();
+        let validStatus = ["student","employed","unemployee"].includes(statusVal);
+        if (!validStatus) $("#member_work_status_error").text("Please select the status");
 
-              { title: "MemberShip End Date", data: "memberShipEndDate" },
+        let localNo = $(s.mobileNumber).val();
+        let fullNo  = this.addMobileIti.getNumber();
+        let validMobile = this.regex.number.test(localNo);
+        if (!validMobile) $("#mobile_number_error").text("Invalid mobile number.");
 
-              { title: "Member Ship Status", data: "memberShipStatus",
-                render:function(data,type,row){
-                    if(row.memberShipStatus === "ACTIVE"){
-                        return`<div><p class="bg-success rounded-5 text-white">${row.memberShipStatus}</p></div>`;
-                    }
-                    else{
-                        return`<div><p class="bg-danger rounded-5 text-white">${row.memberShipStatus}</p></div>`; 
-                    }
-                    
-                  }
-               },
+        if (validName && validAddr && validEmail && validStatus && validMobile) {
+            this.showLoader(true);
+            let payload = {
+                memberName: $(s.memberName).val().trim(),
+                memberShipEndDate: $(s.membershipEndDate).val().trim(),
+                memberaddress: $(s.memberAddress).val().trim(),
+                memberMobileNumber: fullNo,
+                memberWorkStatus: statusVal,
+                memberEmail: $(s.memberEmail).val().trim()
+            };
 
-             
-
-             
-
-              { title: "Work Status", data: "memberWorkStatus" },
-
-             
-              {
-                title: "Actions",
-                data: null,
-                orderable: false,
-                render: function (data, type, row) {
-                  return `
-        <button class="btn btn-sm btn-warning me-2 mb-2 update-member" data-bs-toggle="modal"
-        data-bs-target="#update_member_modal" data-id="${row.memberId}">
-          <i class="fa-solid fa-pen-to-square" style="color: #fff;"></i>
-        </button><button class="btn btn-sm btn-dark me-2 mb-2 view-member" data-bs-toggle="modal"
-        data-bs-target="#member_profile_modal" data-id="${row.memberId}">
-        <i class="fa-solid fa-eye" style="color: #fff;"></i>
-          
-        </button>`;
+            $.ajax({
+                url: "http://localhost:8080/LibraryManagementSystem/Members/registerMember",
+                type: "POST",
+                data: JSON.stringify(payload),
+                contentType: "application/json",
+                success: (res) => {
+                    this.showLoader(false);
+                    $(s.memberModal).modal("hide");
+                    this.resetForm();
+                    Swal.fire({ icon:"success", title:"Member Added", text: "✅ "+res.object, timer:2000, showConfirmButton:false })
+                        .then(()=> $(s.applyFiltersBtn).click());
                 },
-              },
-            ],
-          });
-          $("#loader").hide();
-          $("#user_table").show();
-        }, 
-        error: function () {
-          if ($.fn.DataTable.isDataTable("#user_table")) {
-            $("#user_table").DataTable().destroy();
-          }
-          $("#user_table").DataTable({
-            data: [],
-            sort: false,
-            destroy: true,
-            dom: '<"top"p>t<"bottom"ip>',
-            language: {
-              emptyTable: "No data found",
-            },
-            columns: [
-              { title: "Book ID", data: "bookId" },
-              { title: "Title", data: "title" },
-              { title: "Language", data: "language" },
-              { title: "Author", data: "author" },
-              { title: "Book Reg. Date", data: "bookRegistrationDate" },
-              { title: "Book Del Date", data: "bookDeletedDate" },
-              { title: "Total Count", data: "totalCount" },
-              { title: "Status", data: "bookStatus" },
-              {
-                title: "Actions",
-                data: null,
-              },
-            ],
-          });
-          $("#loader").hide();
-          $("#user_table").show();
-        },
-      });
-    });
-
-  const nameRegex = /^[A-Za-z0-9\s]{3,30}$/;
-  const addressRegex = /^[A-Za-z0-9,\s]{3,30}$/;
-  const numberRegex = /^[6-9][0-9]{9}$/;
-  const emailRegex = /^[a-z0-9]{8,20}[@][a-z]{1,15}[.][a-z]{1,3}$/;
-  function validateField(id, regex, errorId, errorMessage) {
-    let value = $(id).val().trim();
-    if (value === "") {
-      $(errorId).text("Required Field.");
-      return false;
-    } else if (regex && !regex.test(value)) {
-      $(errorId).text(errorMessage);
-      return false;
-    } else {
-      $(errorId).text("");
-      return true;
-    }
-  }
-
-  function initPhoneInput() {
-    var input = $("#mobile_number");
-
-    // Destroy if already initialized (avoid duplicates)
-    if (input.hasClass("iti")) {
-      input.intlTelInput("destroy");
-    }
-
-    // Reinitialize
-    window.intlTelInput(input[0], {
-      initialCountry: "in", // no default country
-      separateDialCode: true, // show code separately
-      nationalMode: true, // allow local number input
-      utilsScript:
-        "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-    });
-  }
-
-  $("#member_modal").on("shown.bs.modal", function () {
-    $("#membership_end_date").inputmask("9999-99-99");
-    initPhoneInput();
-
-    $("#calendar_icon").on("click", function () {
-      if (window.endDatePicker) {
-        window.endDatePicker.show();
-      }
-    });
-  });
-
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1); // block today + past
-
-  const endDatePicker = new tempusDominus.TempusDominus(
-    document.getElementById("membership_end_date_picker"),
-    {
-      display: {
-        components: {
-          calendar: true,
-          date: true,
-          month: true,
-          year: true,
-          decades: true,
-        },
-        buttons: {
-          today: false,
-          clear: true,
-          close: true,
-        },
-        viewMode: "calendar",
-      },
-      localization: {
-        format: "yyyy-MM-dd", // format YYYY-MM-DD
-      },
-      restrictions: {
-        minDate: tomorrow, // disable past + today
-      },
-      useCurrent: false,
-    }
-  );
-
-  $("#member_add_btn").on("click", function () {
-    let validMemberName = validateField(
-      "#member_name",
-      nameRegex,
-      "#member_name_error",
-      "Only letters and numbers allowed."
-    );
-    let validMemberAddress = validateField(
-      "#member_name",
-      addressRegex,
-      "#member_name_error",
-      "Only letters and numbers allowed."
-    );
-    let validMemberEMail = validateField(
-      "#member_email",
-      emailRegex,
-      "#member_email_error",
-      "Email format not matched."
-    );
-    let validStatus = $("#member_work_status").val();
-    if (
-      validStatus === "student" ||
-      validStatus === "employed" ||
-      validStatus === "unemployee"
-    ) {
-      $("#member_work_status_error").text("");
-      validStatus = true;
-    } else {
-      $("#member_work_status_error").text("Please select the status");
-      validStatus = false;
-    }
-
-    let input = $("#mobile_number")[0];
-    let iti = window.intlTelInputGlobals.getInstance(input);
-    let fullNumber = iti.getNumber();
-    let localNumber = $(input).val();
-    let validateMobileNumber = true;
-    if (!numberRegex.test(localNumber)) {
-      $("#mobile_number_error").text("Invalid mobile number.");
-      validateMobileNumber = false;
-    } else {
-      $("#mobile_number_error").text("");
-    }
-
-    // $("#calendar_icon").on("click", function () {
-    //     endDatePicker.show();
-    //     endDate=true;
-    //     console.log(endDatePicker)
-    //   });
-    let dateVal = "";
-    // Validation  manually
-    $("#membership_end_date").on("blur", function () {
-      dateVal = $(this).val().trim();
-      console.log(dateVal);
-      if (dateVal === "") {
-        $("#membership_end_date_error").text("");
-        endDate = true;
-      }
-
-      // Check valid format YYYY-MM-DD
-      let regex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!regex.test(dateVal)) {
-        $("#membership_end_date_error").text("Invalid format. Use YYYY-MM-DD.");
-      }
-
-      let enteredDate = new Date(dateVal);
-      if (enteredDate <= today) {
-        $("#membership_end_date_error").text("Date must be after today.");
-      } else {
-        $("#membership_end_date_error").text("");
-        endDate = true;
-      }
-    });
-    if (
-      validMemberEMail &&
-      validateMobileNumber &&
-      validStatus &&
-      validMemberAddress &&
-      validMemberName
-    ) {
-       $("#loader").show();
-      let requestData = {
-        memberName: $("#member_name").val().trim(),
-        memberShipEndDate: $("#membership_end_date").val().trim(),
-        memberaddress: $("#member_address").val().trim(),
-        memberMobileNumber: fullNumber,
-        memberWorkStatus: $("#member_work_status").val().trim(),
-        memberEmail: $("#member_email").val().trim(),
-      };
-
-      $.ajax({
-        url: "http://localhost:8080/LibraryManagementSystem/Members/registerMember",
-        type: "POST",
-        data: JSON.stringify(requestData),
-        contentType: "application/json",
-        success: function (response) {
-           $("#loader").hide();
-          $("#example_modal").modal("hide");
-          resetForm();
-          Swal.fire({
-            icon: "success",
-            title: "Member Added",
-            text: "✅ " + response.object,
-            showConfirmButton: false,
-            timer: 2000,
-          }).then(() => {
-            $("#apply_member_filters").click();
-          });
-        },
-        error: function (xhr, status, error) {
-          let message = "Something went wrong.";
-
-          if (xhr.responseJSON) {
-            if (xhr.responseJSON.message) {
-              message = xhr.responseJSON.message;
-            }
-            if (xhr.responseJSON.object) {
-              let errors = Object.values(xhr.responseJSON.object).join("\n");
-              message = errors;
-            }
-          }
-           $("#loader").hide();
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "❌ " + message,
-            showConfirmButton: false,
-            timer: 2000,
-          });
-        },
-      });
-    }
-  });
-
-   $("#update_member_btn").on("click", function () {
-          let validMemberName = validateField(
-      "#update_member_name",
-      nameRegex,
-      "#update_member_name_error",
-      "Only letters and numbers allowed."
-    );
-    let validMemberAddress = validateField(
-      "#update_member_address",
-      addressRegex,
-      "#update_member_address_error",
-      "Only letters and numbers allowed."
-    );
-    let validMemberEMail = validateField(
-      "#update_member_email",
-      emailRegex,
-      "#update_member_email_error",
-      "Email format not matched."
-    );
-    let validStatus = $("#update_member_work_status").val();
-    if (
-      validStatus === "student" ||
-      validStatus === "employed" ||
-      validStatus === "unemployee"
-    ) {
-      $("#update_member_work_status_error").text("");
-      validStatus = true;
-    } else {
-      $("#update_member_work_status_error").text("Please select the status");
-      validStatus = false;
-    }     
-     let input = $("#update_mobile_number")[0];
-    let iti = window.intlTelInputGlobals.getInstance(input);
-    let fullNumber = iti.getNumber();
-    let localNumber = $(input).val();
-    let validateMobileNumber = true;
-    if (!numberRegex.test(localNumber)) {
-      $("#update_mobile_number_error").text("Invalid mobile number.");
-      validateMobileNumber = false;
-    } else {
-      $("#update_mobile_number_error").text("");
-    }
-     let dateVal = "";
-    // Validation if user types manually
-    $("#update_membership_end_date").on("blur", function () {
-      dateVal = $(this).val().trim();
-      console.log(dateVal);
-      if (dateVal === "") {
-        $("#membership_end_daupdate_membership_end_date_errorte_error").text("");
-        endDate = true;
-      }});    
-      if (
-      validMemberEMail &&
-      validateMobileNumber &&
-      validStatus &&
-      validMemberAddress &&
-      validMemberName
-    ) {
-       $("#loader").show();
-      let requestData = {
-        memberId:$("#update_member_id").val().trim(),
-        memberName: $("#update_member_name").val().trim(),
-        memberShipEndDate: $("#update_membership_end_date").val().trim(),
-        memberaddress: $("#update_mobile_number").val().trim(),
-        memberMobileNumber: fullNumber,
-        memberWorkStatus: $("#update_member_work_status").val().trim(),
-        memberEmail: $("#update_member_email").val().trim(),
-      };
-
-      $.ajax({
-        url: "http://localhost:8080/LibraryManagementSystem/Members/updateMemberDetails",
-        type: "PUT",
-        data: JSON.stringify(requestData),
-        contentType: "application/json",
-        success: function (response) {
-           $("#loader").hide();
-          $("#update_member_modal").modal("hide");
-          Swal.fire({
-            icon: "success",
-            title: "Updated",
-            text: "✅ " + response.object,
-            showConfirmButton: false,
-            timer: 2000,
-          }).then(() => {
-            $("#reset_member_filters").click();
-            $("#apply_member_filters").click();
-          });
-        },
-        error: function (xhr, status, error) {
-          let message = "Something went wrong.";
-
-          if (xhr.responseJSON) {
-            if (xhr.responseJSON.message) {
-              message = xhr.responseJSON.message;
-            }
-            if (xhr.responseJSON.object) {
-              let errors = Object.values(xhr.responseJSON.object).join("\n");
-              message = errors;
-            }
-          }
-           $("#loader").hide();
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "❌ " + message,
-            showConfirmButton: false,
-            timer: 2000,
-          });
-        },
-      });
-    }
-   })
-
-let updateMobileIti = null;
-let updateEndDp = null;
-
-$(document).on("click", ".update-member", function () {
-  const memberId = $(this).data("id");
- $("#loader").show();
-  $.ajax({
-    url: `http://localhost:8080/LibraryManagementSystem/Members/getMemberById/${memberId}`,
-    method: "GET",
-    dataType: "json",
-    success: function (res) {
-      
-      const m = res.object;
-
-      // Fill static fields
-      $("#update_member_id").val(m.memberId);
-      $("#update_member_name").val(m.memberName);
-      $("#update_member_email").val(m.memberEmail);
-      $("#update_member_work_status").val(m.memberWorkStatus);
-      $("#update_member_status").val(m.memberShipStatus);
-      $("#update_membership_start_date").val(m.memberShipStartDate);
-      $("#update_member_address").val(m.memberaddress);
-
-      // ----- intl-tel-input (destroy then init) -----
-      const mobileEl = document.getElementById("update_mobile_number");
-      if (updateMobileIti && updateMobileIti.destroy) updateMobileIti.destroy();
-      updateMobileIti = window.intlTelInput(mobileEl, {
-        initialCountry: "in",
-        separateDialCode: true,
-        utilsScript:
-          "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-      });
-      if (m.memberMobileNumber) {
-        const num = m.memberMobileNumber.toString().startsWith("+")
-          ? m.memberMobileNumber
-          : `+${m.memberMobileNumber}`;
-        updateMobileIti.setNumber(num);
-      }
-
-      // ----- Tempus Dominus (destroy then init) -----
-      const endInputEl = document.getElementById("update_membership_end_date");
-      if (updateEndDp && updateEndDp.dispose) updateEndDp.dispose();
-
-      // Restrict to the fetched date or later
-      const minDt =
-        m.memberShipEndDate && m.memberShipEndDate.trim() !== ""
-          ? new tempusDominus.DateTime(m.memberShipEndDate) // must be yyyy-MM-dd or ISO
-          : new Date(); // fallback: today
-
-      updateEndDp = new tempusDominus.TempusDominus(endInputEl, {
-        localization: { format: "yyyy-MM-dd" },
-        useCurrent: false,
-        restrictions: { minDate: minDt },
-        display: {
-          components: { calendar: true, date: true, month: true, year: true },
-        },
-      });
-
-      if (m.memberShipEndDate) {
-        updateEndDp.dates.setValue(
-          new tempusDominus.DateTime(m.memberShipEndDate)
-        );
-      }
-      
-
-      // Show the modal
-       $("#loader").hide();
-      $("#update_member_modal").modal("show");
-    },
-    error: function () {
-       $("#loader").hide();
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Failed to fetch Member details.",
-        showConfirmButton: false,
-        timer: 2000,
-      });
-    },
-  });
-});
-
-// (Optional) manual show on icon click; data-attrs also handle this
-$(document).on("click", "#update_calendar_icon", function () {
-  if (updateEndDp) updateEndDp.show();
-});
-
-// Clean up on close to avoid duplicate inits
-$("#update_member_modal").on("hidden.bs.modal", function () {
-  if (updateMobileIti && updateMobileIti.destroy) {
-    updateMobileIti.destroy();
-    updateMobileIti = null;
-  }
-  if (updateEndDp && updateEndDp.dispose) {
-    updateEndDp.dispose();
-    updateEndDp = null;
-  }
-  $(this).find("form")[0].reset();
-});
-
-
-     $("#reset_member_filters")
-      .off("click")
-      .on("click", function () {
-        $("#member_filter_type").val("all");
-        $("#member_filter_value").val("");
-        $("#member_filter_status").val("all");
-        $("#member_length").val("10");
-
-        if ($.fn.DataTable.isDataTable("#user_table")) {
-          $("#user_table").DataTable().clear().destroy();
-          $("#user_table").hide();
-        }
-      });
-
-  function resetForm() {
-    $(
-      "#member_name, #member_email, #member_work_status, #mobile_number,#membership_end_date,#member_address"
-    ).val("");
-    $(
-      "#member_name_error, #member_email_error, #member_work_status_error, #mobile_number_error,#membership_end_date_error,#member_address_error"
-    ).text("");
-  }
-
-  $("#cancel").on("click", function () {
-    resetForm();
-  });
-
-  $("#member_modal").on("hidden.bs.modal", function () {
-    resetForm();
-  });
-
-
-  $(document).on("click", ".view-member", function () {
-  const memberId = $(this).data("id");
-  $("#loader").show();
-
-  $.ajax({
-    url: `http://localhost:8080/LibraryManagementSystem/Members/getMemberById/${memberId}`,
-    method: "GET",
-    dataType: "json",
-    success: function (res) {
-  
-      const m = res.object;
-      // ---- Avatar letter & color ----
-      const firstLetter = (m.memberName || "?").charAt(0).toUpperCase();
-      const colors = ["#4f46e5", "#16a34a", "#db2777", "#f97316", "#0ea5e9"];
-      const bgColor = colors[firstLetter.charCodeAt(0) % colors.length];
-      $("#profile_avatar")
-        .text(firstLetter)
-        .css("background-color", bgColor);
-
-      // ---- Fill profile fields ----
-      $("#profile_name").text(m.memberName || "N/A");
-      $("#profile_status").text(`Status: ${m.memberShipStatus || "N/A"}`);
-      $("#profile_email").text(m.memberEmail || "N/A");
-      $("#profile_mobile").text(m.memberMobileNumber || "N/A");
-      $("#profile_work").text(m.memberWorkStatus || "N/A");
-
-      const start = m.memberShipStartDate ? `Start: ${m.memberShipStartDate}` : "";
-      const end   = m.memberShipEndDate   ? ` | End: ${m.memberShipEndDate}`   : "";
-      $("#profile_membership").text(`${start}${end}`);
-      $("#profile_address").text(m.memberaddress || "N/A");
-
-       $("#profile_books").empty();
-      $("#fav_books_section").hide();
-      // Show modal
-      let params={
-        memberId:m.memberId
-      }
-     $.ajax({
-        url: `http://localhost:8080/LibraryManagementSystem/RentalTransactions/getTop3FavoriteAuthorsBooks`,
-        data:params,
-        method: "GET",
-        dataType: "json",
-        success: function (bookRes) {
-          const books = Array.isArray(bookRes.object) ? bookRes.object : [];
-          if (books.length > 0) {
-            books.forEach(b => {
-              $("#profile_books").append(`
-                <li class="list-group-item px-0">
-                  <strong>${b.title}</strong><br>
-                  <small class="text-muted">by ${b.author}</small>
-                </li>
-              `);
+                error: (xhr) => {
+                    this.showLoader(false);
+                    let msg = xhr.responseJSON?.message || "Something went wrong.";
+                    Swal.fire({ icon:"error", title:"Oops...", text:"❌ "+msg, timer:2000, showConfirmButton:false });
+                }
             });
-            $("#fav_books_section").show();
-          }
-        },
-        error: function () {
-          console.warn("Favourite books fetch failed");
         }
-      });
+    };
 
-      $("#loader").hide();
-      $("#member_profile_modal").modal("show");
-    },
-    error: function () {
-      $("#loader").hide();
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Failed to fetch Member details.",
-        showConfirmButton: false,
-        timer: 2000
-      });
-    },
-  });
-});
-}
-$(document).ready(function () {
-  renderUserTable();
-});
+    // ---------- 7️⃣  Update Member ----------
+    this.updateMember = function () {
+        const s = this.selectors;
+        let validName   = this.validateField(s.updateMemberName,   this.regex.name,   "#update_member_name_error",   "Only letters and numbers allowed.");
+        let validAddr   = this.validateField(s.updateMemberAddress,this.regex.address,"#update_member_address_error","Only letters and numbers allowed.");
+        let validEmail  = this.validateField(s.updateMemberEmail,  this.regex.email,  "#update_member_email_error",  "Email format not matched.");
+        let statusVal   = $(s.updateMemberWorkStatus).val();
+        let validStatus = ["student","employed","unemployee"].includes(statusVal);
+        if (!validStatus) $("#update_member_work_status_error").text("Please select the status");
+
+        let localNo = $(s.updateMobileNumber).val();
+        let fullNo  = this.updateMobileIti.getNumber();
+        let validMobile = this.regex.number.test(localNo);
+        if (!validMobile) $("#update_mobile_number_error").text("Invalid mobile number.");
+
+        if (validName && validAddr && validEmail && validStatus && validMobile) {
+            this.showLoader(true);
+            let payload = {
+                memberId: $(s.updateMemberId).val().trim(),
+                memberName: $(s.updateMemberName).val().trim(),
+                memberShipEndDate: $(s.updateMembershipEnd).val().trim(),
+                memberaddress: $(s.updateMemberAddress).val().trim(),
+                memberMobileNumber: fullNo,
+                memberWorkStatus: statusVal,
+                memberEmail: $(s.updateMemberEmail).val().trim()
+            };
+
+            $.ajax({
+                url: "http://localhost:8080/LibraryManagementSystem/Members/updateMemberDetails",
+                type: "PUT",
+                data: JSON.stringify(payload),
+                contentType: "application/json",
+                success: (res) => {
+                    this.showLoader(false);
+                    $(s.updateMemberModal).modal("hide");
+                    Swal.fire({ icon:"success", title:"Updated", text:"✅ "+res.object, timer:2000, showConfirmButton:false })
+                        .then(() => {
+                            $(s.resetFiltersBtn).click();
+                            $(s.applyFiltersBtn).click();
+                        });
+                },
+                error: (xhr) => {
+                    this.showLoader(false);
+                    let msg = xhr.responseJSON?.message || "Something went wrong.";
+                    Swal.fire({ icon:"error", title:"Oops...", text:"❌ "+msg, timer:2000, showConfirmButton:false });
+                }
+            });
+        }
+    };
+
+    // ---------- 8️⃣  Update modal setup ----------
+    this.openUpdateModal = function (e) {
+        const s = this.selectors;
+        const memberId = $(e.currentTarget).data("id");
+        this.showLoader(true);
+        $.ajax({
+            url: `http://localhost:8080/LibraryManagementSystem/Members/getMemberById/${memberId}`,
+            method: "GET",
+            dataType: "json",
+            success: (res) => {
+                const m = res.object;
+                $(s.updateMemberId).val(m.memberId);
+                $(s.updateMemberName).val(m.memberName);
+                $(s.updateMemberEmail).val(m.memberEmail);
+                $(s.updateMemberWorkStatus).val(m.memberWorkStatus);
+                $(s.updateMemberStatus).val(m.memberShipStatus);
+                $(s.updateMembershipStart).val(m.memberShipStartDate);
+                $(s.updateMemberAddress).val(m.memberaddress);
+
+                if (this.updateMobileIti && this.updateMobileIti.destroy) this.updateMobileIti.destroy();
+                this.updateMobileIti = window.intlTelInput($(s.updateMobileNumber)[0], {
+                    initialCountry: "in",
+                    separateDialCode: true,
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+                });
+                if (m.memberMobileNumber) {
+                    const num = m.memberMobileNumber.startsWith("+") ? m.memberMobileNumber : `+${m.memberMobileNumber}`;
+                    this.updateMobileIti.setNumber(num);
+                }
+
+                if (this.updateEndDp && this.updateEndDp.dispose) this.updateEndDp.dispose();
+                const minDt = m.memberShipEndDate ? new tempusDominus.DateTime(m.memberShipEndDate) : new Date();
+                this.updateEndDp = new tempusDominus.TempusDominus($(s.updateMembershipEnd)[0], {
+                    localization: { format: "yyyy-MM-dd" },
+                    useCurrent: false,
+                    restrictions: { minDate: minDt },
+                    display: { components: { calendar:true, date:true, month:true, year:true } }
+                });
+                if (m.memberShipEndDate) {
+                    this.updateEndDp.dates.setValue(new tempusDominus.DateTime(m.memberShipEndDate));
+                }
+
+                this.showLoader(false);
+                $(s.updateMemberModal).modal("show");
+            },
+            error: () => {
+                this.showLoader(false);
+                Swal.fire({ icon:"error", title:"Error", text:"Failed to fetch Member details.", timer:2000, showConfirmButton:false });
+            }
+        });
+    };
+
+    this.cleanupUpdateModal = function () {
+        if (this.updateMobileIti && this.updateMobileIti.destroy) {
+            this.updateMobileIti.destroy();
+            this.updateMobileIti = null;
+        }
+        if (this.updateEndDp && this.updateEndDp.dispose) {
+            this.updateEndDp.dispose();
+            this.updateEndDp = null;
+        }
+        $(this.selectors.updateMemberModal).find("form")[0].reset();
+    };
+
+    // ---------- 9️⃣  View Profile ----------
+    this.openProfile = function (e) {
+        const s = this.selectors;
+        const memberId = $(e.currentTarget).data("id");
+        this.showLoader(true);
+        $.ajax({
+            url: `http://localhost:8080/LibraryManagementSystem/Members/getMemberById/${memberId}`,
+            method: "GET",
+            dataType: "json",
+            success: (res) => {
+                const m = res.object;
+                const firstLetter = (m.memberName || "?").charAt(0).toUpperCase();
+                const colors = ["#4f46e5", "#16a34a", "#db2777", "#f97316", "#0ea5e9"];
+                const bgColor = colors[firstLetter.charCodeAt(0) % colors.length];
+                $(s.profileAvatar).text(firstLetter).css("background-color", bgColor);
+                $(s.profileName).text(m.memberName || "N/A");
+                $(s.profileStatus).text(`Status: ${m.memberShipStatus || "N/A"}`);
+                $(s.profileEmail).text(m.memberEmail || "N/A");
+                $(s.profileMobile).text(m.memberMobileNumber || "N/A");
+                $(s.profileWork).text(m.memberWorkStatus || "N/A");
+                const start = m.memberShipStartDate ? `Start: ${m.memberShipStartDate}` : "";
+                const end   = m.memberShipEndDate   ? ` | End: ${m.memberShipEndDate}`   : "";
+                $(s.profileMembership).text(`${start}${end}`);
+                $(s.profileAddress).text(m.memberaddress || "N/A");
+                $(s.profileBooks).empty();
+                $(s.favBooksSection).hide();
+
+                $.ajax({
+                    url: `http://localhost:8080/LibraryManagementSystem/Members/favBookList/${memberId}`,
+                    method: "GET",
+                    dataType: "json",
+                    success: (books) => {
+                        if (books.object && books.object.length) {
+                            $(s.profileBooks).html(
+                                books.object.map(b => `<span class="badge bg-primary me-1">${b.bookName}</span>`).join("")
+                            );
+                            $(s.favBooksSection).show();
+                        }
+                        this.showLoader(false);
+                        $(s.viewMemberModal).modal("show");
+                    },
+                    error: () => {
+                        this.showLoader(false);
+                        Swal.fire({ icon:"error", title:"Error", text:"Failed to load favorite books.", timer:2000, showConfirmButton:false });
+                    }
+                });
+            },
+            error: () => {
+                this.showLoader(false);
+                Swal.fire({ icon:"error", title:"Error", text:"Failed to fetch Member details.", timer:2000, showConfirmButton:false });
+            }
+        });
+    };
+
+    // ---------- 🔟  Reset filters ----------
+    this.resetFilters = function () {
+        $("#member_filter_status").val("");
+        $("#member_filter_value").val("");
+    };
+};
+
+// ----------  Create and Init ----------
+const userManagement = new UserManagement();
+userManagement.init();
