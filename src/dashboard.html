@@ -1,31 +1,50 @@
-<div class="container-fluid">
-  <h1 class="mb-4">Welcome to Dashboard</h1>
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card shadow-sm mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Card 1</h5>
-          <p class="card-text">This is a sample card content.</p>
-        </div>
+<div class="container-fluid py-4">
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="dashboard-card">
+        <div class="stat-title">Book Status</div>
+        <canvas id="bookStatusChart" height="180"></canvas>
       </div>
     </div>
-    
-    <div class="col-md-4">
-      <div class="card shadow-sm mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Card 2</h5>
-          <p class="card-text">Another example card.</p>
-        </div>
+    <div class="col-lg-4">
+      <div class="dashboard-card">
+        <div class="stat-title">Rentals Overview</div>
+        <canvas id="rentalsChart" height="290"></canvas>
       </div>
     </div>
-    
-    <div class="col-md-4">
-      <div class="card shadow-sm mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Card 3</h5>
-          <p class="card-text">More dashboard widgets.</p>
-        </div>
+    <div class="col-lg-4">
+      <div class="dashboard-card">
+        <div class="stat-title">New Members (Monthly)</div>
+        <canvas id="membersChart" height="290"></canvas>
       </div>
     </div>
   </div>
+
+  <div class="row g-4 mt-1">
+    <div class="col-md-4">
+      <div class="dashboard-card">
+        <div class="stat-title">Total Members</div>
+        <div class="stat-value text-primary" id="totalMembers">1,250</div>
+        <small>Active members</small>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="dashboard-card">
+        <div class="stat-title">Active Penalties</div>
+        <div class="stat-value text-danger" id="activePenalties">35</div>
+        <small>Unresolved penalties</small>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="dashboard-card">
+        <div class="stat-title">Collected Penalties</div>
+        <div class="stat-value text-success" id="collectedFees">$1,230.50</div>
+        <small>Total collected fees</small>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<script defer src="js/dashboard.js"></script>

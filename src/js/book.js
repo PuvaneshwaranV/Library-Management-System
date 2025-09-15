@@ -12,7 +12,7 @@ const selectors = {
   filterLength:        "#custom_length",
 
   // Add book modal
-  addModal:            "#example_modal",
+  addModal:            "#book_modal",
   addBtn:              "#add_btn",
   addCancelBtn:        "#cancel",
   addTitle:            "#title",
@@ -43,6 +43,24 @@ const selectors = {
   // Generate PDF
   generatePdfBtn:      "#book_pdf",
 };
+
+      console.log("main ");
+      $(document).ready(()=>{
+        console.log("jjj");
+        
+          const custom_elements = "./template-custom-elements.html";
+$("#book_add").load(custom_elements, () => {
+   $("#book_add").append("<book-add-edit-modal></book-add-edit-modal>");
+      console.log("mainmmmmmm ");
+    const script =document.createElement("script");
+    script.src = "js/add.or.update.book.js"
+    document.body.appendChild(script);
+})
+      })
+
+      
+
+
 
 // ---------------------------------------------------------
 
@@ -135,8 +153,6 @@ const Books = function () {
                 orderable: false,
                 render: (d, t, row) => `
                   <button class="btn btn-sm btn-warning me-2 update-book"
-                          data-bs-toggle="modal"
-                          data-bs-target="${selectors.updateModal}"
                           data-id="${row.bookId}">
                     <i class="fa-solid fa-pen-to-square text-white"></i>
                   </button>
@@ -220,7 +236,16 @@ const Books = function () {
           $(selectors.updateAuthor).val(book.author);
           $(selectors.updateLanguage).val(book.language);
           $(selectors.updateTotalCount).val(book.totalCount);
-          $(selectors.updateModal).data("bookId", bookId).modal("show");
+          const modalEl = document.querySelector("book-add-edit-modal");
+if (modalEl) {
+  modalEl.open({
+    bookId: book.bookId,
+    title: book.title,
+    author: book.author,
+    language: book.language,
+    totalCount: book.totalCount
+  });
+}
         },
         error: function () {
           $(selectors.loader).hide();
@@ -278,115 +303,6 @@ const Books = function () {
     });
   };
 
-  // -------------------------------------------------------
-  this.validateField = function (id, regex, errorId, errorMessage) {
-    const value = $(id).val().trim();
-    if (value === "") {
-      $(errorId).text("Required Field.");
-      return false;
-    } else if (regex && !regex.test(value)) {
-      $(errorId).text(errorMessage);
-      return false;
-    }
-    $(errorId).text("");
-    return true;
-  };
-
-  // -------------------------------------------------------
-  this.updateBookDetails = function () {
-    $(document).on("click", selectors.updateBtn, function () {
-      const validTitle     = that.validateField(selectors.updateTitle, nameRegex, selectors.updateTitleError,   "Only letters and numbers allowed.");
-      const validAuthor    = that.validateField(selectors.updateAuthor, nameRegex, selectors.updateAuthorError, "Only letters and numbers allowed.");
-      const validLanguage  = that.validateField(selectors.updateLanguage, nameRegex, selectors.updateLanguageError,"Only letters and numbers allowed.");
-      let   validTotalCount = that.validateField(selectors.updateTotalCount, numberRegex, selectors.updateTotalError,"Only numbers allowed.");
-
-      if (parseInt($(selectors.updateTotalCount).val(),10) < totalCountPrev) {
-        $(selectors.updateTotalError).text("Must be greater than previous count");
-        validTotalCount = false;
-      }
-
-      const bookId = $(selectors.updateModal).data("bookId");
-      if (validTitle && validAuthor && validLanguage && validTotalCount) {
-        const requestData = {
-          bookId: parseInt(bookId,10),
-          title: $(selectors.updateTitle).val().trim(),
-          author: $(selectors.updateAuthor).val().trim(),
-          language: $(selectors.updateLanguage).val().trim(),
-          totalCount: $(selectors.updateTotalCount).val().trim(),
-        };
-        $(selectors.loader).show();
-        $.ajax({
-          url: "http://localhost:8080/LibraryManagementSystem/Books/updateBookDetails",
-          type: "PUT",
-          data: JSON.stringify(requestData),
-          contentType: "application/json",
-          success: function () {
-            $(selectors.loader).hide();
-            $(selectors.updateModal).modal("hide");
-            resetForm();
-            Swal.fire({ icon: "success", title: "Book Updated", text: "✅ Your book was updated successfully!", timer: 2000, showConfirmButton: false })
-                .then(() => $(selectors.filterApplyBtn).click());
-          },
-          error: function (xhr) {
-            let msg = "Something went wrong.";
-            if (xhr.responseJSON) {
-              if (xhr.responseJSON.message) msg = xhr.responseJSON.message;
-              if (xhr.responseJSON.object) msg = Object.values(xhr.responseJSON.object).join("\n");
-            }
-            $(selectors.loader).hide();
-            Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });
-          },
-        });
-      }
-    });
-  };
-
-  // -------------------------------------------------------
-  this.addNewBook = function () {
-    $(document).on("click", selectors.addBtn, function () {
-      const validTitle    = that.validateField(selectors.addTitle,    nameRegex,   selectors.addTitleError,   "Only letters and numbers allowed.");
-      const validAuthor   = that.validateField(selectors.addAuthor,   nameRegex,   selectors.addAuthorError,  "Only letters and numbers allowed.");
-      const validLanguage = that.validateField(selectors.addLanguage, nameRegex,   selectors.addLanguageError,"Only letters and numbers allowed.");
-      const validQty      = that.validateField(selectors.addQuantity, numberRegex, selectors.addQuantityError,"Only numbers allowed.");
-
-      if (validTitle && validAuthor && validQty && validLanguage) {
-        const requestData = {
-          title:     $(selectors.addTitle).val().trim(),
-          author:    $(selectors.addAuthor).val().trim(),
-          totalCount:parseInt($(selectors.addQuantity).val().trim(),10),
-          language:  $(selectors.addLanguage).val().trim(),
-        };
-        $(selectors.loader).show();
-        $.ajax({
-          url: "http://localhost:8080/LibraryManagementSystem/Books/addNewBook",
-          type: "POST",
-          data: JSON.stringify(requestData),
-          contentType: "application/json",
-          success: function () {
-            $(selectors.loader).hide();
-            $(selectors.addModal).modal("hide");
-            resetForm();
-            Swal.fire({ icon: "success", title: "Book Saved", text: "✅ Your book was added successfully!", timer: 2000, showConfirmButton: false })
-                .then(() => $(selectors.filterApplyBtn).click());
-          },
-          error: function (xhr) {
-            let msg = "Something went wrong.";
-            if (xhr.responseJSON) {
-              if (xhr.responseJSON.message) msg = xhr.responseJSON.message;
-              if (xhr.responseJSON.object) msg = Object.values(xhr.responseJSON.object).join("\n");
-            }
-            $(selectors.loader).hide();
-            Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });
-          },
-        });
-      }
-    });
-  };
-
-  // -------------------------------------------------------
-  this.resetFormOnBackdrop = function () {
-    $(document).on("hidden.bs.modal", selectors.addModal, resetForm);
-  };
 };
 
 // ------------------- INITIALISE -------------------------
@@ -397,6 +313,6 @@ books.getBookDetailsById();
 books.deleteBookById();
 books.resetFiltersApplied();
 books.resetAddBookModalFields();
-books.updateBookDetails();
-books.addNewBook();
-books.resetFormOnBackdrop();
+// books.updateBookDetails();
+// books.addNewBook();
+// books.resetFormOnBackdrop();

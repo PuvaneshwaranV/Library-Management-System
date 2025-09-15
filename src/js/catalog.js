@@ -1,5 +1,7 @@
 /* ===================== Rental Transactions ===================== */
-const RentalTransaction = function () {
+
+if (typeof window.RentalTransaction === "undefined") {
+    window.RentalTransaction = function () {
 
     /* ---------- CENTRAL SELECTORS ---------- */
     const selectors = {
@@ -372,6 +374,7 @@ const RentalTransaction = function () {
         Swal.fire({ icon: "error", title: "Oops...", text: `❌ ${msg}`, timer: 2000, showConfirmButton: false });
     };
 };
+}
 
 /* ===== Kick-off ===== */
 $(document).ready(function () {

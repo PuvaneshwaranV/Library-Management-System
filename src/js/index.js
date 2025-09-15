@@ -97,7 +97,7 @@ const App = function () {
             // Load page-specific scripts
             // if (page === "books.html") { $.getScript("js/book.js"); }
             if (page === "users.html")   { $.getScript("js/users.js");   }
-            else if (page === "catalog.html") { $.getScript("js/catalog.js"); }
+            //else if (page === "catalog.html") { $.getScript("js/catalog.js"); }
             else if (page === "penalty.html") { $.getScript("js/penalty.js"); }
         });
     };

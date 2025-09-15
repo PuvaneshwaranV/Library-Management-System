@@ -1,0 +1,58 @@
+<template id="book_add_edit_modal">
+  <div class="modal fade" id="book_modal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-body position-relative mx-3">
+          <h3 class="modal-title d-flex align-items-center">
+            <i class="fa-solid fa-book-open me-2"></i>
+            <span class="modal-heading-text">Add Book</span>
+          </h3>
+          <button type="button" class="btn-close-custom position-absolute top-0 end-0 m-3"
+                  data-bs-dismiss="modal" aria-label="Close">
+            <i class="fa-regular fa-circle-xmark"></i>
+          </button>
+          <hr class="border border-1 border-dark opacity-100" />
+          <form class="mx-5 my-4" id="book_form">
+            <div class="mb-3">
+              <label for="title" class="form-label">Book Title</label>
+              <input type="text" class="form-control" id="title" placeholder="Title" />
+              <div id="title_error" class="text-danger small"></div>
+            </div>
+            <div class="mb-3">
+              <label for="author" class="form-label">Author Name</label>
+              <input type="text" class="form-control" id="author" placeholder="Author" />
+              <div id="author_error" class="text-danger small"></div>
+            </div>
+            <div class="row">
+              <div class="mb-3 col-6 pe-0">
+                <label for="language" class="form-label">Select Language</label>
+                <select id="language" class="form-select " required>
+                  <option value="" disabled selected>Select Language</option>
+                  <option value="tamil">Tamil</option>
+                  <option value="english">English</option>
+                  <option value="hindi">Hindi</option>
+                  <option value="german">German</option>
+                </select>
+                <div id="language_error" class="text-danger small"></div>
+              </div>
+              <div class="mb-3 col-6">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantity" placeholder="Quantity" />
+                <div id="quantity_error" class="text-danger small"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <button id="reset_btn" type="button" class="btn btn-dark w-100">Reset</button>
+              </div>
+              <div class="col-6">
+                <button id="save_btn" type="button" class="btn btn-dark w-100">Save</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</template>

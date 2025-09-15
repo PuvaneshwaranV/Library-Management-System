@@ -161,3 +161,28 @@ input[type=text]{
   0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+ .dashboard-card {
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  height: 100%;           /* let it stretch to full column height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertically center text */
+  align-items: center;     /* horizontally center text (for stats) */
+}
+
+.stat-title {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
