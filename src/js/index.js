@@ -73,6 +73,7 @@ const App = function () {
     this.bindSidebarToggle = function () {
         $(document).on("click", selectors.sidebarToggle, () => {
             $(selectors.sidebar).toggleClass(selectors.collapsedClass);
+            $(selectors.mainBody).toggleClass(selectors.collapsedClass);
         });
     };
 
@@ -87,6 +88,7 @@ const App = function () {
                 this.updateHeader($(e.currentTarget).text().trim());
                 this.setActiveLink($(e.currentTarget));
                 $(selectors.sidebar).addClass(selectors.collapsedClass);
+                $(selectors.mainBody).toggleClass(selectors.collapsedClass);
             }
         });
     };

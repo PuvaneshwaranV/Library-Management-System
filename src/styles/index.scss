@@ -23,7 +23,7 @@ td,th{
   text-align:center !important;
 }
 #sidebar {
-  
+  margin-top:35px;
   width: 200px;
   color: $secondary;
   transition: all 0.3s ease;
@@ -64,6 +64,17 @@ background-color:$primary;
   }
 }
 
+#logout{
+  margin-top:350px;
+}
+//..........................main body
+#main_body{
+  transition: all 0.3s;
+  &.collapsed{
+  margin-left:200px;
+ } 
+}
+
 //...........................body
 #content {
   background-color:$secondary1;
@@ -81,7 +92,9 @@ background-color:$primary;
   border-color:$primary !important;
 }
 
-
+.staus-click{
+  cursor:pointer !important;
+}
 
 
 .btn-close-custom{
@@ -109,7 +122,9 @@ input[type=text]{
 #header {
   background: #1e3a8a; 
   color: white;
-  
+  margin-bottom:80px;
+  transition: all 0.3s ease;
+ 
 }
 
 /* Buttons */

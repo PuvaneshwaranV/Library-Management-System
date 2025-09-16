@@ -1,9 +1,11 @@
-const Penalty = function () {
+if (typeof window.Penalty === "undefined") {
+    window.Penalty = function () {
     // ------------------ selectors in one place ------------------
     this.selectors = {
         loader:        "#loader",
         userTable:     "#user_table",
         applyFilters:  "#apply_penalty_filters",
+        resetFilters:  "#reset_penalty_filters",
         addBtn:        "#penalty_add_btn",
         transactionId: "#penalty_transactionid",
         amount:        "#penalty_amount",
@@ -15,7 +17,8 @@ const Penalty = function () {
         length:        "#penalty_length",
         status:        "#penalty_filter_status",
         filterType:    "#penalty_filter_type",
-        filterValue:   "#penalty_filter_value"
+        filterValue:   "#penalty_filter_value",
+        filters:       ".filters",
     };
 
     // ------------------ public methods ------------------
@@ -27,6 +30,10 @@ const Penalty = function () {
             .on("click", s.applyFilters, this.applyFilters.bind(this));
 
         $(document)
+            .off("click", s.resetFilters)
+            .on("click", s.resetFilters, this.resetFilters.bind(this));
+            
+        $(document)
             .off("click", s.addBtn)
             .on("click", s.addBtn, this.addPenalty.bind(this));
 
@@ -37,8 +44,67 @@ const Penalty = function () {
         $(document)
             .off("click", s.payBtn)
             .on("click", s.payBtn, this.payPenalty.bind(this));
+        
+        $(document)
+        .off("change", s.filterType)
+        .on("change", s.filterType, this.toggleFilterInput.bind(this));
+
+        $(document)
+        .off("change", s.filters)
+        .on("change", s.filters, this.toggleFilters.bind(this));
+
+        $(document)
+        .off("input", s.filterValue)
+        .on("input", s.filterValue, this.changeFilterValue.bind(this));
+
+        this.toggleFilterInput();
     };
 
+    this.changeFilterValue = function(){
+        const s = this.selectors;
+        if ($.fn.DataTable.isDataTable(s.userTable)) {
+            $(s.userTable).DataTable().clear().destroy();
+            $(s.userTable).hide();
+        }
+    }
+
+    this.toggleFilters = function(){
+        const s = this.selectors;
+        if ($.fn.DataTable.isDataTable(s.userTable)) {
+            $(s.userTable).DataTable().clear().destroy();
+            $(s.userTable).hide();
+        }
+    }
+
+    this.toggleFilterInput = function () {
+        const s = this.selectors;
+        const selected = $(s.filterType).val();
+        if ($.fn.DataTable.isDataTable(s.userTable)) {
+            $(s.userTable).DataTable().clear().destroy();
+            $(s.userTable).hide();
+        }
+       // enable input if user picked anything other than "all"
+        if (selected && selected.toLowerCase() !== "all") {
+            $(s.filterValue).prop("disabled", false);
+        } else {
+            $(s.filterValue).prop("disabled", true).val("");  // also clear value
+        }
+    };
+
+    this.resetFilters = function () {
+        const s = this.selectors;
+        $(s.filterType).val("all");
+        $(s.filterValue).val("");
+        $(s.status).val("all");
+        $(s.length).val("10");
+
+        if ($.fn.DataTable.isDataTable(s.userTable)) {
+            $(s.userTable).DataTable().clear().destroy();
+            $(s.userTable).hide();
+        }
+
+        this.toggleFilterInput();
+    };
     this.applyFilters = function () {
         const s = this.selectors;
         $(s.loader).show();
@@ -49,15 +115,15 @@ const Penalty = function () {
         let searchColumn = $(s.filterType).val();
         let searchValue  = $(s.filterValue).val().trim();
         let asc          = "asc";
-
+        console.log(status)
         let params = { start: 0, length: length, order: asc };
 
         if ((status === "paid" || status === "pending") && searchValue !== "") {
-            params = { ...params, paymentStatus: status, searchColumn, searchValue };
+            params = {start: 0, length: length, order: asc, paymentStatus: status, searchColumn:searchColumn, searchValue:searchValue };
         } else if (status === "paid" || status === "pending") {
-            params = { ...params, paymentStatus: status };
+            params = { start: 0, length: length, order: asc, paymentStatus: status };
         } else if (searchValue !== "") {
-            params = { ...params, searchColumn, searchValue };
+            params = { start: 0, length: length, order: asc,searchColumn:searchColumn, searchValue: searchValue };
         }
 
         $.ajax({
@@ -69,8 +135,11 @@ const Penalty = function () {
                 if ($.fn.DataTable.isDataTable(s.userTable)) {
                     $(s.userTable).DataTable().destroy();
                 }
+                const rows = (res.object && Array.isArray(res.object.data))
+        ? res.object.data
+        : [];
                 $(s.userTable).DataTable({
-                    data: res.object.data,
+                    data: rows,
                     sort: false,
                     destroy: true,
                     dom: '<"top"lp>t<"bottom"ip>',
@@ -91,7 +160,7 @@ const Penalty = function () {
                     destroy: true,
                     dom: '<"top"p>t<"bottom"ip>',
                     language: { emptyTable: "No data found" },
-                    columns: this.columnsConfig(false)
+                    // columns: this.columnsConfig(false)
                 });
                 $(s.loader).hide();
                 $(s.userTable).show();
@@ -237,3 +306,4 @@ $(document).ready(function () {
     const penalty = new Penalty();
     penalty.init();
 });
+}

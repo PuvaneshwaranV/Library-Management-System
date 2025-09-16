@@ -33,7 +33,7 @@
       <div class="d-flex gap-2">
          <div class="d-flex flex-column">
         <label for="custom_length" class="ms-2">Show </label>
-        <select id="custom_length" class="form-select w-auto">
+        <select id="custom_length" class="form-select filters w-auto">
           <option value="10">10</option>
           <option value="25">25</option>
           <option value="50">50</option>
@@ -42,7 +42,7 @@
       </div>
         <div class="d-flex flex-column">
           <label for="filter_status" class="ms-2">Status</label>
-          <select id="filter_status" class="form-select w-auto">
+          <select id="filter_status" class="form-select filters w-auto">
             <option value="all">All</option>
             <option value="Available">Available</option>
             <option value="Borrowed">Borrowed</option>
@@ -50,7 +50,7 @@
         </div>
         <div class="d-flex flex-column">
           <label for="filter_type" class="ms-2">Search By</label>
-          <select id="filter_type" class="form-select w-auto">
+          <select id="filter_type" class="form-select filters w-auto">
             <option value="all">All</option>
             <option value="language">Language</option>
             <option value="author">Author</option>
@@ -63,15 +63,15 @@
           <input
             type="text"
             id="filter_value"
-            class="form-control w-auto"
-            placeholder="🔍 Enter Value"
+            class="form-control filters w-auto"
+            placeholder="🔍 Enter Value" disabled
           />
         </div>
       </div>
     </div>
     <div class="d-flex justify-content-end gap-2">
       <button id="apply_filters" class="btn btn-dark">Submit</button>
-      <button id="reset_filters" class="btn btn-dark">Cancel</button>
+      <button id="reset_filters" class="btn btn-dark">Reset</button>
     </div>
   </div>
 

@@ -15,6 +15,7 @@ if (typeof window.RentalTransaction === "undefined") {
         filterStatus:      "#rental_status",
         filterType:        "#rental_filter_type",
         filterValue:       "#rental_filter_value",
+        filters:           ".filters",
 
         // Borrow
         booksContainer:    "#books_container",
@@ -60,7 +61,38 @@ if (typeof window.RentalTransaction === "undefined") {
     this.bindFilterHandlers = function () {
         $(selectors.applyFiltersBtn).off("click").on("click", () => this.applyFilters());
         $(selectors.resetFiltersBtn).off("click").on("click", () => this.resetFilters());
+        $(selectors.filters).off("change").on("change", () => this.toggleFilters());
+        $(selectors.filterType).off("change").on("change", () => this.toggleFilterInput());
+        $(selectors.filterValue).off("input").on("input", () => this.changeFilterInput());
     };
+
+    this.toggleFilterInput = function () {
+        const selected = $(selectors.filterType).val();
+        // if ($.fn.DataTable.isDataTable(s.userTable)) {
+        //     $(s.userTable).DataTable().clear().destroy();
+        //     $(s.userTable).hide();
+        // }
+       // enable input if user picked anything other than "all"
+        if (selected && selected.toLowerCase() !== "all") {
+            $(selectors.filterValue).prop("disabled", false);
+        } else {
+            $(selectors.filterValue).prop("disabled", true).val("");  // also clear value
+        }
+    };
+
+    this.changeFilterInput = function(){
+        if ($.fn.DataTable.isDataTable(selectors.table)) {
+            $(selectors.table).DataTable().clear().destroy();
+            $(selectors.table).hide();
+        }
+    }
+    
+    this.toggleFilters = function(){
+        if ($.fn.DataTable.isDataTable(selectors.table)) {
+            $(selectors.table).DataTable().clear().destroy();
+            $(selectors.table).hide();
+        }
+    }
 
     this.applyFilters = function () {
         $(selectors.loader).show();

@@ -1,4 +1,25 @@
-// ----------------- CENTRAL SELECTOR MAP -----------------
+
+console.log("main ");
+$(document).ready(()=>{
+  console.log("jjj");   
+  const custom_elements = "./template-custom-elements.html";
+  $("#book_add").load(custom_elements, () => {
+    $("#book_add").append("<book-add-edit-modal></book-add-edit-modal>");
+      console.log("mainmmmmmm ");
+      const script =document.createElement("script");
+      script.src = "js/add.or.update.book.js"
+      document.body.appendChild(script);
+  })
+})
+
+      
+
+
+
+// ---------------------------------------------------------
+if (typeof window.Books === "undefined") {
+    window.Books = function () {
+  // ----------------- CENTRAL SELECTOR MAP -----------------
 const selectors = {
   loader:              "#loader",
   dataTable:           "#user_table",
@@ -10,6 +31,7 @@ const selectors = {
   filterValue:         "#filter_value",
   filterStatus:        "#filter_status",
   filterLength:        "#custom_length",
+  filters:             ".filters",
 
   // Add book modal
   addModal:            "#book_modal",
@@ -44,27 +66,6 @@ const selectors = {
   generatePdfBtn:      "#book_pdf",
 };
 
-      console.log("main ");
-      $(document).ready(()=>{
-        console.log("jjj");
-        
-          const custom_elements = "./template-custom-elements.html";
-$("#book_add").load(custom_elements, () => {
-   $("#book_add").append("<book-add-edit-modal></book-add-edit-modal>");
-      console.log("mainmmmmmm ");
-    const script =document.createElement("script");
-    script.src = "js/add.or.update.book.js"
-    document.body.appendChild(script);
-})
-      })
-
-      
-
-
-
-// ---------------------------------------------------------
-
-const Books = function () {
   const nameRegex   = /^[A-Za-z0-9\s]+$/;
   const numberRegex = /^[0-9]+$/;
 
@@ -237,15 +238,15 @@ const Books = function () {
           $(selectors.updateLanguage).val(book.language);
           $(selectors.updateTotalCount).val(book.totalCount);
           const modalEl = document.querySelector("book-add-edit-modal");
-if (modalEl) {
-  modalEl.open({
-    bookId: book.bookId,
-    title: book.title,
-    author: book.author,
-    language: book.language,
-    totalCount: book.totalCount
-  });
-}
+          if (modalEl) {
+            modalEl.open({
+              bookId: book.bookId,
+              title: book.title,
+              author: book.author,
+              language: book.language,
+              totalCount: book.totalCount
+            });
+          }
         },
         error: function () {
           $(selectors.loader).hide();
@@ -303,16 +304,53 @@ if (modalEl) {
     });
   };
 
-};
+  this.toggleFilters = function(){
+    $(document).on("change", selectors.filters, function(){
+        if ($.fn.DataTable.isDataTable(selectors.dataTable)) {
+        $(selectors.dataTable).DataTable().clear().destroy();
+        $(selectors.dataTable).hide();
+      }
+    })
+  }
+  
+  this.changeFilterValue = function(){
+    $(document).on("input", selectors.filterValue, function(){
+      if ($.fn.DataTable.isDataTable(selectors.dataTable)) {
+        $(selectors.dataTable).DataTable().clear().destroy();
+        $(selectors.dataTable).hide();
+      }
+    })
+  }
 
+  this.toggleFilterInput = function () {
+  // use the top-level constant directly
+  $(document).on("change", selectors.filterType, function () {
+    const selected = $(selectors.filterType).val();
+
+    if (selected && selected.toLowerCase() !== "all") {
+      $(selectors.filterValue).prop("disabled", false);
+    } else {
+      // disable and clear when “all” is chosen
+      $(selectors.filterValue).prop("disabled", true).val("");
+    }
+  });
+};
+    
+};
+}
 // ------------------- INITIALISE -------------------------
-const books = new Books();
-books.displayBooksTable();
-books.generateAvailableBookPdf();
-books.getBookDetailsById();
-books.deleteBookById();
-books.resetFiltersApplied();
-books.resetAddBookModalFields();
+if (!window.books) {
+    window.books = new Books();
+    books.displayBooksTable();
+    books.generateAvailableBookPdf();
+    books.getBookDetailsById();
+    books.deleteBookById();
+    books.resetFiltersApplied();
+    books.resetAddBookModalFields();
+    books.toggleFilters();
+    books.changeFilterValue();
+    books.toggleFilterInput();
+}
 // books.updateBookDetails();
 // books.addNewBook();
 // books.resetFormOnBackdrop();

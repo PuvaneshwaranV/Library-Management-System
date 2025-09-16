@@ -1,14 +1,27 @@
 // =====================  User Management  =====================
-const UserManagement = function () {
+if (typeof window.UserManagement === "undefined") {
+    window.UserManagement = function () {
 
     // ---------- 1️⃣  Selectors ----------
     this.selectors = {
+        
+        //SearchFields
+        filterType:             "#member_filter_type",
+        filterValue:            "#member_filter_value",
+        filters:                ".filters",
+
         // Buttons
         applyFiltersBtn:        "#apply_member_filters",
         resetFiltersBtn:        "#reset_member_filters",
         memberAddBtn:           "#member_add_btn",
         memberUpdateBtn:        "#update_member_btn",
-        memberCancelBtn:        "#cancel",
+        memberCancelBtn:        "#member_cancel_btn",   
+        updateCancelBtn:        "#update_cancel_btn",
+
+        membershipModal:      "#membership_modal",
+        membershipEndDate:    "#membership_end_date",
+        membershipStatus:     "#membership_status",
+        membershipSaveBtn:    "#membership_save",
 
         // Tables / Modals
         userTable:              "#user_table",
@@ -65,23 +78,47 @@ const UserManagement = function () {
         const s = this.selectors;
 
         // DataTable render
-        this.renderUserTable();
+       // this.renderUserTable();
 
         // Bind buttons
         $(document).on("click", s.applyFiltersBtn, () => this.renderUserTable());
+        $(document).on("click", ".status-click", function () {
+            userManagement.changeMemberStatus(this);
+        });
         $(document).on("click", s.resetFiltersBtn, () => this.resetFilters());
         $(document).on("click", s.memberAddBtn,  () => this.addMember());
         $(document).on("click", s.memberCancelBtn, () => this.resetForm());
         $(document).on("click", s.memberUpdateBtn, () => this.updateMember());
         $(document).on("click", ".update-member", (e) => this.openUpdateModal(e));
         $(document).on("click", ".view-member",   (e) => this.openProfile(e));
+        $(document).on("click", this.selectors.membershipSaveBtn, () => this.saveMembershipUpdate());
+        $(document).on("change", s.filterType, this.toggleFilterInput.bind(this));
+        $(document).on("change", s.filters, this.toggleFilters.bind(this));
+        $(document).on("input", s.filterValue, this.changeFilterInput.bind(this));
+        this.toggleFilterInput();
         $(document).on("click", s.updateCalendarIcon, () => {
             if (this.updateEndDp) this.updateEndDp.show();
         });
 
         $(s.memberModal).on("hidden.bs.modal", () => this.resetForm());
         $(s.updateMemberModal).on("hidden.bs.modal", () => this.cleanupUpdateModal());
-
+        $('#membership_modal').on('shown.bs.modal', function () {
+    if (!window.membershipPicker) {
+        window.membershipPicker = new tempusDominus.TempusDominus(
+            document.getElementById('membership_end_date'),
+            {
+                display: {
+                    components: {
+                        calendar: true,
+                        date: true,
+                        month: true,
+                        year: true
+                    }
+                }
+            }
+        );
+    }
+});
         // ----------  Add-modal widgets ----------
         // Phone input (region-aware)
         this.addMobileIti = window.intlTelInput($(s.mobileNumber)[0], {
@@ -102,6 +139,32 @@ const UserManagement = function () {
         show ? $(this.selectors.loader).show() : $(this.selectors.loader).hide();
     };
 
+    this.changeFilterInput = function(){
+         if ($.fn.DataTable.isDataTable(this.selectors.userTable)) {
+            $(this.selectors.userTable).DataTable().clear().destroy();
+            $(this.selectors.userTable).hide();
+        }   
+    }
+
+    this.toggleFilters =function(){
+         if ($.fn.DataTable.isDataTable(this.selectors.userTable)) {
+            $(this.selectors.userTable).DataTable().clear().destroy();
+            $(this.selectors.userTable).hide();
+        }    
+    }
+
+    this.toggleFilterInput = function () {
+        const s = this.selectors;
+        const selected = $(s.filterType).val();
+
+       // enable input if user picked anything other than "all"
+        if (selected && selected.toLowerCase() !== "all") {
+            $(s.filterValue).prop("disabled", false);
+        } else {
+            $(s.filterValue).prop("disabled", true).val("");  // also clear value
+        }
+    };
+
     this.validateField = function (id, regex, errorId, errorMessage) {
         let value = $(id).val().trim();
         if (value === "") {
@@ -119,8 +182,7 @@ const UserManagement = function () {
         const s = this.selectors;
         $(`${s.memberName}, ${s.memberEmail}, ${s.memberWorkStatus},
            ${s.mobileNumber}, ${s.membershipEndDate}, ${s.memberAddress}`).val("");
-        $("#member_name_error, #member_email_error, #member_work_status_error, \
-          #mobile_number_error, #membership_end_date_error, #member_address_error").text("");
+        $("#member_name_error, #member_email_error, #member_work_status_error, #mobile_number_error, #membership_end_date_error, #member_address_error").text("");
     };
 
     // ---------- 5️⃣  Table ----------
@@ -164,10 +226,17 @@ const UserManagement = function () {
                         { title: "Member Name", data: "memberName" },
                         { title: "MemberShip Start Date", data: "memberShipStartDate" },
                         { title: "MemberShip End Date", data: "memberShipEndDate" },
-                        { title: "Member Ship Status", data: "memberShipStatus",
-                          render: (d,t,row) => row.memberShipStatus === "ACTIVE"
-                                ? `<p class="bg-success rounded-5 text-white">${row.memberShipStatus}</p>`
-                                : `<p class="bg-danger rounded-5 text-white">${row.memberShipStatus}</p>`
+                        { title: "MemberShip Status", data: "memberShipStatus",
+                            render: (d, t, row) => {
+                                // add pointer cursor and data-id for click handler
+                                const cls = row.memberShipStatus === "ACTIVE" ? "bg-success" : "bg-danger";
+                                return `<span class="status-click ${cls} rounded-5 text-white mb-0 px-2"
+                                style="cursor:pointer; display:inline-block"
+                                data-id="${row.memberId}"
+                                data-status="${row.memberShipStatus}">
+                                ${row.memberShipStatus}
+                                </span>`;
+                            },
                         },
                         { title: "Work Status", data: "memberWorkStatus" },
                         { title: "Actions", data: null, orderable: false,
@@ -196,6 +265,82 @@ const UserManagement = function () {
             }
         });
     };
+
+        this.changeMemberStatus = function (el) {
+    const s = this.selectors;
+    const $el = $(el);
+    const memberId = $el.data("id");
+
+    // Fetch member details first
+    this.showLoader(true);
+    $.ajax({
+        url: `http://localhost:8080/LibraryManagementSystem/Members/getMemberById/${memberId}`,
+        method: "GET",
+        dataType: "json",
+        success: (res) => {
+            const m = res.object || {};
+            this.showLoader(false);
+
+            // Fill modal fields
+            const endDate = (m.membershipEndDate || m.memberShipEndDate || "")
+                   .split("T")[0];   // trims to YYYY-MM-DD if ISO
+  $(s.membershipEndDate).val(endDate);
+
+  $(s.membershipStatus).val(m.membershipStatus || m.memberShipStatus || "");
+  $(s.membershipModal).data("member-id", memberId).modal("show");
+        },
+        error: () => {
+            this.showLoader(false);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Unable to fetch member details."
+            });
+        }
+    });
+};
+
+    this.saveMembershipUpdate = function () {
+    const s = this.selectors;
+    const memberId = $(s.membershipModal).data("member-id");
+    const endDate  = $(s.membershipEndDate).val().trim();
+    const status   = $(s.membershipStatus).val();
+
+    if (!endDate) {
+        $("#end_date_error").text("End date required.");
+        return;
+    } else {
+        $("#end_date_error").text("");
+    }
+    if (!status) {
+        $("#status_error").text("Select status.");
+        return;
+    } else {
+        $("#status_error").text("");
+    }
+
+    this.showLoader(true);
+    $.ajax({
+        method: "PUT",
+        url: `http://localhost:8080/LibraryManagementSystem/Members/updateMemberStatus`,
+        contentType: "application/json",
+        data: JSON.stringify({
+            id: memberId,
+            endDate: endDate,
+            status: status
+        }),
+        success: () => {
+            this.showLoader(false);
+            $(s.membershipModal).modal("hide");
+            Swal.fire("Updated!", "Membership updated successfully.", "success");
+            $(this.selectors.applyFiltersBtn).click(); // refresh table
+        },
+        error: () => {
+            this.showLoader(false);
+            Swal.fire("Error", "Failed to update membership.", "error");
+        }
+    });
+};
 
     // ---------- 6️⃣  Add Member ----------
     this.addMember = function () {
@@ -384,24 +529,31 @@ const UserManagement = function () {
                 $(s.profileAddress).text(m.memberaddress || "N/A");
                 $(s.profileBooks).empty();
                 $(s.favBooksSection).hide();
-
+                console.log(memberId)
                 $.ajax({
-                    url: `http://localhost:8080/LibraryManagementSystem/Members/favBookList/${memberId}`,
+                    
+                    url: `http://localhost:8080/LibraryManagementSystem/RentalTransactions/getTop3FavoriteAuthorsBooks?memberId=${memberId}`,
                     method: "GET",
                     dataType: "json",
                     success: (books) => {
-                        if (books.object && books.object.length) {
+                        const list = Array.isArray(books.object) ? books.object : [];
+                        if (list.length) {
                             $(s.profileBooks).html(
-                                books.object.map(b => `<span class="badge bg-primary me-1">${b.bookName}</span>`).join("")
+                                list.map(b =>
+                                    `<span class="text-dark me-1">${b.title}</span>`
+                                ).join("")
                             );
                             $(s.favBooksSection).show();
+                        } else {
+                            // Optionally show a placeholder if no favourites
+                            $(s.profileBooks).html('<span class="text-muted">No favourite books found</span>');
                         }
                         this.showLoader(false);
                         $(s.viewMemberModal).modal("show");
                     },
                     error: () => {
                         this.showLoader(false);
-                        Swal.fire({ icon:"error", title:"Error", text:"Failed to load favorite books.", timer:2000, showConfirmButton:false });
+                       $(s.profileBooks).html('<span class="text-muted">No favourite books found</span>')
                     }
                 });
             },
@@ -414,11 +566,21 @@ const UserManagement = function () {
 
     // ---------- 🔟  Reset filters ----------
     this.resetFilters = function () {
-        $("#member_filter_status").val("");
+        $("#member_length").val("10");
+        $("#member_filter_type").val("all");
+        $("#member_filter_status").val("all");
         $("#member_filter_value").val("");
+
+        if ($.fn.DataTable.isDataTable(this.selectors.userTable)) {
+            $(this.selectors.userTable).DataTable().clear().destroy();
+            $(this.selectors.userTable).hide();
+        }
+
+        this.toggleFilterInput();
     };
 };
 
 // ----------  Create and Init ----------
 const userManagement = new UserManagement();
 userManagement.init();
+}

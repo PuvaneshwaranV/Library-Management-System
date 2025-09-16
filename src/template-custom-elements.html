@@ -1,6 +1,6 @@
 <template id="book_add_edit_modal">
   <div class="modal fade" id="book_modal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body position-relative mx-3">
           <h3 class="modal-title d-flex align-items-center">
@@ -15,12 +15,12 @@
           <form class="mx-5 my-4" id="book_form">
             <div class="mb-3">
               <label for="title" class="form-label">Book Title</label>
-              <input type="text" class="form-control" id="title" placeholder="Title" />
+              <input type="text" class="form-control text-capitalize" id="title" placeholder="Title" />
               <div id="title_error" class="text-danger small"></div>
             </div>
             <div class="mb-3">
               <label for="author" class="form-label">Author Name</label>
-              <input type="text" class="form-control" id="author" placeholder="Author" />
+              <input type="text" class="form-control text-capitalize" id="author" placeholder="Author" />
               <div id="author_error" class="text-danger small"></div>
             </div>
             <div class="row">
@@ -41,11 +41,11 @@
                 <div id="quantity_error" class="text-danger small"></div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-6">
+            <div class="row" id="form_actions">
+              <div class="col-6" id="reset_col">
                 <button id="reset_btn" type="button" class="btn btn-dark w-100">Reset</button>
               </div>
-              <div class="col-6">
+              <div class="col-6" id="save_col">
                 <button id="save_btn" type="button" class="btn btn-dark w-100">Save</button>
               </div>
             </div>

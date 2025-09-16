@@ -1,3 +1,5 @@
+
+if(!customElements.get("book-add-edit-modal")){
 class BookAddEditModal extends HTMLElement {
   constructor() {
     super();
@@ -13,6 +15,8 @@ class BookAddEditModal extends HTMLElement {
     this.$qty     = $(this).find("#quantity");
     this.$heading = $(this).find(".modal-heading-text");
     this.$saveBtn = $(this).find("#save_btn");
+    this.$resetCol = $(this).find("#reset_col");
+    this.$saveCol  = $(this).find("#save_col");
 
     this.bookId   = null;
     this.prevQty  = 0;
@@ -20,9 +24,7 @@ class BookAddEditModal extends HTMLElement {
 
   connectedCallback() {
     this.attachEvents();
-    console.log("HII")
     $(document).on("click", "#add_new_book", function(){
-        console.log("HIO")
         $("#book_modal").modal("show")
     })
   }
@@ -77,6 +79,7 @@ class BookAddEditModal extends HTMLElement {
             this.$modal.modal("hide");
             this.reset();
             // trigger a custom event so parent page can refresh table
+            $("#apply_filters").click();
             this.dispatchEvent(new CustomEvent("book-saved", {bubbles:true, detail:{updated:isUpdate}}));
           },
           error: (xhr) => {
@@ -115,13 +118,21 @@ class BookAddEditModal extends HTMLElement {
       this.prevQty = data.totalCount;
       this.$title.val(data.title);
       this.$author.val(data.author);
-      this.$lang.val(data.language);
+      this.$lang.val((data.language).toLowerCase());
       this.$qty.val(data.totalCount);
       this.$saveBtn.text("Update");
       this.$heading.text("Update Book");
+      this.$resetCol.hide();
+      this.$saveCol.removeClass("col-6").addClass("col-12");
+    }
+    else {
+      this.$resetCol.show();
+      this.$saveCol.removeClass("col-12").addClass("col-6");
+      this.reset();
     }
     this.$modal.modal("show");
   }
 }
 
 customElements.define("book-add-edit-modal", BookAddEditModal);
+}
