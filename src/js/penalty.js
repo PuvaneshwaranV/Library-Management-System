@@ -146,7 +146,7 @@ if (typeof window.Penalty === "undefined") {
                     lengthMenu: [10, 25, 50, 100],
                     language: { emptyTable: "No data found" },
                     columns: this.columnsConfig(true)
-                });
+                })
                 $(s.loader).hide();
                 $(s.userTable).show();
             },
@@ -254,6 +254,13 @@ if (typeof window.Penalty === "undefined") {
 
     this.columnsConfig = function (withActions) {
         const baseCols = [
+            {
+            title: "S.No",
+            data: null,                // no field from the data source
+            orderable: false,
+            searchable: false,
+            render: (data, type, row, meta) => meta.row + 1 // row index + 1
+            },
             { title: "Penalty ID",        data: "penaltyId" },
             { title: "Transaction ID",    data: "transactionId" },
             { title: "Member ID",         data: "memberId" },
@@ -280,20 +287,25 @@ if (typeof window.Penalty === "undefined") {
                 orderable: false,
                 render: (data, type, row) => {
                     if (row.status === "Pending") {
-                        return `
-                            <button class="btn btn-sm btn-warning me-2 mb-2 penalty-pay"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#penalty_pay_modal"
-                                    data-id="${row.penaltyId}"
-                                    data-amount="${row.amount}">
-                                <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
-                            </button>`;
-                    } else {
-                        return `
-                            <button class="btn btn-sm btn-dark me-2 mb-2" disabled>
-                                <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
-                            </button>`;
-                    }
+        return `
+            <button class="btn btn-sm btn-warning me-2 mb-2 penalty-pay"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Pay Penalty"
+                    data-bs-target="#penalty_pay_modal"
+                    data-id="${row.penaltyId}"
+                    data-amount="${row.amount}">
+                <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
+            </button>`;
+    } else {
+        return `
+            <button class="btn btn-sm btn-dark me-2 mb-2" disabled
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Already Paid">
+                <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
+            </button>`;
+    }
                 }
             });
         }

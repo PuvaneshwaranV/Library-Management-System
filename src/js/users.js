@@ -19,9 +19,11 @@ if (typeof window.UserManagement === "undefined") {
         updateCancelBtn:        "#update_cancel_btn",
 
         membershipModal:      "#membership_modal",
-        membershipEndDate:    "#membership_end_date",
+        // membershipEndDate:    "#membership_end_date",
         membershipStatus:     "#membership_status",
         membershipSaveBtn:    "#membership_save",
+        membershipEndDateStatus: "#membership_end_date_status",
+        calendarIconChange:     "#calendar_icon_change",
 
         // Tables / Modals
         userTable:              "#user_table",
@@ -39,6 +41,7 @@ if (typeof window.UserManagement === "undefined") {
         memberAddress:          "#member_address",
         mobileNumber:           "#mobile_number",
         membershipEndDate:      "#membership_end_date",
+        calendarIcon:           "#calendar_icon",
 
         // Update-form fields
         updateMemberId:         "#update_member_id",
@@ -99,25 +102,30 @@ if (typeof window.UserManagement === "undefined") {
         $(document).on("click", s.updateCalendarIcon, () => {
             if (this.updateEndDp) this.updateEndDp.show();
         });
+        $(document).on("click", s.calendarIcon, () => {
+        if (this.addEndDp) this.addEndDp.show();
+    });
+
+    // Membership-Status modal icon
+    $(document).on("click", s.calendarIconChange, () => {
+        if (this.statusEndDp) this.statusEndDp.show();
+    });
 
         $(s.memberModal).on("hidden.bs.modal", () => this.resetForm());
         $(s.updateMemberModal).on("hidden.bs.modal", () => this.cleanupUpdateModal());
         $('#membership_modal').on('shown.bs.modal', function () {
-    if (!window.membershipPicker) {
+    
         window.membershipPicker = new tempusDominus.TempusDominus(
-            document.getElementById('membership_end_date'),
-            {
-                display: {
-                    components: {
-                        calendar: true,
-                        date: true,
-                        month: true,
-                        year: true
-                    }
-                }
-            }
-        );
+    document.getElementById('membership_end_date'),
+    {
+        localization: { format: "yyyy-MM-dd" },
+        restrictions: { minDate: new tempusDominus.DateTime(new Date()) }, // 👈 future only
+        display: {
+            components: { calendar: true, date: true, month: true, year: true }
+        }
     }
+);
+    
 });
         // ----------  Add-modal widgets ----------
         // Phone input (region-aware)
@@ -127,9 +135,25 @@ if (typeof window.UserManagement === "undefined") {
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
         });
 
+        this.statusEndDp = new tempusDominus.TempusDominus(
+    document.getElementById("membership_end_date_status"),
+    {
+        localization: { format: "yyyy-MM-dd" },
+        restrictions: { minDate: new tempusDominus.DateTime(new Date()) },
+        display: {
+            components: {
+                calendar: true,
+                date: true,
+                month: true,
+                year: true,
+            },
+        },
+    }
+);
         // Tempus-Dominus date picker
         this.addEndDp = new tempusDominus.TempusDominus($(s.membershipEndDate)[0], {
             localization: { format: "yyyy-MM-dd" },
+            restrictions: { minDate: new tempusDominus.DateTime(new Date()) }, // 👈 allow today & future only
             display: { components: { calendar: true, date: true, month: true, year: true } }
         });
     };
@@ -222,6 +246,13 @@ if (typeof window.UserManagement === "undefined") {
                     lengthMenu: [10, 25, 50, 100],
                     language: { emptyTable: "No data found" },
                     columns: [
+                        {
+            title: "S.No",
+            data: null,                // no field from the data source
+            orderable: false,
+            searchable: false,
+            render: (data, type, row, meta) => meta.row + 1 // row index + 1
+            },
                         { title: "Member ID", data: "memberId" },
                         { title: "Member Name", data: "memberName" },
                         { title: "MemberShip Start Date", data: "memberShipStartDate" },
@@ -271,7 +302,6 @@ if (typeof window.UserManagement === "undefined") {
     const $el = $(el);
     const memberId = $el.data("id");
 
-    // Fetch member details first
     this.showLoader(true);
     $.ajax({
         url: `http://localhost:8080/LibraryManagementSystem/Members/getMemberById/${memberId}`,
@@ -281,13 +311,22 @@ if (typeof window.UserManagement === "undefined") {
             const m = res.object || {};
             this.showLoader(false);
 
-            // Fill modal fields
-            const endDate = (m.membershipEndDate || m.memberShipEndDate || "")
-                   .split("T")[0];   // trims to YYYY-MM-DD if ISO
-  $(s.membershipEndDate).val(endDate);
+            // extract ISO date only
+            const raw = m.memberShipEndDate || m.membershipEndDate || "";
+            const endDate = raw ? raw.split("T")[0] : "";
 
-  $(s.membershipStatus).val(m.membershipStatus || m.memberShipStatus || "");
-  $(s.membershipModal).data("member-id", memberId).modal("show");
+            // ✅ set value on the new field
+            $(s.membershipEndDateStatus).val(endDate);
+
+            // ✅ update the dedicated picker
+            if (this.statusEndDp && endDate) {
+                this.statusEndDp.dates.setValue(
+                    new tempusDominus.DateTime(endDate)
+                );
+            }
+
+            $(s.membershipStatus).val(m.membershipStatus || m.memberShipStatus || "");
+            $(s.membershipModal).data("member-id", memberId).modal("show");
         },
         error: () => {
             this.showLoader(false);
@@ -300,10 +339,11 @@ if (typeof window.UserManagement === "undefined") {
     });
 };
 
+
     this.saveMembershipUpdate = function () {
     const s = this.selectors;
     const memberId = $(s.membershipModal).data("member-id");
-    const endDate  = $(s.membershipEndDate).val().trim();
+    const endDate  = $(s.membershipEndDateStatus).val().trim(); // ✅ updated
     const status   = $(s.membershipStatus).val();
 
     if (!endDate) {
@@ -322,18 +362,13 @@ if (typeof window.UserManagement === "undefined") {
     this.showLoader(true);
     $.ajax({
         method: "PUT",
-        url: `http://localhost:8080/LibraryManagementSystem/Members/updateMemberStatus`,
-        contentType: "application/json",
-        data: JSON.stringify({
-            id: memberId,
-            endDate: endDate,
-            status: status
-        }),
+        url: `http://localhost:8080/LibraryManagementSystem/Members/updateMemberStatus?id=${memberId}&membershipEndDate=${endDate}&status=${status}`,
+        dataType: "json",
         success: () => {
             this.showLoader(false);
             $(s.membershipModal).modal("hide");
             Swal.fire("Updated!", "Membership updated successfully.", "success");
-            $(this.selectors.applyFiltersBtn).click(); // refresh table
+            $(this.selectors.applyFiltersBtn).click();
         },
         error: () => {
             this.showLoader(false);
@@ -341,6 +376,7 @@ if (typeof window.UserManagement === "undefined") {
         }
     });
 };
+
 
     // ---------- 6️⃣  Add Member ----------
     this.addMember = function () {
@@ -469,7 +505,7 @@ if (typeof window.UserManagement === "undefined") {
                     this.updateMobileIti.setNumber(num);
                 }
 
-                if (this.updateEndDp && this.updateEndDp.dispose) this.updateEndDp.dispose();
+                // if (this.updateEndDp && this.updateEndDp.dispose) this.updateEndDp.dispose();
                 const minDt = m.memberShipEndDate ? new tempusDominus.DateTime(m.memberShipEndDate) : new Date();
                 this.updateEndDp = new tempusDominus.TempusDominus($(s.updateMembershipEnd)[0], {
                     localization: { format: "yyyy-MM-dd" },

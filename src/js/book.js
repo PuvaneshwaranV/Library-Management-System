@@ -134,6 +134,13 @@ const selectors = {
             lengthMenu: [10, 25, 50, 100],
             language: { emptyTable: "No data found" },
             columns: [
+              {
+            title: "S.No",
+            data: null,                // no field from the data source
+            orderable: false,
+            searchable: false,
+            render: (data, type, row, meta) => meta.row + 1 // row index + 1
+            },
               { title: "Book ID", data: "bookId" },
               { title: "Title", data: "title" },
               { title: "Language", data: "language" },

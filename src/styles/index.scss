@@ -29,11 +29,13 @@ td,th{
   transition: all 0.3s ease;
 background-color:$primary;
   ul {
+    margin-top:50px !important;
     li {
       i {
         color: $secondary;
       }
       a {
+        font-size:20px;
         border-radius: 0;
         background-color: $primary;
         color: #d1d5db;
@@ -65,7 +67,7 @@ background-color:$primary;
 }
 
 #logout{
-  margin-top:350px;
+  margin-top:300px;
 }
 //..........................main body
 #main_body{
