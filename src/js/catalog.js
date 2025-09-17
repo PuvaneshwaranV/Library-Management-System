@@ -1,422 +1,453 @@
 /* ===================== Rental Transactions ===================== */
-
 if (typeof window.RentalTransaction === "undefined") {
     window.RentalTransaction = function () {
 
-    /* ---------- CENTRAL SELECTORS ---------- */
-    const selectors = {
-        loader:            "#loader",
-        table:             "#user_table",
+        /* ---------- CENTRAL SELECTORS ---------- */
+        const s = {
+            loader:            "#loader",
+            table:             "#user_table",
 
-        // Filter
-        applyFiltersBtn:   "#apply_rental_filters",
-        resetFiltersBtn:   "#reset_rental_filters",
-        filterLength:      "#rental_length",
-        filterStatus:      "#rental_status",
-        filterType:        "#rental_filter_type",
-        filterValue:       "#rental_filter_value",
-        filters:           ".filters",
+            // Filters
+            applyFiltersBtn:   "#apply_rental_filters",
+            resetFiltersBtn:   "#reset_rental_filters",
+            filterLength:      "#rental_length",
+            filterStatus:      "#rental_status",
+            filterType:        "#rental_filter_type",
+            filterValue:       "#rental_filter_value",
+            filters:           ".filters",
 
-        // Borrow
-        booksContainer:    "#books_container",
-        addBookBtn:        "#add_book_btn",
-        borrowCancel:      "#cancel",
-        borrowSubmit:      "#add_btn",
-        borrowForm:        "#borrow_form",
-        memberId:          "#member_id",
-        memberIdError:     "#member_id_error",
+            // Borrow
+            booksContainer:    "#books_container",
+            addBookBtn:        "#add_book_btn",
+            borrowCancel:      "#cancel",
+            borrowSubmit:      "#add_btn",
+            borrowForm:        "#borrow_form",
+            memberId:          "#member_id",
+            memberIdError:     "#member_id_error",
+            borrowModal:       "#borrow_modal",
+            calendarIcon:      ".due_date_calendar_icon",          // <-- icon in borrow modal
 
-        // Return
-        addReturnGroup:    "#add_group",
-        bookGroups:        "#book_groups",
-        returnCancel:      "#return_cancel",
-        returnBtn:         "#return_btn",
+            // Return
+            addReturnGroup:    "#add_group",
+            bookGroups:        "#book_groups",
+            returnCancel:      "#return_cancel",
+            returnBtn:         "#return_btn",
 
-        // Update
-        updateRentalModal: "#update_rental_modal",
-        updateTransaction: "#update_transactionId",
-        updateBookId:      "#update_bookId",
-        updateQuantity:    "#update_quantity",
-        updateRentalBtn:   "#update_rental_btn",
+            // Update
+            updateRentalModal: "#update_rental_modal",
+            updateTransaction: "#update_transactionId",
+            updateBookId:      "#update_bookId",
+            updateQuantity:    "#update_quantity",
+            updateRentalBtn:   "#update_rental_btn",
+            updateDueInput:    "#update_due_date",                 // <-- input in update modal
+            updateCalendarIcon: ".update_due_date_calendar_icon",   // <-- icon in update modal
 
-        // PDF
-        pdfBtn:            "#transaction_pdf",
+            // PDF
+            pdfBtn:            "#transaction_pdf"
+        };
 
-        // Borrow Modal
-        borrowModal:       "#borrow_modal"
-    };
+        const apiBase = "http://localhost:8080/LibraryManagementSystem/RentalTransactions";
 
-    const apiBase = "http://localhost:8080/LibraryManagementSystem/RentalTransactions";
+        // ===== Tempus Dominus pickers =====
+        this.addDueDp    = null;   // for borrow modal
+        this.updateDueDp = null;   // for update modal
 
-    /* ---------- INIT ---------- */
-    this.init = function () {
-        this.bindFilterHandlers();
-        this.bindBorrowHandlers();
-        this.bindReturnHandlers();
-        this.bindUpdateHandlers();
-        this.bindPDFHandler();
-    };
+        /* ---------- INIT ---------- */
+        this.init = function () {
+            this.bindFilterHandlers();
+            this.bindBorrowHandlers();
+            this.bindReturnHandlers();
+            this.bindUpdateHandlers();
+            this.bindPDFHandler();
+            this.bindDatePickers();
+        };
 
-    /* ---------- FILTER / TABLE ---------- */
-    this.bindFilterHandlers = function () {
-        $(selectors.applyFiltersBtn).off("click").on("click", () => this.applyFilters());
-        $(selectors.resetFiltersBtn).off("click").on("click", () => this.resetFilters());
-        $(selectors.filters).off("change").on("change", () => this.toggleFilters());
-        $(selectors.filterType).off("change").on("change", () => this.toggleFilterInput());
-        $(selectors.filterValue).off("input").on("input", () => this.changeFilterInput());
-    };
+        /* ---------- FILTER / TABLE ---------- */
+        this.bindFilterHandlers = function () {
+            $(s.applyFiltersBtn).off("click").on("click", () => this.applyFilters());
+            $(s.resetFiltersBtn).off("click").on("click", () => this.resetFilters());
+            $(s.filters).off("change").on("change", () => this.toggleFilters());
+            $(s.filterType).off("change").on("change", () => this.toggleFilterInput());
+            $(s.filterValue).off("input").on("input", () => this.changeFilterInput());
+        };
 
-    this.toggleFilterInput = function () {
-        const selected = $(selectors.filterType).val();
-        // if ($.fn.DataTable.isDataTable(s.userTable)) {
-        //     $(s.userTable).DataTable().clear().destroy();
-        //     $(s.userTable).hide();
-        // }
-       // enable input if user picked anything other than "all"
-        if (selected && selected.toLowerCase() !== "all") {
-            $(selectors.filterValue).prop("disabled", false);
-        } else {
-            $(selectors.filterValue).prop("disabled", true).val("");  // also clear value
-        }
-    };
+        this.toggleFilterInput = function () {
+            const selected = $(s.filterType).val();
+            if (selected && selected.toLowerCase() !== "all") {
+                $(s.filterValue).prop("disabled", false);
+            } else {
+                $(s.filterValue).prop("disabled", true).val("");
+            }
+        };
+        this.changeFilterInput = function () {
+            if ($.fn.DataTable.isDataTable(s.table)) {
+                $(s.table).DataTable().clear().destroy();
+                $(s.table).hide();
+            }
+        };
+        this.toggleFilters = function () {
+            if ($.fn.DataTable.isDataTable(s.table)) {
+                $(s.table).DataTable().clear().destroy();
+                $(s.table).hide();
+            }
+        };
 
-    this.changeFilterInput = function(){
-        if ($.fn.DataTable.isDataTable(selectors.table)) {
-            $(selectors.table).DataTable().clear().destroy();
-            $(selectors.table).hide();
-        }
-    }
-    
-    this.toggleFilters = function(){
-        if ($.fn.DataTable.isDataTable(selectors.table)) {
-            $(selectors.table).DataTable().clear().destroy();
-            $(selectors.table).hide();
-        }
-    }
-
-    this.applyFilters = function () {
-        $(selectors.loader).show();
-        $(selectors.table).hide();
-
-        const length  = $(selectors.filterLength).val();
-        const status  = $(selectors.filterStatus).val();
-        const column  = $(selectors.filterType).val().trim();
-        const value   = $(selectors.filterValue).val().trim();
-        const params  = this.buildFilterParams(length, status, column, value);
-
-        $.ajax({
-            url: `${apiBase}/getAllTransactions`,
-            method: "GET",
-            data: params,
-            dataType: "json",
-            success: res => this.populateTable(res.object?.data || []),
-            error: () => this.populateTable([])
-        });
-    };
-
-    this.buildFilterParams = function (length, status, col, field) {
-        const base = { start: 0, length, order: "asec" };
-        if (status !== "all") base.bookRentalStatus = status;
-        if (col !== "all") { base.searchColumn = col; base.searchField = field; }
-        return base;
-    };
-
-    this.populateTable = function (data) {
-        if ($.fn.DataTable.isDataTable(selectors.table)) {
-            $(selectors.table).DataTable().destroy();
-        }
-        $(selectors.table).DataTable({
-            data,
-            sort: false,
-            destroy: true,
-            dom: '<"top"lp>t<"bottom"ip>',
-            lengthMenu: [10, 25, 50, 100],
-            language: { emptyTable: "No data found" },
-            columns: [
-                {
-            title: "S.No",
-            data: null,                // no field from the data source
-            orderable: false,
-            searchable: false,
-            render: (data, type, row, meta) => meta.row + 1 // row index + 1
-            },
-                { title: "Transaction ID", data: "transactionId" },
-                { title: "Member Id",      data: "memberId" },
-                { title: "Book Id",        data: "bookId" },
-                { title: "Book Title",     data: "bookTittle" },
-                { title: "Quantity",       data: "quantity" },
-                { title: "Returned Qty",   data: "bookReturnedQuantity" },
-                { title: "Borrowed Date",  data: "borrowedDate" },
-                { title: "Return Due",     data: "returnDueDate" },
-                { title: "Actual Return",  data: "actualReturnedDate" },
-                {
-                    title: "Status",
-                    data: "bookRentalStatus",
-                    render: (d, t, row) =>
-                        `<p class="${row.bookRentalStatus === "Returned" ? "bg-success" : "bg-danger"} rounded-5 text-white mb-0 px-2">${row.bookRentalStatus}</p>`
-                },
-                {
-                    title: "Actions",
-                    data: null,
-                    orderable: false,
-                    render: (d, t, row) =>
-                        row.bookRentalStatus === "Borrowed"
-                            ? `<button class="btn btn-sm btn-warning update-rental"
-                                   data-id="${row.transactionId}"
-                                   data-bookid="${row.bookId}"
-                                   data-quantity="${row.quantity}">
-                                   <i class="fa-solid fa-pen-to-square text-white"></i>
-                               </button>`
-                            : `<button class="btn btn-sm btn-secondary" disabled>
-                                   <i class="fa-solid fa-pen-to-square text-white"></i>
-                               </button>`
-                }
-            ]
-        });
-        $(selectors.loader).hide();
-        $(selectors.table).show();
-    };
-
-    this.resetFilters = function () {
-        $(selectors.filterType).val("all");
-        $(selectors.filterValue).val("");
-        $(selectors.filterStatus).val("all");
-        $(selectors.filterLength).val("10");
-
-        if ($.fn.DataTable.isDataTable(selectors.table)) {
-            $(selectors.table).DataTable().clear().destroy();
-            $(selectors.table).hide();
-        }
-    };
-
-    /* ---------- BORROW ---------- */
-    this.bindBorrowHandlers = function () {
-        const container = document.querySelector(selectors.booksContainer);
-        const updateRemoveButtons = () => {
-            container.querySelectorAll(".book-entry").forEach((e, i) =>
-                e.querySelector(".remove-book-btn").style.display = i === 0 ? "none" : "block"
+        this.applyFilters = function () {
+            $(s.loader).show();
+            $(s.table).hide();
+            const params = this.buildFilterParams(
+                $(s.filterLength).val(),
+                $(s.filterStatus).val(),
+                $(s.filterType).val().trim(),
+                $(s.filterValue).val().trim()
             );
-        };
-
-        $(selectors.addBookBtn).on("click", () => {
-            const entry = $(`
-                <div class="book-entry mb-3 border p-3 rounded position-relative">
-                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn">✖</button>
-                    <input type="text" class="form-control mb-2" placeholder="Book Id" name="book_id"/>
-                    <div class="text-danger small error_book_id"></div>
-                    <input type="text" class="form-control mb-2" placeholder="Quantity" name="quantity"/>
-                    <div class="text-danger small error_quantity"></div>
-                    <input type="text" class="form-control mb-2" placeholder="YYYY-MM-DD" name="due_date"/>
-                    <div class="text-danger small error_due_date"></div>
-                </div>`);
-            entry.find(".remove-book-btn").on("click", () => entry.remove());
-            $(container).append(entry);
-            updateRemoveButtons();
-        });
-
-        $(selectors.borrowCancel).on("click", () => this.resetBorrowModal(container, updateRemoveButtons));
-
-        $(selectors.borrowSubmit).on("click", () => {
-            if (!this.validateBorrow(container)) return;
-            const payload = this.collectBorrowData(container);
-            this.ajaxBorrow(payload, container, updateRemoveButtons);
-        });
-
-        updateRemoveButtons();
-    };
-
-    this.resetBorrowModal = function (container, updater) {
-        $(selectors.borrowForm)[0].reset();
-        container.innerHTML = "";
-        $(selectors.addBookBtn).trigger("click");
-        updater();
-    };
-
-    this.validateBorrow = function (container) {
-        let valid = true;
-        $(".text-danger.small").text("");
-
-        if (!$(selectors.memberId).val().trim()) {
-            $(selectors.memberIdError).text("Member ID is required.");
-            valid = false;
-        }
-
-        container.querySelectorAll(".book-entry").forEach(entry => {
-            const id  = entry.querySelector('[name="book_id"]');
-            const qty = entry.querySelector('[name="quantity"]');
-            const due = entry.querySelector('[name="due_date"]');
-
-            if (!id.value.trim())  { entry.querySelector(".error_book_id").textContent = "Book ID is required."; valid = false; }
-            if (!qty.value.trim()) { entry.querySelector(".error_quantity").textContent = "Quantity is required."; valid = false; }
-            if (!due.value.trim()) { entry.querySelector(".error_due_date").textContent = "Due date is required."; valid = false; }
-        });
-        return valid;
-    };
-
-    this.collectBorrowData = function (container) {
-        const books = [];
-        container.querySelectorAll(".book-entry").forEach(entry => {
-            books.push({
-                bookId: parseInt(entry.querySelector('[name="book_id"]').value, 10),
-                quantity: parseInt(entry.querySelector('[name="quantity"]').value, 10),
-                returnDueDate: entry.querySelector('[name="due_date"]').value
+            $.ajax({
+                url: `${apiBase}/getAllTransactions`,
+                method: "GET",
+                data: params,
+                dataType: "json",
+                success: res => this.populateTable(res.object?.data || []),
+                error:   () => this.populateTable([])
             });
-        });
-        return {
-            memberId: parseInt($(selectors.memberId).val().trim(), 10),
-            books
-        };
-    };
-
-    this.ajaxBorrow = function (payload, container, updater) {
-        $(selectors.loader).show();
-        $.ajax({
-            url: `${apiBase}/borrowBooks`,
-            type: "POST",
-            data: JSON.stringify(payload),
-            contentType: "application/json",
-            success: (res) => {
-                $(selectors.loader).hide();
-                $(selectors.borrowModal).modal("hide");
-                this.resetBorrowModal(container, updater);
-                Swal.fire({ icon: "success", title: "Borrowed", text: `✅ ${res.object}`, timer: 2000, showConfirmButton: false })
-                    .then(() => $(selectors.applyFiltersBtn).click());
-            },
-            error: (xhr) => this.showAjaxError(xhr)
-        });
-    };
-
-    /* ---------- RETURN ---------- */
-    this.bindReturnHandlers = function () {
-        const resetReturnModal = () => {
-            const first = $(".book-group").first().clone();
-            $(selectors.bookGroups).html(first);
-            $(`${selectors.bookGroups} .book-group input`).val("");
-            $(`${selectors.bookGroups} .remove-group`).hide();
-            $(`${selectors.bookGroups} .text-danger`).text("");
         };
 
-        $(selectors.addReturnGroup).on("click", () => {
-            const g = $(".book-group").first().clone();
-            g.find("input").val("");
-            g.find(".text-danger").text("");
-            g.find(".remove-group").show();
-            $(selectors.bookGroups).append(g);
-        });
+        this.buildFilterParams = function (length, status, col, field) {
+            const base = { start: 0, length, order: "asec" };
+            if (status !== "all") base.bookRentalStatus = status;
+            if (col !== "all") { base.searchColumn = col; base.searchField = field; }
+            return base;
+        };
 
-        $(document).on("click", ".remove-group", function () {
-            $(this).closest(".book-group").remove();
-        });
+        this.populateTable = function (data) {
+            if ($.fn.DataTable.isDataTable(s.table)) {
+                $(s.table).DataTable().destroy();
+            }
+            $(s.table).DataTable({
+                data,
+                sort: false,
+                destroy: true,
+                dom: '<"top"lp>t<"bottom"ip>',
+                lengthMenu: [10, 25, 50, 100],
+                language: { emptyTable: "No data found" },
+                columns: [
+                    { title: "S.No", data: null, orderable: false,
+                      render: (d, t, r, m) => m.row + 1 },
+                    { title: "Transaction ID", data: "transactionId" },
+                    { title: "Member Id",      data: "memberId" },
+                    { title: "Book Id",        data: "bookId" },
+                    { title: "Book Title",     data: "bookTittle" },
+                    { title: "Quantity",       data: "quantity" },
+                    { title: "Returned Qty",   data: "bookReturnedQuantity" },
+                    { title: "Borrowed Date",  data: "borrowedDate" },
+                    { title: "Return Due Date",data: "returnDueDate" },
+                    { title: "Actual Return Date", data: "actualReturnedDate" },
+                    {
+                        title: "Status",
+                        data: "bookRentalStatus",
+                        render: (d,t,row) =>
+                            `<p class="${row.bookRentalStatus === "Returned"
+                                        ? "bg-success"
+                                        : "bg-danger"} rounded-5 text-white mb-0 px-2">
+                              ${row.bookRentalStatus}</p>`
+                    },
+                    {
+                        title: "Actions",
+                        data: null,
+                        orderable: false,
+                        render: (d,t,row) =>
+                            row.bookRentalStatus === "Borrowed"
+                                ? `<button class="btn btn-sm btn-warning update-rental"
+                                        data-bs-toggle="tooltip"
+                                       data-id="${row.transactionId}"
+                                       data-bookid="${row.bookId}"
+                                       data-quantity="${row.quantity}" title="Return Book">
+                                       <i class="fa-solid fa-pen-to-square text-white"></i>
+                                   </button>`
+                                : `<span data-bs-toggle="tooltip" title="Already Returned"><button class="btn btn-sm btn-secondary" disabled>
+                                       <i class="fa-solid fa-pen-to-square text-white"></i>
+                                   </button></span>`
+                    }
+                ],
+                drawCallback: () => {
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                        if (!bootstrap.Tooltip.getInstance(el)) new bootstrap.Tooltip(el);
+                    });
+                }
+            });
+            $(s.loader).hide();
+            $(s.table).show();
+        };
 
-        $(selectors.returnCancel).on("click", () => {
-            resetReturnModal();
-            $("#return_modal").modal("hide");
-        });
+        this.resetFilters = function () {
+            $(s.filterType).val("all");
+            $(s.filterValue).val("");
+            $(s.filterStatus).val("all");
+            $(s.filterLength).val("10");
+            if ($.fn.DataTable.isDataTable(s.table)) {
+                $(s.table).DataTable().clear().destroy();
+                $(s.table).hide();
+            }
+        };
 
-        $(selectors.returnBtn).on("click", () => {
-            const books = [];
+        /* ---------- BORROW ---------- */
+        this.bindBorrowHandlers = function () {
+            const container = document.querySelector(s.booksContainer);
+            const updateRemoveButtons = () => {
+                container.querySelectorAll(".book-entry").forEach((e, i) =>
+                    e.querySelector(".remove-book-btn").style.display = i === 0 ? "none" : "block"
+                );
+            };
+
+            $(s.addBookBtn).on("click", () => {
+                const entry = $(`
+                    <div class="book-entry mb-3 border p-3 rounded position-relative">
+                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn">✖</button>
+                        <input type="text" class="form-control mb-2" placeholder="Book Id" name="book_id"/>
+                        <div class="text-danger small error_book_id"></div>
+                        <input type="number" class="form-control mb-2" placeholder="Quantity" name="quantity"/>
+                        <div class="text-danger small error_quantity"></div>
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control due_date border-end-0" placeholder="YYYY-MM-DD" name="due_date"/>
+                            <span class="input-group-text border border-black border-start-0">
+                                <i class="fa fa-calendar update_due_date_calendar_icon" style="color:#1e3a8a;cursor:pointer"></i>
+                            </span>
+                        </div>
+                        <div class="text-danger small error_due_date"></div>
+                    </div>`);
+                entry.find(".remove-book-btn").on("click", () => entry.remove());
+
+                const dateInput = entry.find(".due_date")[0];
+                new tempusDominus.TempusDominus(dateInput, {
+                    localization: { format: "yyyy-MM-dd" },
+                    restrictions: { minDate: new tempusDominus.DateTime(new Date()) },
+                    display: { components: { calendar: true, date: true, month: true, year: true } }
+                });
+
+                entry.find(".due_date").inputmask("9999-99-99");
+                $(container).append(entry);
+                updateRemoveButtons();
+            });
+
+            $(s.borrowCancel).on("click", () => this.resetBorrowModal(container, updateRemoveButtons));
+            $(s.borrowSubmit).on("click", () => {
+                if (!this.validateBorrow(container)) return;
+                const payload = this.collectBorrowData(container);
+                this.ajaxBorrow(payload, container, updateRemoveButtons);
+            });
+
+            updateRemoveButtons();
+        };
+
+        this.resetBorrowModal = function (container, updater) {
+            $(s.borrowForm)[0].reset();
+            container.innerHTML = "";
+            $(s.addBookBtn).trigger("click");
+            updater();
+        };
+
+        this.validateBorrow = function (container) {
             let valid = true;
+            $(".text-danger.small").text("");
+            if (!$(s.memberId).val().trim()) {
+                $(s.memberIdError).text("Member ID is required.");
+                valid = false;
+            }
+            container.querySelectorAll(".book-entry").forEach(entry => {
+                const id  = entry.querySelector('[name="book_id"]');
+                const qty = entry.querySelector('[name="quantity"]');
+                const due = entry.querySelector('[name="due_date"]');
+                if (!id.value.trim())  { entry.querySelector(".error_book_id").textContent = "Book ID is required."; valid = false; }
+                if (!qty.value.trim()) { entry.querySelector(".error_quantity").textContent = "Quantity is required."; valid = false; }
+                if (!due.value.trim()) { entry.querySelector(".error_due_date").textContent = "Due date is required."; valid = false; }
+            });
+            return valid;
+        };
 
-            $(`${selectors.bookGroups} .book-group`).each(function () {
-                const id   = $(this).find(".book-id").val().trim();
-                const qty  = $(this).find(".quantity").val().trim();
-                const trans= $(this).find(".transaction-id").val().trim();
+        this.collectBorrowData = function (container) {
+            const books = [];
+            container.querySelectorAll(".book-entry").forEach(entry => {
+                books.push({
+                    bookId: +entry.querySelector('[name="book_id"]').value,
+                    quantity: +entry.querySelector('[name="quantity"]').value,
+                    returnDueDate: entry.querySelector('[name="due_date"]').value
+                });
+            });
+            return {
+                memberId: +$(s.memberId).val().trim(),
+                books
+            };
+        };
 
-                $(this).find(".text-danger").text("");
+        this.ajaxBorrow = function (payload, container, updater) {
+            $(s.loader).show();
+            $.ajax({
+                url: `${apiBase}/borrowBooks`,
+                type: "POST",
+                data: JSON.stringify(payload),
+                contentType: "application/json",
+                success: (res) => {
+                    $(s.loader).hide();
+                    $(s.borrowModal).modal("hide");
+                    this.resetBorrowModal(container, updater);
+                    Swal.fire({ icon: "success", title: "Borrowed", text: `✅ ${res.object}`, timer: 2000, showConfirmButton: false })
+                        .then(() => $(s.applyFiltersBtn).click());
+                },
+                error: (xhr) => this.showAjaxError(xhr)
+            });
+        };
 
-                if (!id)  { $(this).find(".error-book-id").text("Book ID is required"); valid = false; }
-                if (!qty || isNaN(qty) || qty <= 0) { $(this).find(".error-quantity").text("Quantity must be a positive number"); valid = false; }
-                if (!trans){ $(this).find(".error-transaction-id").text("Transaction ID is required"); valid = false; }
+        /* ---------- RETURN ---------- */
+        this.bindReturnHandlers = function () {
+            const resetReturnModal = () => {
+                const first = $(".book-group").first().clone();
+                $(s.bookGroups).html(first);
+                $(`${s.bookGroups} .book-group input`).val("");
+                $(`${s.bookGroups} .remove-group`).hide();
+                $(`${s.bookGroups} .text-danger`).text("");
+            };
 
-                if (valid && id && qty && trans) {
-                    books.push({ bookId: +id, quantity: +qty, transactionId: +trans });
+            $(s.addReturnGroup).on("click", () => {
+                const g = $(".book-group").first().clone();
+                g.find("input").val("");
+                g.find(".text-danger").text("");
+                g.find(".remove-group").show();
+                $(s.bookGroups).append(g);
+            });
+
+            $(document).on("click", ".remove-group", function () {
+                $(this).closest(".book-group").remove();
+            });
+
+            $(s.returnCancel).on("click", () => {
+                resetReturnModal();
+                $("#return_modal").modal("hide");
+            });
+
+            $(s.returnBtn).on("click", () => {
+                const books = [];
+                let valid = true;
+                $(`${s.bookGroups} .book-group`).each(function () {
+                    const id   = $(this).find(".book-id").val().trim();
+                    const qty  = $(this).find(".quantity").val().trim();
+                    const trans= $(this).find(".transaction-id").val().trim();
+                    $(this).find(".text-danger").text("");
+                    if (!id)  { $(this).find(".error-book-id").text("Book ID is required"); valid = false; }
+                    if (!qty || isNaN(qty) || qty <= 0) { $(this).find(".error-quantity").text("Quantity must be positive"); valid = false; }
+                    if (!trans){ $(this).find(".error-transaction-id").text("Transaction ID is required"); valid = false; }
+                    if (valid && id && qty && trans) books.push({ bookId: +id, quantity: +qty, transactionId: +trans });
+                });
+                if (!valid) return;
+                $(s.loader).show();
+                $.ajax({
+                    url: `${apiBase}/returnBooks`,
+                    type: "POST",
+                    data: JSON.stringify(books),
+                    contentType: "application/json",
+                    success: (res) => {
+                        $(s.loader).hide();
+                        resetReturnModal();
+                        $("#return_modal").modal("hide");
+                        Swal.fire({ icon: "success", title: "Returned", text: `✅ Books Returned Successfully`, timer: 4000, showConfirmButton: false })
+                            .then(() => $(s.applyFiltersBtn).click());
+                    },
+                    error: (xhr) => this.showAjaxError(xhr)
+                });
+            });
+        };
+
+        /* ---------- UPDATE ---------- */
+        this.bindUpdateHandlers = function () {
+            $(document).on("click", ".update-rental", function () {
+                $(s.updateTransaction).val($(this).data("id"));
+                $(s.updateBookId).val($(this).data("bookid"));
+                $(s.updateQuantity).val($(this).data("quantity"));
+                $(s.updateRentalModal).modal("show");
+            });
+
+            $(s.updateRentalBtn).on("click", () => {
+                const params = [{
+                    transactionId: +$(s.updateTransaction).val(),
+                    bookId: +$(s.updateBookId).val(),
+                    quantity: +$(s.updateQuantity).val().trim()
+                }];
+                $(s.loader).show();
+                $.ajax({
+                    url: `${apiBase}/returnBooks`,
+                    method: "POST",
+                    data: JSON.stringify(params),
+                    contentType: "application/json",
+                    success: () => {
+                        $(s.loader).hide();
+                        $(s.updateRentalModal).modal("hide");
+                        Swal.fire({ icon: "success", title: "Returned", text: "✅ Book Returned Successfully", timer: 2000, showConfirmButton: false })
+                            .then(() => $(s.applyFiltersBtn).click());
+                    },
+                    error: (xhr) => this.showAjaxError(xhr)
+                });
+            });
+        };
+
+        /* ---------- Tempus Dominus delegated handlers ---------- */
+        this.bindDatePickers = function () {
+            // create default picker when borrow modal is shown
+            $(document).on("shown.bs.modal", s.borrowModal, () => {
+                const addInput = document.querySelector("#books_container .due_date");
+                if (addInput && !this.addDueDp) {
+                    this.addDueDp = new tempusDominus.TempusDominus(addInput, {
+                        localization: { format: "yyyy-MM-dd" },
+                        restrictions: { minDate: new tempusDominus.DateTime(new Date()) }
+                    });
                 }
             });
 
-            if (!valid) return;
-            $(selectors.loader).show();
-            $.ajax({
-                url: `${apiBase}/returnBooks`,
-                type: "POST",
-                data: JSON.stringify(books),
-                contentType: "application/json",
-                success: (res) => {
-                    $(selectors.loader).hide();
-                    resetReturnModal();
-                    $("#return_modal").modal("hide");
-                    Swal.fire({ icon: "success", title: "Returned", text: `✅ ${res.object}`, timer: 4000, showConfirmButton: false })
-                        .then(() => $(selectors.applyFiltersBtn).click());
-                },
-                error: (xhr) => this.showAjaxError(xhr)
+            // create update picker when update modal is shown
+            $(document).on("shown.bs.modal", s.updateRentalModal, () => {
+                const updInput = document.querySelector(s.updateDueInput);
+                if (updInput && !this.updateDueDp) {
+                    this.updateDueDp = new tempusDominus.TempusDominus(updInput, {
+                        localization: { format: "yyyy-MM-dd" },
+                        restrictions: { minDate: new tempusDominus.DateTime(new Date()) }
+                    });
+                }
             });
-        });
-    };
 
-    /* ---------- UPDATE ---------- */
-    this.bindUpdateHandlers = function () {
-        $(document).on("click", ".update-rental", function () {
-            $(selectors.updateTransaction).val($(this).data("id"));
-            $(selectors.updateBookId).val($(this).data("bookid"));
-            $(selectors.updateQuantity).val($(this).data("quantity"));
-            $(selectors.updateRentalModal).modal("show");
-        });
-
-        $(selectors.updateRentalBtn).on("click", () => {
-            const params = [{
-                transactionId: +$(selectors.updateTransaction).val(),
-                bookId: +$(selectors.updateBookId).val(),
-                quantity: +$(selectors.updateQuantity).val().trim()
-            }];
-
-            $(selectors.loader).show();
-            $.ajax({
-                url: `${apiBase}/returnBooks`,
-                method: "POST",
-                data: JSON.stringify(params),
-                contentType: "application/json",
-                success: () => {
-                    $(selectors.loader).hide();
-                    $(selectors.updateRentalModal).modal("hide");
-                    Swal.fire({ icon: "success", title: "Returned", text: "✅ Book Returned Successfully", timer: 2000, showConfirmButton: false })
-                        .then(() => $(selectors.applyFiltersBtn).click());
-                },
-                error: (xhr) => this.showAjaxError(xhr)
+            // delegated icon clicks
+            $(document).on("click", s.calendarIcon, () => {
+                if (this.addDueDp) this.addDueDp.show();
             });
-        });
-    };
-
-    /* ---------- PDF ---------- */
-    this.bindPDFHandler = function () {
-        $(selectors.pdfBtn).on("click", () => {
-            $(selectors.loader).show();
-            $.ajax({
-                url: `${apiBase}/getTransactionPDF`,
-                type: "GET",
-                dataType: "json",
-                success: (res) => {
-                    $(selectors.loader).hide();
-                    Swal.fire({ icon: "success", title: "Generated", text: `✅ ${res.object}`, timer: 2000, showConfirmButton: false });
-                },
-                error: (xhr) => this.showAjaxError(xhr)
+            $(document).on("click", s.updateCalendarIcon, () => {
+                if (this.updateDueDp) this.updateDueDp.show();
             });
-        });
-    };
+        };
 
-    /* ---------- COMMON ERROR ---------- */
-    this.showAjaxError = function (xhr) {
-        $(selectors.loader).hide();
-        let msg = "Something went wrong.";
-        if (xhr.responseJSON) {
-            msg = xhr.responseJSON.message || msg;
-            if (xhr.responseJSON.object) msg = Object.values(xhr.responseJSON.object).join("\n");
-        }
-        Swal.fire({ icon: "error", title: "Oops...", text: `❌ ${msg}`, timer: 2000, showConfirmButton: false });
+        /* ---------- PDF ---------- */
+        this.bindPDFHandler = function () {
+            $(s.pdfBtn).on("click", () => {
+                $(s.loader).show();
+                $.ajax({
+                    url: `${apiBase}/getTransactionPDF`,
+                    type: "GET",
+                    dataType: "json",
+                    success: (res) => {
+                        $(s.loader).hide();
+                        Swal.fire({ icon: "success", title: "Generated", text: `✅ ${res.object}`, timer: 2000, showConfirmButton: false });
+                    },
+                    error: (xhr) => this.showAjaxError(xhr)
+                });
+            });
+        };
+
+        /* ---------- Helper ---------- */
+        this.showAjaxError = function (xhr) {
+            $(s.loader).hide();
+            const msg = xhr?.responseJSON?.object || "Unexpected error";
+            Swal.fire({ icon: "error", title: "Error", text: `❌ ${msg}`, confirmButtonColor: "#3085d6" });
+        };
     };
-};
 }
 
-/* ===== Kick-off ===== */
+/* ---------- INITIALIZE ---------- */
 $(document).ready(function () {
-    const rental = new RentalTransaction();
-    rental.init();
+    window.RentalTransactionInstance = new window.RentalTransaction();
+    window.RentalTransactionInstance.init();
 });

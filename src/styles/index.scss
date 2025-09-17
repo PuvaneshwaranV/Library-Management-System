@@ -65,7 +65,17 @@ background-color:$primary;
     margin-left: -200px;
   }
 }
+.swal2-title,
+.swal2-html-container {
+  
+   word-spacing: 5px !important; 
+}
 
+input:disabled:hover,
+select:disabled:hover,
+textarea:disabled:hover {
+  cursor: not-allowed;        /* standard ⃠ symbol */
+}
 #logout{
   margin-top:300px;
 }
@@ -109,7 +119,7 @@ background-color:$primary;
   transform: scale(1.1);
   }
 }
-input[type=text]{
+input[type=text],input[type=number]{
   border:1px solid $primary;
   &:focus{
     border-color:$primary;

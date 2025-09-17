@@ -50,19 +50,28 @@
               <div class="text-danger small error_book_id"></div>
 
               <input
-                type="text"
+                type="number"
                 class="form-control mb-2"
                 placeholder="Quantity"
                 name="quantity"
               />
               <div class="text-danger small error_quantity"></div>
-
+              <div class="input-group  mb-2">
               <input
                 type="text"
-                class="form-control mb-2"
+                class="form-control due_date border-1 border-black border-end-0"
                 placeholder="YYYY-MM-DD"
-                name="due_date"
+                name="due_date" 
               />
+              <span
+                    class="input-group-text border-1 border-black border-start-0"
+                    
+                    ><i
+                      class="fa fa-calendar due_date_calendar_icon"
+                      
+                      style="color: #1e3a8a; cursor: pointer"
+                    ></i
+                  ></span></div>
               <div class="text-danger small error_due_date"></div>
             </div>
           </div>
@@ -114,7 +123,7 @@
             <input type="text" class="form-control" id="update_bookId" placeholder="Book ID" disabled />
           </div>
           <div class="mb-3">
-            <input type="text" class="form-control" id="update_quantity" placeholder="Quantity" />
+            <input type="number" class="form-control" id="update_quantity" placeholder="Quantity" />
           </div>
           <div class="row">
             <div class="col-6">
@@ -162,7 +171,7 @@
         <div class="text-danger small error-book-id"></div>
       </div>
       <div class="mb-2">
-        <input type="text" class="form-control quantity" placeholder="Quantity" />
+        <input type="number" class="form-control quantity" placeholder="Quantity" />
         <div class="text-danger small error-quantity"></div>
       </div>
       <div class="mb-2">
@@ -210,7 +219,7 @@
       </button>
       <button  data-bs-toggle="modal"
         data-bs-target="#return_modal" class="btn btn-dark">
-        <i class="fa-solid fa-circle-minus" style="color: #fff;"></i></i
+        <i class="fa-solid fa-circle-minus me-1" style="color: #fff;"></i></i
         >Return
       </button>
     </div>

@@ -334,7 +334,7 @@
             <label for="membership_end_date" class="form-label fw-semibold">
               Membership End Date
             </label>
-            <div class="input-group" id="membership_end_date_group">
+            <div class="input-group " id="membership_end_date_group">
               <input
                 type="text"
                 class="form-control border-1 border-black border-end-0"
@@ -344,9 +344,9 @@
               <span
                 class="input-group-text border-1 border-black border-start-0"
                 id="calendar_icon_change"
-                style="cursor:pointer"
+               
               >
-                <i class="fa fa-calendar text-primary"></i>
+                <i class="fa fa-calendar "  style="cursor:pointer;color: #1e3a8a;"></i>
               </span>
             </div>
             <div id="end_date_error" class="text-danger small"></div>
@@ -503,7 +503,7 @@
       </div>
     </div>
     <div class="d-flex justify-content-end gap-2">
-      <button id="apply_member_filters" class="btn btn-dark " data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">Submit</button>
+      <button id="apply_member_filters" class="btn btn-dark " >Submit</button>
       <button id="reset_member_filters" class="btn btn-dark">
         Reset
       </button>
@@ -519,13 +519,4 @@
     <tbody></tbody>
   </table>
 </div>
-<script>
- // Place this once, after Bootstrap JS is loaded
-document.body.addEventListener('mouseover', function (e) {
-  const target = e.target.closest('[data-bs-toggle="tooltip"]');
-  if (target && !bootstrap.Tooltip.getInstance(target)) {
-    new bootstrap.Tooltip(target);
-  }
-});
 
-</script>

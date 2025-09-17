@@ -160,15 +160,28 @@ const selectors = {
                 data: null,
                 orderable: false,
                 render: (d, t, row) => `
-                  <button class="btn btn-sm btn-warning me-2 update-book"
+                  <button class="btn btn-sm btn-warning me-2 update-book" data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Edit"
                           data-id="${row.bookId}">
                     <i class="fa-solid fa-pen-to-square text-white"></i>
                   </button>
-                  <button class="btn btn-sm btn-danger delete-book" data-id="${row.bookId}">
+                  <button class="btn btn-sm btn-danger delete-book" data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Delete" data-id="${row.bookId}">
                     <i class="fa-solid fa-trash"></i>
                   </button>`,
               },
             ],
+            drawCallback: function () {
+        const tipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tipEls.forEach(el => {
+            // avoid duplicates
+            if (!bootstrap.Tooltip.getInstance(el)) {
+                new bootstrap.Tooltip(el);
+            }
+        });
+    }
           });
 
           $(selectors.loader).hide();

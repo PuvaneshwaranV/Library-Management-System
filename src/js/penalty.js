@@ -145,7 +145,16 @@ if (typeof window.Penalty === "undefined") {
                     dom: '<"top"lp>t<"bottom"ip>',
                     lengthMenu: [10, 25, 50, 100],
                     language: { emptyTable: "No data found" },
-                    columns: this.columnsConfig(true)
+                    columns: this.columnsConfig(true),
+                    drawCallback: function () {
+        const tipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tipEls.forEach(el => {
+            // avoid duplicates
+            if (!bootstrap.Tooltip.getInstance(el)) {
+                new bootstrap.Tooltip(el);
+            }
+        });
+    }
                 })
                 $(s.loader).hide();
                 $(s.userTable).show();
@@ -238,11 +247,16 @@ if (typeof window.Penalty === "undefined") {
         let message = "Something went wrong.";
 
         if (xhr.responseJSON) {
-            if (xhr.responseJSON.message) message = xhr.responseJSON.message;
-            if (xhr.responseJSON.object) {
-                message = Object.values(xhr.responseJSON.object).join("\n");
-            }
+    if (xhr.responseJSON.object) {
+        if (typeof xhr.responseJSON.object === "string") {
+            message = xhr.responseJSON.object;
+        } else {
+            message = Object.values(xhr.responseJSON.object).join("\n");
         }
+    } else if (xhr.responseJSON.message) {
+        message = xhr.responseJSON.message;
+    }
+}
         $(s.loader).hide();
         Swal.fire({
             icon: "error",
@@ -279,6 +293,7 @@ if (typeof window.Penalty === "undefined") {
             },
             { title: "Payment Date", data: "paymentDate" }
         ];
+        
 
         if (withActions) {
             baseCols.push({
@@ -299,12 +314,11 @@ if (typeof window.Penalty === "undefined") {
             </button>`;
     } else {
         return `
-            <button class="btn btn-sm btn-dark me-2 mb-2" disabled
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title="Already Paid">
-                <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
-            </button>`;
+            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Already Paid" >
+        <button class="btn btn-sm btn-dark me-2 mb-2" disabled>
+            <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
+        </button>
+    </span>`;
     }
                 }
             });
