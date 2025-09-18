@@ -1,185 +1,203 @@
-$primary: #1e3a8a;
-$secondary: #fff;
-$secondary1:#F2F2F2;
-$secondary2:#ff0000;
-//...........................sidebar
+// ======================= Color Palette ===========================
+$color-primary:      #1e3a8a;   // Deep Blue
+$color-primary-light:#3b4fb0;   // Lighter blue (optional highlight)
+$color-secondary:    #ffffff;   // Pure white
+$color-bg-light:     #f3f4f6;   // App background grey
+$color-bg-table:     #f2f2f2;   // Light grey for main content
+$color-accent:       #fbbf24;   // Golden accent (hover/highlight)
+$color-danger:       #ff0000;   // Red for warnings
+$color-muted:        #999999;   // Disabled text
+
+// ======================= Base ===========================
 .tilt-neon-body {
   margin: 0;
   height: 100vh;
-  background-color: #f3f4f6;
-  color:#111827;
-   font-family: "Tilt Neon", sans-serif;
-  font-optical-sizing: auto;
+  background-color: $color-bg-light;
+  color: #111827;
+  font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
-  font-style: normal;
-  font-variation-settings:
-    "XROT" 0,
-    "YROT" 0;
 }
-.text-secondary{
-  color:$primary !important;
-}
-td,th{
-  text-align:center !important;
-}
-#sidebar {
-  margin-top:35px;
-  width: 200px;
-  color: $secondary;
-  transition: all 0.3s ease;
-background-color:$primary;
-  ul {
-    margin-top:50px !important;
-    li {
-      i {
-        color: $secondary;
-      }
-      a {
-        font-size:20px;
-        border-radius: 0;
-        background-color: $primary;
-        color: #d1d5db;
-        cursor:pointer;
 
-        &.active {
-          background-color: #fbbf24;
-          color: $primary;
-          i {
-            color: $primary;
-          }
-        }
-        &:hover{
-          color: $primary;
-            background-color: $secondary;
-            i {
-            color: $primary;
-          }
-        }
-      }
-    }
-  }
-  &.no-transition {
-    transition: none !important;
-  }
-  &.collapsed {
-    margin-left: -200px;
+.text-secondary { color: $color-primary !important; }
+
+td, th { text-align: center !important; }
+
+input[type=text],
+input[type=number],
+select {
+  border: 1px solid $color-primary !important;
+  &:focus {
+    border-color: $color-primary !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
 }
-.swal2-title,
-.swal2-html-container {
-  
-   word-spacing: 5px !important; 
+label.error{
+  color:$color-danger;
 }
 
 input:disabled:hover,
 select:disabled:hover,
 textarea:disabled:hover {
-  cursor: not-allowed;        /* standard ⃠ symbol */
-}
-#logout{
-  margin-top:300px;
-}
-//..........................main body
-#main_body{
-  transition: all 0.3s;
-  &.collapsed{
-  margin-left:200px;
- } 
+  cursor: not-allowed;
 }
 
-//...........................body
-#content {
-  background-color:$secondary1;
+// ======================= Sidebar ===========================
+#sidebar {
+  margin-top: 35px;
+  width: 200px;
+  color: $color-secondary;
+  background-color: $color-primary;
+  transition: all 0.3s ease;
+
+  ul {
+    margin-top: 50px !important;
+    li {
+      i { color: $color-secondary; }
+      a {
+        font-size: 20px;
+        border-radius: 0;
+        background-color: $color-primary;
+        color: #d1d5db;
+        cursor: pointer;
+
+        &.active {
+          background-color: $color-accent;
+          color: $color-primary;
+          i { color: $color-primary; }
+        }
+        &:hover {
+          color: $color-primary;
+          background-color: $color-secondary;
+          i { color: $color-primary; }
+        }
+      }
+    }
+  }
+
+  &.no-transition { transition: none !important; }
+  &.collapsed    { margin-left: -200px; }
+}
+
+#logout { margin-top: 300px; }
+
+// ======================= Main Content ===========================
+#main_body {
   transition: all 0.3s;
-  table{
-    background-color:$secondary;
-    padding:15px;
-    border-radius:40px;
+  &.collapsed { margin-left: 200px; }
+}
+
+#content {
+  background-color: $color-bg-table;
+  transition: all 0.3s;
+
+  table {
+    background-color: $color-secondary;
+    padding: 15px;
+    border-radius: 40px;
   }
 }
-.modal-title{
-  color:$primary;
-}
-.border-dark{
-  border-color:$primary !important;
+
+.modal-title { color: $color-primary; }
+.border-dark { border-color: $color-primary !important; }
+.staus-click { cursor: pointer !important; }
+
+// ======================= Header ===========================
+#header {
+  background: $color-primary;
+  color: $color-secondary;
+  margin-bottom: 80px;
+  transition: all 0.3s ease;
 }
 
-.staus-click{
-  cursor:pointer !important;
+// ======================= Buttons ===========================
+.btn-dark {
+  background-color: $color-primary;
+  border: none;
+  &:hover {
+    background-color: $color-accent;
+    color: $color-secondary;
+    transition: 0.3s;
+  }
 }
 
-
-.btn-close-custom{
-   border: none;
+.btn-close-custom {
+  border: none;
   background: transparent;
   font-size: 1.5rem;
-  color: $primary;
-  &:hover{
-    color: $secondary2;
-  transform: scale(1.1);
-  }
-}
-input[type=text],input[type=number]{
-  border:1px solid $primary;
-  &:focus{
-    border-color:$primary;
-    outline:none;
-    box-shadow:none;
-  }
-}
-//...........................Header
-
-//...........................Users
-
-#header {
-  background: #1e3a8a; 
-  color: white;
-  margin-bottom:80px;
-  transition: all 0.3s ease;
- 
-}
-
-/* Buttons */
-.btn-dark {
-  background-color: #1e3a8a;
-  border: none;
-  &:hover{
-    background-color: #fbbf24;
-  color: #fff;
-  transition: 0.3s;
+  color: $color-primary;
+  &:hover {
+    color: $color-danger;
+    transform: scale(1.1);
   }
 }
 
+// ======================= DataTables ===========================
+.dataTables_wrapper .dataTables_paginate {
+  margin-right: 30px !important;
 
+  .paginate_button {
+    margin-bottom: 3px !important;
+    background-color: $color-secondary !important;
+    color: $color-primary !important;
+    padding: 6px 12px;
+    border-radius: 4px;
 
-.iti {
-  width: 100%;
+    &.current,
+    &.current:hover {
+      background-color: $color-primary !important;
+      color: $color-secondary !important;
+    }
+
+    &.previous,
+    &.next {
+      color: $color-primary !important;
+      padding: 6px 14px;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: $color-accent !important;
+        color: $color-secondary !important;
+      }
+    }
+
+    &.disabled,
+    &.disabled:hover {
+      color: $color-muted !important;
+      background-color: $color-secondary !important;
+      cursor: not-allowed;
+    }
+
+    // Hover for inactive numbers
+    &:hover:not(.current):not(.disabled) {
+      background-color: $color-accent !important;
+      color: $color-secondary !important;
+    }
+  }
 }
 
-.iti input {
-  width: 100% !important;
-}
+// ======================= Loader ===========================
 #loader {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255, 255, 255, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  display: none; /* hidden by default */
+  display: none; // hidden by default
 }
 
 .circle-loader {
-   position: fixed;
+  position: fixed;
   top: 50%; left: 50%;
-  transform:translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   width: 70px;
   height: 70px;
-  border: 8px solid #e6e6e6;   /* light grey arc */
-  border-top: 8px solid #3498db; /* blue arc */
-  border-bottom: 8px solid #3498db; /* blue arc */
+  border: 8px solid #e6e6e6;   // light grey arc
+  border-top: 8px solid #3498db;
+  border-bottom: 8px solid #3498db;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -189,17 +207,17 @@ input[type=text],input[type=number]{
   100% { transform: rotate(360deg); }
 }
 
-
- .dashboard-card {
-  background: #fff;
+// ======================= Dashboard Cards ===========================
+.dashboard-card {
+  background: $color-secondary;
   border-radius: 0.75rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   padding: 1.5rem;
-  height: 100%;           /* let it stretch to full column height */
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* vertically center text */
-  align-items: center;     /* horizontally center text (for stats) */
+  justify-content: center;
+  align-items: center;
 }
 
 .stat-title {

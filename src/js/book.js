@@ -1,11 +1,9 @@
 
-console.log("main ");
+
 $(document).ready(()=>{
-  console.log("jjj");   
   const custom_elements = "./template-custom-elements.html";
   $("#book_add").load(custom_elements, () => {
     $("#book_add").append("<book-add-edit-modal></book-add-edit-modal>");
-      console.log("mainmmmmmm ");
       const script =document.createElement("script");
       script.src = "js/add.or.update.book.js"
       document.body.appendChild(script);

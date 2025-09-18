@@ -188,7 +188,9 @@ if (typeof window.RentalTransaction === "undefined") {
                 $(s.table).hide();
             }
         };
-
+        function clearValidationErrors(modalSelector) {
+    $(`${modalSelector} .text-danger.small`).text("");
+}
         /* ---------- BORROW ---------- */
         this.bindBorrowHandlers = function () {
             const container = document.querySelector(s.booksContainer);
@@ -234,12 +236,19 @@ if (typeof window.RentalTransaction === "undefined") {
                 const payload = this.collectBorrowData(container);
                 this.ajaxBorrow(payload, container, updateRemoveButtons);
             });
-
+            $(s.borrowModal).on("hidden.bs.modal", () => {
+                this.resetBorrowModal(container, updateRemoveButtons)
+                clearValidationErrors(s.borrowModal);
+                $(s.memberIdError).text("");         // make sure member-id error disappears
+            });
+           
             updateRemoveButtons();
         };
 
         this.resetBorrowModal = function (container, updater) {
             $(s.borrowForm)[0].reset();
+            $(s.memberIdError).text("");                  // 🔑 clear member id error
+            $(s.borrowModal).find(".text-danger.small").text("");
             container.innerHTML = "";
             $(s.addBookBtn).trigger("click");
             updater();
@@ -322,7 +331,10 @@ if (typeof window.RentalTransaction === "undefined") {
                 resetReturnModal();
                 $("#return_modal").modal("hide");
             });
-
+             $("#return_modal").on("hidden.bs.modal", () => {
+                clearValidationErrors("#return_modal");
+                resetReturnModal();
+            });
             $(s.returnBtn).on("click", () => {
                 const books = [];
                 let valid = true;
@@ -403,11 +415,13 @@ if (typeof window.RentalTransaction === "undefined") {
             // create update picker when update modal is shown
             $(document).on("shown.bs.modal", s.updateRentalModal, () => {
                 const updInput = document.querySelector(s.updateDueInput);
-                if (updInput && !this.updateDueDp) {
-                    this.updateDueDp = new tempusDominus.TempusDominus(updInput, {
+                if (updInput) {
+                    // dispose old picker if it exists
+                    if (this.updateDueDp && this.updateDueDp.dispose) this.updateDueDp.dispose();
+                        this.updateDueDp = new tempusDominus.TempusDominus(updInput, {
                         localization: { format: "yyyy-MM-dd" },
                         restrictions: { minDate: new tempusDominus.DateTime(new Date()) }
-                    });
+                    });   
                 }
             });
 
@@ -415,7 +429,8 @@ if (typeof window.RentalTransaction === "undefined") {
             $(document).on("click", s.calendarIcon, () => {
                 if (this.addDueDp) this.addDueDp.show();
             });
-            $(document).on("click", s.updateCalendarIcon, () => {
+            $(document).on("click", s.updateCalendarIcon, (e) => {
+                console.log("updateDueDp =", this.updateDueDp);
                 if (this.updateDueDp) this.updateDueDp.show();
             });
         };

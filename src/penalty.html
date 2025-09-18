@@ -22,42 +22,42 @@
               <i class="fa-regular fa-circle-xmark"></i>
             </button>
             <hr class="border border-1 border-dark opacity-100" />
-            <form class="mx-5 my-4">
+            <form class="mx-5 my-4" id="penalty_add_form">
               <div class="mb-3">
                 <input
                   type="text"
                   class="form-control"
-                  id="penalty_transactionid"
+                  id="penalty_transactionid" name="penalty_transactionid"
                   placeholder="Transaction ID"
                 />
-                <div id="penalty_transactionid_error" class="text-danger small"></div>
+               
               </div>
               <div class="mb-3">
                 <input
-                  type="text"
+                  type="number"
                   class="form-control"
-                  id="penalty_amount"
-                  placeholder="Amount"
+                  id="penalty_amount" name="penalty_amount"
+                  placeholder="Amount" 
                 />
-                <div id="penalty_amount_error" class="text-danger small"></div>
+               
               </div>
               <div class="mb-3">
                 <input
                   type="text"
                   class="form-control"
-                  id="penalty_reason"
+                  id="penalty_reason" name="penalty_reason"
                   placeholder="Reason"
                 />
-                <div id="penalty_reason_error" class="text-danger small"></div>
+                
               </div>
               <div class="row">
                 <div class="col-6">
                   <button
-                    id="cancel"
+                    id="reset"
                     type="button"
-                    class="btn btn-dark w-100" data-bs-dismiss="modal"
+                    class="btn btn-dark w-100" 
                   >
-                    Cancel
+                    Reset
                   </button>
                 </div>
                 <div class="col-6">

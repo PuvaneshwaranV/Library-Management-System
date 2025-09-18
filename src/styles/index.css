@@ -1,14 +1,10 @@
-@charset "UTF-8";
 .tilt-neon-body {
   margin: 0;
   height: 100vh;
   background-color: #f3f4f6;
   color: #111827;
   font-family: "Tilt Neon", sans-serif;
-  font-optical-sizing: auto;
   font-weight: 400;
-  font-style: normal;
-  font-variation-settings: "XROT" 0, "YROT" 0;
 }
 
 .text-secondary {
@@ -19,18 +15,41 @@ td, th {
   text-align: center !important;
 }
 
+input[type=text],
+input[type=number],
+select {
+  border: 1px solid #1e3a8a !important;
+}
+input[type=text]:focus,
+input[type=number]:focus,
+select:focus {
+  border-color: #1e3a8a !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+label.error {
+  color: #ff0000;
+}
+
+input:disabled:hover,
+select:disabled:hover,
+textarea:disabled:hover {
+  cursor: not-allowed;
+}
+
 #sidebar {
   margin-top: 35px;
   width: 200px;
-  color: #fff;
-  transition: all 0.3s ease;
+  color: #ffffff;
   background-color: #1e3a8a;
+  transition: all 0.3s ease;
 }
 #sidebar ul {
   margin-top: 50px !important;
 }
 #sidebar ul li i {
-  color: #fff;
+  color: #ffffff;
 }
 #sidebar ul li a {
   font-size: 20px;
@@ -48,7 +67,7 @@ td, th {
 }
 #sidebar ul li a:hover {
   color: #1e3a8a;
-  background-color: #fff;
+  background-color: #ffffff;
 }
 #sidebar ul li a:hover i {
   color: #1e3a8a;
@@ -58,17 +77,6 @@ td, th {
 }
 #sidebar.collapsed {
   margin-left: -200px;
-}
-
-.swal2-title,
-.swal2-html-container {
-  word-spacing: 5px !important;
-}
-
-input:disabled:hover,
-select:disabled:hover,
-textarea:disabled:hover {
-  cursor: not-allowed; /* standard ⃠ symbol */
 }
 
 #logout {
@@ -83,11 +91,11 @@ textarea:disabled:hover {
 }
 
 #content {
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   transition: all 0.3s;
 }
 #content table {
-  background-color: #fff;
+  background-color: #ffffff;
   padding: 15px;
   border-radius: 40px;
 }
@@ -104,6 +112,23 @@ textarea:disabled:hover {
   cursor: pointer !important;
 }
 
+#header {
+  background: #1e3a8a;
+  color: #ffffff;
+  margin-bottom: 80px;
+  transition: all 0.3s ease;
+}
+
+.btn-dark {
+  background-color: #1e3a8a;
+  border: none;
+}
+.btn-dark:hover {
+  background-color: #fbbf24;
+  color: #ffffff;
+  transition: 0.3s;
+}
+
 .btn-close-custom {
   border: none;
   background: transparent;
@@ -115,39 +140,37 @@ textarea:disabled:hover {
   transform: scale(1.1);
 }
 
-input[type=text], input[type=number] {
-  border: 1px solid #1e3a8a;
+.dataTables_wrapper .dataTables_paginate {
+  margin-right: 30px !important;
 }
-input[type=text]:focus, input[type=number]:focus {
-  border-color: #1e3a8a;
-  outline: none;
-  box-shadow: none;
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  margin-bottom: 3px !important;
+  background-color: #ffffff !important;
+  color: #1e3a8a !important;
+  padding: 6px 12px;
+  border-radius: 4px;
 }
-
-#header {
-  background: #1e3a8a;
-  color: white;
-  margin-bottom: 80px;
-  transition: all 0.3s ease;
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background-color: #1e3a8a !important;
+  color: #ffffff !important;
 }
-
-/* Buttons */
-.btn-dark {
-  background-color: #1e3a8a;
-  border: none;
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous, .dataTables_wrapper .dataTables_paginate .paginate_button.next {
+  color: #1e3a8a !important;
+  padding: 6px 14px;
+  border-radius: 4px;
 }
-.btn-dark:hover {
-  background-color: #fbbf24;
-  color: #fff;
-  transition: 0.3s;
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.next:hover {
+  background-color: #fbbf24 !important;
+  color: #ffffff !important;
 }
-
-.iti {
-  width: 100%;
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled, .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+  color: #999999 !important;
+  background-color: #ffffff !important;
+  cursor: not-allowed;
 }
-
-.iti input {
-  width: 100% !important;
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current):not(.disabled) {
+  background-color: #fbbf24 !important;
+  color: #ffffff !important;
 }
 
 #loader {
@@ -161,7 +184,7 @@ input[type=text]:focus, input[type=number]:focus {
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  display: none; /* hidden by default */
+  display: none;
 }
 
 .circle-loader {
@@ -171,9 +194,9 @@ input[type=text]:focus, input[type=number]:focus {
   transform: translate(-50%, -50%);
   width: 70px;
   height: 70px;
-  border: 8px solid #e6e6e6; /* light grey arc */
-  border-top: 8px solid #3498db; /* blue arc */
-  border-bottom: 8px solid #3498db; /* blue arc */
+  border: 8px solid #e6e6e6;
+  border-top: 8px solid #3498db;
+  border-bottom: 8px solid #3498db;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -187,15 +210,15 @@ input[type=text]:focus, input[type=number]:focus {
   }
 }
 .dashboard-card {
-  background: #fff;
+  background: #ffffff;
   border-radius: 0.75rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   padding: 1.5rem;
-  height: 100%; /* let it stretch to full column height */
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* vertically center text */
-  align-items: center; /* horizontally center text (for stats) */
+  justify-content: center;
+  align-items: center;
 }
 
 .stat-title {

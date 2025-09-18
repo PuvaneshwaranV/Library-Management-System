@@ -1,5 +1,5 @@
 
-if(!customElements.get("book-add-edit-modal")){
+ if(!customElements.get("book-add-edit-modal")){
 class BookAddEditModal extends HTMLElement {
   constructor() {
     super();
@@ -24,9 +24,12 @@ class BookAddEditModal extends HTMLElement {
 
   connectedCallback() {
     this.attachEvents();
-    $(document).on("click", "#add_new_book", function(){
-        $("#book_modal").modal("show")
-    })
+    // $(document).off("click", "#add_new_book");
+
+    // IMPORTANT: call the component's own open() with no data
+    $(document).on("click", "#add_new_book", () => {
+      this.open();            // or this.open(null)
+    });
   }
 
   attachEvents() {
@@ -44,10 +47,17 @@ class BookAddEditModal extends HTMLElement {
       this.showError(errId, ""); return true;
     };
 
+    const validateSelect = (el, errId) => {
+      if (!el || el.length === 0) return false;
+      const v = el.val();
+      if (!v) { this.showError(errId,"Please select a language."); return false; }
+      this.showError(errId,""); return true;
+    };
+
     this.$saveBtn.on("click", () => {
       const validTitle  = validateField(this.$title,  nameRegex, "#title_error",   "Only letters/numbers.");
       const validAuthor = validateField(this.$author, nameRegex, "#author_error",  "Only letters/numbers.");
-      // const validLang   = validateField(this.$lang,   null,      "#language_error","Select language.");
+      const validLang = validateSelect(this.$lang, "#language_error");
       let validQty      = validateField(this.$qty,    numRegex,  "#quantity_error","Only numbers.");
 
       if (this.bookId && parseInt(this.$qty.val(),10) < this.prevQty) {
@@ -55,7 +65,7 @@ class BookAddEditModal extends HTMLElement {
         validQty = false;
       }
 
-      if (validTitle && validAuthor && validQty) {
+      if (validTitle && validAuthor && validLang && validQty) {
         const payload = {
           title: this.$title.val().trim(),
           author: this.$author.val().trim(),
@@ -101,7 +111,8 @@ class BookAddEditModal extends HTMLElement {
   reset() {
     this.bookId = null; this.prevQty = 0;
     this.$title.val(""); this.$author.val("");
-    this.$lang.val("");  this.$qty.val("");
+    this.$lang.prop("selectedIndex", 0).trigger("change");
+    this.$qty.val("");
     this.showError("#title_error",""); this.showError("#author_error","");
     this.showError("#language_error",""); this.showError("#quantity_error","");
     this.$saveBtn.text("Save");
@@ -113,7 +124,32 @@ class BookAddEditModal extends HTMLElement {
    * @param {Object|null} data  Pass null for Add, or {bookId,title,author,language,totalCount}
    */
   open(data=null) {
-    if (data) {
+    if (!data) {
+       this.bookId = null;
+      this.prevQty = 0;
+      this.$title.val("");
+      this.$author.val("");
+      this.$lang.prop("selectedIndex", 0).trigger("change");
+      this.$qty.val("");
+
+      // clear errors
+      this.showError("#title_error","");
+      this.showError("#author_error","");
+      this.showError("#language_error","");
+      this.showError("#quantity_error","");
+
+      // restore default Add layout
+      
+      this.$saveBtn.text("Save");
+      this.$heading.text("Add Book");
+      $("#reset_col").show();  
+      $("#save_col").removeClass("col-12").addClass("col-6");
+      
+
+    }
+    else {
+     
+     
       this.bookId = data.bookId;
       this.prevQty = data.totalCount;
       this.$title.val(data.title);
@@ -124,11 +160,7 @@ class BookAddEditModal extends HTMLElement {
       this.$heading.text("Update Book");
       this.$resetCol.hide();
       this.$saveCol.removeClass("col-6").addClass("col-12");
-    }
-    else {
-      this.$resetCol.show();
-      this.$saveCol.removeClass("col-12").addClass("col-6");
-      this.reset();
+      
     }
     this.$modal.modal("show");
   }
