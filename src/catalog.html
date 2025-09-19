@@ -13,11 +13,11 @@
             </button>
             <hr class="border border-1 border-dark opacity-100" />
 
-            <form id="borrow_form" class="mx-5 my-4">
+            <form id="borrow_form" class="mx-5 my-4" >
               <!-- Member ID -->
               <div class="mb-3">
-                <input type="text" class="form-control" id="member_id" placeholder="Member Id" />
-                <div id="member_id_error" class="text-danger small"></div>
+                <input type="text" class="form-control" id="member_id" name="member_id" placeholder="Member Id" />
+                <!-- <div id="member_id_error" class="text-danger small"></div> -->
               </div>
 
               <!-- Book fields container -->
@@ -27,19 +27,19 @@
                     style="display:none;">
                     ✖
                   </button>
-                  <input type="text" class="form-control mb-2" placeholder="Book Id" name="book_id" />
-                  <div class="text-danger small error_book_id"></div>
+                  <input type="text" class="form-control mb-2" placeholder="Book Id" name="book_id[]" />
+                  <!-- <div class="text-danger small error_book_id"></div> -->
 
-                  <input type="number" class="form-control mb-2" placeholder="Quantity" name="quantity" />
-                  <div class="text-danger small error_quantity"></div>
+                  <input type="number" class="form-control mb-2" placeholder="Quantity" name="quantity[]" />
+                  <!-- <div class="text-danger small error_quantity"></div> -->
                   <div class="input-group  mb-2">
                     <input type="text" class="form-control due_date border-1 border-black border-end-0"
-                      placeholder="YYYY-MM-DD" name="due_date" />
+                      placeholder="YYYY-MM-DD" name="due_date[]" />
                     <span class="input-group-text border-1 border-black border-start-0"><i
                         class="fa fa-calendar due_date_calendar_icon"
                         style="color: #1e3a8a; cursor: pointer"></i></span>
                   </div>
-                  <div class="text-danger small error_due_date"></div>
+                  <!-- <div class="text-danger small error_due_date"></div> -->
                 </div>
               </div>
 
@@ -117,7 +117,7 @@
               <i class="fa-regular fa-circle-xmark"></i>
             </button>
             <hr class="border border-1 border-dark opacity-100" />
-            <form id="return_form" class="mx-5 my-4">
+            <form id="return_form" class="mx-5 my-4" >
               <div id="book_groups">
                 <div class="book-group border rounded p-3 mb-3 position-relative">
                   <div class="mb-2">

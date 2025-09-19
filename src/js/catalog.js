@@ -70,7 +70,9 @@ if (typeof window.RentalTransaction === "undefined") {
             $(s.filterType).off("change").on("change", () => this.toggleFilterInput());
             $(s.filterValue).off("input").on("input", () => this.changeFilterInput());
         };
-
+        /**
+         * 
+         */
         this.toggleFilterInput = function () {
             const selected = $(s.filterType).val();
             if (selected && selected.toLowerCase() !== "all") {
@@ -204,17 +206,17 @@ if (typeof window.RentalTransaction === "undefined") {
                 const entry = $(`
                     <div class="book-entry mb-3 border p-3 rounded position-relative">
                         <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn">✖</button>
-                        <input type="text" class="form-control mb-2" placeholder="Book Id" name="book_id"/>
-                        <div class="text-danger small error_book_id"></div>
-                        <input type="number" class="form-control mb-2" placeholder="Quantity" name="quantity"/>
-                        <div class="text-danger small error_quantity"></div>
+                        <input type="text" class="form-control mb-2" placeholder="Book Id" name="book_id[]"/>
+                        
+                        <input type="number" class="form-control mb-2" placeholder="Quantity" name="quantity[]"/>
+                        
                         <div class="input-group mb-2">
-                            <input type="text" class="form-control due_date border-end-0" placeholder="YYYY-MM-DD" name="due_date"/>
+                            <input type="text" class="form-control due_date border-end-0" placeholder="YYYY-MM-DD" name="due_date[]"/>
                             <span class="input-group-text border border-black border-start-0">
                                 <i class="fa fa-calendar update_due_date_calendar_icon" style="color:#1e3a8a;cursor:pointer"></i>
                             </span>
                         </div>
-                        <div class="text-danger small error_due_date"></div>
+                        
                     </div>`);
                 entry.find(".remove-book-btn").on("click", () => entry.remove());
 
@@ -236,7 +238,7 @@ if (typeof window.RentalTransaction === "undefined") {
                 const payload = this.collectBorrowData(container);
                 this.ajaxBorrow(payload, container, updateRemoveButtons);
             });
-            $(s.borrowModal).on("hidden.bs.modal", () => {
+            $(s.borrowModal).on("hidden.bs.modal", () => { 
                 this.resetBorrowModal(container, updateRemoveButtons)
                 clearValidationErrors(s.borrowModal);
                 $(s.memberIdError).text("");         // make sure member-id error disappears
@@ -254,22 +256,59 @@ if (typeof window.RentalTransaction === "undefined") {
             updater();
         };
 
+        jQuery.validator.addMethod("numbersOnly", function (value, element) {
+            return this.optional(element) || /^\d+$/.test(value);
+        }, "Please enter digits only.");
+
+        jQuery.validator.addMethod("futureDate", function (value, element) {
+            if (this.optional(element)) return true;
+            // must be YYYY-MM-DD and after today
+            const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+            if (!m) return false;
+            const inputDate = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00`);
+            const today     = new Date();
+            today.setHours(0,0,0,0);
+            return inputDate > today;
+        }, "Enter a valid date (YYYY-MM-DD) greater than today.");
+
         this.validateBorrow = function (container) {
-            let valid = true;
-            $(".text-danger.small").text("");
-            if (!$(s.memberId).val().trim()) {
-                $(s.memberIdError).text("Member ID is required.");
-                valid = false;
-            }
-            container.querySelectorAll(".book-entry").forEach(entry => {
-                const id  = entry.querySelector('[name="book_id"]');
-                const qty = entry.querySelector('[name="quantity"]');
-                const due = entry.querySelector('[name="due_date"]');
-                if (!id.value.trim())  { entry.querySelector(".error_book_id").textContent = "Book ID is required."; valid = false; }
-                if (!qty.value.trim()) { entry.querySelector(".error_quantity").textContent = "Quantity is required."; valid = false; }
-                if (!due.value.trim()) { entry.querySelector(".error_due_date").textContent = "Due date is required."; valid = false; }
+            if ($(s.borrowForm).length) {
+        const $form = $(s.borrowForm);   // ✅ cache the form jQuery object
+
+        // If the validator hasn’t been attached yet, attach it once
+        if (!$form.data('validator')) {
+            $form.validate({
+                rules: {
+                    "member_id": { required: true, numbersOnly: true },
+                    "book_id[]": { required: true, numbersOnly: true },
+                    "quantity[]": { required: true, numbersOnly: true, min: 1 },
+                    "due_date[]": { required: true, dateISO: true, futureDate: true }
+                },
+                messages: {
+                    "member_id": { required: "Member ID is required", numbersOnly: "Digits only" },
+                    "book_id[]": { required: "Book ID is required", numbersOnly: "Digits only" },
+                    "quantity[]": { required: "Quantity is required", numbersOnly: "Digits only", min: "Quantity must be at least 1" },
+                    "due_date[]": { required: "Due date is required", dateISO: "Use YYYY-MM-DD", futureDate: "Due date must be after today" }
+                },
+                errorElement: "span",
+                errorClass: "text-danger small",
+                errorPlacement: function(error, element) {
+                    // if inside .input-group, put the error after the group
+                    if (element.closest(".input-group").length) {
+                        error.insertAfter(element.closest(".input-group"));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                // highlight: el => $(el).addClass("is-invalid"),
+                // unhighlight: el => $(el).removeClass("is-invalid")
             });
-            return valid;
+        }
+
+        // ✅ call valid() on the jQuery form object
+        return $form.valid();
+    }
+    return false;
         };
 
         this.collectBorrowData = function (container) {
