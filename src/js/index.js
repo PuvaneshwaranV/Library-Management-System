@@ -1,7 +1,6 @@
 /* ===================== Main App ===================== */
 const App = function () {
 
-    /* ---------- CENTRAL SELECTORS ---------- */
     const selectors = {
         header:            "#header",
         sidebar:           "#sidebar",
@@ -23,8 +22,14 @@ const App = function () {
     };
 
     /* ---------- LOAD HEADER & SIDEBAR ---------- */
-    this.loadHeaderAndSidebar = function () {
-        $(selectors.header).load("header.html");
+    this.loadHeaderAndSidebar = () => {
+        // Load header and set the saved title after the HTML arrives
+        $(selectors.header).load("header.html", () => {
+            const lastTitle = localStorage.getItem("lastTitle") || "Dashboard";
+            this.updateHeader(lastTitle);
+        });
+
+        // Load sidebar and set active link after HTML arrives
         $(selectors.sidebar).load("sidebar.html", () => {
             this.setActiveLink();
             this.bindLogout();
@@ -81,14 +86,17 @@ const App = function () {
     this.bindSidebarLinks = function () {
         $(document).on("click", selectors.navLink, (e) => {
             e.preventDefault();
-            const href = $(e.currentTarget).attr("href");
+
+            const href  = $(e.currentTarget).attr("href");
+            const title = $(e.currentTarget).text().trim();
+
             if (href && href !== "#") {
-                localStorage.setItem("lastPage", href);
-                this.loadPage(href);
-                this.updateHeader($(e.currentTarget).text().trim());
-                this.setActiveLink($(e.currentTarget));
-                $(selectors.sidebar).addClass(selectors.collapsedClass);
-                $(selectors.mainBody).toggleClass(selectors.collapsedClass);
+                // store page + title BEFORE reload
+                localStorage.setItem("lastPage",  href);
+                localStorage.setItem("lastTitle", title);
+
+                // reload the entire app so header & sidebar re-init
+                window.location.reload();
             }
         });
     };
@@ -96,24 +104,20 @@ const App = function () {
     /* ---------- PAGE LOADER ---------- */
     this.loadPage = function (page) {
         $(selectors.mainBody).load(page, () => {
-            // Load page-specific scripts
-            // if (page === "books.html") { $.getScript("js/book.js"); }
-            if (page === "users.html")   { $.getScript("js/users.js");   }
-            //else if (page === "catalog.html") { $.getScript("js/catalog.js"); }
+            if (page === "users.html")      { $.getScript("js/users.js"); }
             else if (page === "penalty.html") { $.getScript("js/penalty.js"); }
         });
     };
 
-    /* ---------- ACTIVE LINK ---------- */
+    /* ---------- ACTIVE LINK (visual only) ---------- */
     this.setActiveLink = function ($link) {
         $(selectors.navLink).removeClass("active");
         if ($link) {
             $link.addClass("active");
         } else {
             const lastPage = localStorage.getItem("lastPage") || "dashboard.html";
-            const $saved = $(`${selectors.navLink}[href="${lastPage}"]`);
+            const $saved   = $(`${selectors.navLink}[href="${lastPage}"]`);
             $saved.addClass("active");
-            this.updateHeader($saved.text().trim());
         }
     };
 

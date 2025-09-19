@@ -1,168 +1,171 @@
-
- if(!customElements.get("book-add-edit-modal")){
+if (!customElements.get("book-add-edit-modal")) {
 class BookAddEditModal extends HTMLElement {
   constructor() {
     super();
-    
+
     const tmpl = $("#book_add_edit_modal").get(0);
     this.appendChild(tmpl.content.cloneNode(true));
 
-    // Cache jQuery selectors
-    this.$modal   = $(this).find("#book_modal");
-    this.$title   = $(this).find("#title");
-    this.$author  = $(this).find("#author");
-    this.$lang    = $(this).find("#language");
-    this.$qty     = $(this).find("#quantity");
-    this.$heading = $(this).find(".modal-heading-text");
-    this.$saveBtn = $(this).find("#save_btn");
-    this.$resetCol = $(this).find("#reset_col");
-    this.$saveCol  = $(this).find("#save_col");
+    // ---------- Centralized selectors ----------
+    this.selectors = {
+      modal:          "#book_modal",
+      form:           "#book_form",
+      titleInput:     "#title",
+      authorInput:    "#author",
+      languageSelect: "#language",
+      quantityInput:  "#quantity",
+      modalHeading:   ".modal-heading-text",
+      saveButton:     "#save_btn",
+      resetColumn:    "#reset_col",
+      saveColumn:     "#save_col",
+      resetButton:    "#reset_btn",
+      addNewBookBtn:  "#add_new_book"
+    };
 
-    this.bookId   = null;
-    this.prevQty  = 0;
+    this.bookId  = null;
+    this.prevQty = 0;
   }
 
   connectedCallback() {
     this.attachEvents();
-    // $(document).off("click", "#add_new_book");
-
-    // IMPORTANT: call the component's own open() with no data
-    $(document).on("click", "#add_new_book", () => {
-      this.open();            // or this.open(null)
-    });
+    $(document).on("click", this.selectors.addNewBookBtn, () => this.open());
   }
 
+  /** All event bindings */
   attachEvents() {
-    const nameRegex = /^[A-Za-z0-9\s]+$/;
-    const numRegex  = /^[0-9]+$/;
+    this.initValidation();
 
-    const validateField = (el, regex, errId, msg) => {
-      if (!el || el.length === 0) {      // <— guard
-    console.warn("Missing element for", errId);
-    return false;
-  }
-      const v = el.val().trim();
-      if (!v) { this.showError(errId, "Required Field."); return false; }
-      if (regex && !regex.test(v)) { this.showError(errId, msg); return false; }
-      this.showError(errId, ""); return true;
-    };
+    // --------- Save Button ----------
+    $(this.selectors.saveButton).on("click", () => {
+      const form = $(this.selectors.form);
+      if (!form.valid()) return;
 
-    const validateSelect = (el, errId) => {
-      if (!el || el.length === 0) return false;
-      const v = el.val();
-      if (!v) { this.showError(errId,"Please select a language."); return false; }
-      this.showError(errId,""); return true;
-    };
-
-    this.$saveBtn.on("click", () => {
-      const validTitle  = validateField(this.$title,  nameRegex, "#title_error",   "Only letters/numbers.");
-      const validAuthor = validateField(this.$author, nameRegex, "#author_error",  "Only letters/numbers.");
-      const validLang = validateSelect(this.$lang, "#language_error");
-      let validQty      = validateField(this.$qty,    numRegex,  "#quantity_error","Only numbers.");
-
-      if (this.bookId && parseInt(this.$qty.val(),10) < this.prevQty) {
-        this.showError("#quantity_error","Must be ≥ previous count");
-        validQty = false;
+      // quantity must not drop below previous when updating
+      if (this.bookId && parseInt($(this.selectors.quantityInput).val(), 10) < this.prevQty) {
+        form.validate().showErrors({
+          quantity: `Not less than ${this.prevQty}` 
+        });
+        return;
       }
 
-      if (validTitle && validAuthor && validLang && validQty) {
-        const payload = {
-          title: this.$title.val().trim(),
-          author: this.$author.val().trim(),
-          language: this.$lang.val(),
-          totalCount: parseInt(this.$qty.val().trim(),10)
-        };
-        const isUpdate = !!this.bookId;
-        const ajaxOpt = {
-          url: isUpdate
-              ? "http://localhost:8080/LibraryManagementSystem/Books/updateBookDetails"
-              : "http://localhost:8080/LibraryManagementSystem/Books/addNewBook",
-          type: isUpdate ? "PUT" : "POST",
-          data: JSON.stringify(isUpdate ? {...payload, bookId: this.bookId} : payload),
-          contentType: "application/json",
-          success: () => {
-            Swal.fire({
-              icon: "success",
-              title: isUpdate ? "Book Updated" : "Book Added",
-              timer: 2000, showConfirmButton: false
-            });
-            this.$modal.modal("hide");
-            this.reset();
-            // trigger a custom event so parent page can refresh table
-            $("#apply_filters").click();
-            this.dispatchEvent(new CustomEvent("book-saved", {bubbles:true, detail:{updated:isUpdate}}));
-          },
-          error: (xhr) => {
-            let msg="Something went wrong.";
-            if (xhr.responseJSON?.message) msg = xhr.responseJSON.message;
-            Swal.fire({icon:"error",title:"Error",text:msg,timer:2000,showConfirmButton:false});
-          }
-        };
-        $.ajax(ajaxOpt);
-      }
+      const payload = {
+        title: $(this.selectors.titleInput).val().trim(),
+        author: $(this.selectors.authorInput).val().trim(),
+        language: $(this.selectors.languageSelect).val(),
+        totalCount: parseInt($(this.selectors.quantityInput).val().trim(), 10)
+      };
+      const isUpdate = !!this.bookId;
+
+      $.ajax({
+        url: isUpdate
+             ? "http://localhost:8080/LibraryManagementSystem/Books/updateBookDetails"
+             : "http://localhost:8080/LibraryManagementSystem/Books/addNewBook",
+        type: isUpdate ? "PUT" : "POST",
+        data: JSON.stringify(isUpdate ? { ...payload, bookId: this.bookId } : payload),
+        contentType: "application/json",
+        success: () => {
+          Swal.fire({
+            icon: "success",
+            title: isUpdate ? "Book Updated" : "Book Added",
+            timer: 2000,
+            showConfirmButton: false
+          });
+          $(this.selectors.modal).modal("hide");
+          this.reset();
+          $("#apply_filters").click(); // refresh parent table
+          this.dispatchEvent(new CustomEvent("book-saved", {
+            bubbles: true,
+            detail: { updated: isUpdate }
+          }));
+        },
+        error: (xhr) => {
+          const msg = xhr.responseJSON?.message || "Something went wrong.";
+          Swal.fire({ icon: "error", title: "Error", text: msg, timer: 2000, showConfirmButton: false });
+        }
+      });
     });
 
-    $(this).find("#reset_btn").on("click", () => this.reset());
-    this.$modal.on("hidden.bs.modal", () => this.reset());
+    // --------- Reset + Close ----------
+    $(this.selectors.resetButton).on("click", () => this.reset());
+    $(this.selectors.modal).on("hidden.bs.modal", () => this.reset());
   }
 
-  showError(id,msg){ $(this).find(id).text(msg); }
+  /** Setup jQuery Validate rules + custom methods */
+  initValidation() {
+    const form = $(this.selectors.form);
 
+    if (form.data("validator")) {
+      form.removeData("validator").removeData("unobtrusiveValidation");
+    }
+
+    jQuery.validator.addMethod(
+      "pattern",
+      function (value, element, param) {
+        const re = new RegExp(param);
+        return this.optional(element) || re.test(value);
+      },
+      "Invalid format."
+    );
+
+    form.validate({
+      ignore: [],
+      onkeyup: false,
+      rules: {
+        title:    { required: true, pattern: /^[a-zA-Z0-9 ]+$/, minlength: 2 },
+        author:   { required: true, pattern: /^[a-zA-Z ]+$/, minlength: 2 },
+        language: { required: true },
+        quantity: { required: true, pattern: /^[1-9][0-9]*$/ }
+      },
+      messages: {
+        title: {
+          required:  "Please enter the Title",
+          minlength: "Minimum 2 characters"
+        },
+        author: {
+          required:  "Please enter the Author",
+          minlength: "Minimum 2 characters"
+        },
+        language: { required: "Please select a language" },
+        quantity: {
+          required: "Please enter Quantity",
+          pattern:  "Quantity must be a positive number"
+        }
+      }
+    });
+  }
+
+  /** Reset fields + clear validation errors */
   reset() {
-    this.bookId = null; this.prevQty = 0;
-    this.$title.val(""); this.$author.val("");
-    this.$lang.prop("selectedIndex", 0).trigger("change");
-    this.$qty.val("");
-    this.showError("#title_error",""); this.showError("#author_error","");
-    this.showError("#language_error",""); this.showError("#quantity_error","");
-    this.$saveBtn.text("Save");
-    this.$heading.text("Add Book");
+    this.bookId  = null;
+    this.prevQty = 0;
+    $(this.selectors.form).trigger("reset");
+    if ($(this.selectors.form).data("validator")) {
+      $(this.selectors.form).validate().resetForm();
+    }
+
+    $(this.selectors.saveButton).text("Save");
+    $(this.selectors.modalHeading).text("Add Book");
+    $(this.selectors.resetColumn).show();
+    $(this.selectors.saveColumn).removeClass("col-12").addClass("col-6");
   }
 
-  /**
-   * Opens modal.
-   * @param {Object|null} data  Pass null for Add, or {bookId,title,author,language,totalCount}
-   */
-  open(data=null) {
-    if (!data) {
-       this.bookId = null;
-      this.prevQty = 0;
-      this.$title.val("");
-      this.$author.val("");
-      this.$lang.prop("selectedIndex", 0).trigger("change");
-      this.$qty.val("");
-
-      // clear errors
-      this.showError("#title_error","");
-      this.showError("#author_error","");
-      this.showError("#language_error","");
-      this.showError("#quantity_error","");
-
-      // restore default Add layout
-      
-      this.$saveBtn.text("Save");
-      this.$heading.text("Add Book");
-      $("#reset_col").show();  
-      $("#save_col").removeClass("col-12").addClass("col-6");
-      
-
-    }
-    else {
-     
-     
-      this.bookId = data.bookId;
+  /** Opens modal. Accepts data for update or null for add */
+  open(data = null) {
+    if (data) {
+      this.bookId  = data.bookId;
       this.prevQty = data.totalCount;
-      this.$title.val(data.title);
-      this.$author.val(data.author);
-      this.$lang.val((data.language).toLowerCase());
-      this.$qty.val(data.totalCount);
-      this.$saveBtn.text("Update");
-      this.$heading.text("Update Book");
-      this.$resetCol.hide();
-      this.$saveCol.removeClass("col-6").addClass("col-12");
-      
+      $(this.selectors.titleInput).val(data.title);
+      $(this.selectors.authorInput).val(data.author);
+      $(this.selectors.languageSelect).val(data.language.toLowerCase());
+      $(this.selectors.quantityInput).val(data.totalCount);
+      $(this.selectors.saveButton).text("Update");
+      $(this.selectors.modalHeading).text("Update Book");
+      $(this.selectors.resetColumn).hide();
+      $(this.selectors.saveColumn).removeClass("col-6").addClass("col-12");
+    } else {
+      this.reset();
     }
-    this.$modal.modal("show");
+    $(this.selectors.modal).modal("show");
   }
 }
 

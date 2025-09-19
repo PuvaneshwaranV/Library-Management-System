@@ -64,9 +64,6 @@ const selectors = {
   generatePdfBtn:      "#book_pdf",
 };
 
-  const nameRegex   = /^[A-Za-z0-9\s]+$/;
-  const numberRegex = /^[0-9]+$/;
-
   const resetForm = function () {
     $(selectors.addTitle + "," +
       selectors.addAuthor + "," +
@@ -79,9 +76,6 @@ const selectors = {
       selectors.addQuantityError).text("");
   };
 
-  const that = this;
-  let totalCountPrev = "";
-  let bookId = "";
 
   // -------------------------------------------------------
   this.resetAddBookModalFields = function () {
@@ -369,6 +363,3 @@ if (!window.books) {
     books.changeFilterValue();
     books.toggleFilterInput();
 }
-// books.updateBookDetails();
-// books.addNewBook();
-// books.resetFormOnBackdrop();
