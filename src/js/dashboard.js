@@ -1,19 +1,19 @@
 (function () {
   const Dashboard = function () {
     this.selectors = {
-      loader:          "#loader",
-      mainContainer:   "#dashboardContainer",
+      loader: "#loader",
+      mainContainer: "#dashboardContainer",
       bookStatusChart: "#bookStatusChart",
-      rentalsChart:    "#rentalsChart",
-      membersChart:    "#membersChart",
-      totalMembers:    "#totalMembers",
+      rentalsChart: "#rentalsChart",
+      membersChart: "#membersChart",
+      totalMembers: "#totalMembers",
       activePenalties: "#activePenalties",
-      refreshBtn:      "#dashboard_refresh_btn"
+      refreshBtn: "#dashboard_refresh_btn"
     };
 
     this.bookStatusInstance = null;
-    this.rentalsInstance    = null;
-    this.membersInstance    = null;
+    this.rentalsInstance = null;
+    this.membersInstance = null;
 
     // ---------------- INIT -----------------
     this.init = () => {
@@ -35,7 +35,7 @@
     // ----------- HELPERS -------------
     this._destroyIfExists = inst => {
       if (inst && typeof inst.destroy === "function") {
-        try { inst.destroy(); } catch (e) {}
+        try { inst.destroy(); } catch (e) { }
       }
     };
 
@@ -89,7 +89,7 @@
 
           // -------- Books (Available vs Borrowed) --------
           let available = 0;
-          let borrowed  = 0;
+          let borrowed = 0;
           if (booksRes.status === "fulfilled" && booksRes.value?.object) {
             // available count from API
             available = booksRes.value.object.fetchedRecords || 0;
@@ -104,7 +104,7 @@
         .catch(err => console.error("Dashboard fetch error:", err))
         .finally(() => {
           $(s.loader).hide();
-      $(s.mainContainer).show();
+          $(s.mainContainer).show();
         });
     };
 
@@ -143,9 +143,9 @@
       if (!ctx) return;
       this._destroyIfExists(this.rentalsInstance);
 
-      const labels = ["Jan","Feb","Mar","Apr","May","Jun"];
-      const activeRentals = [160,180,190,200,210,220];
-      const overdue = [20,15,10,15,12,18];
+      const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+      const activeRentals = [160, 180, 190, 200, 210, 220];
+      const overdue = [20, 15, 10, 15, 12, 18];
 
       this.rentalsInstance = new Chart(ctx, {
         type: "bar",
@@ -169,8 +169,8 @@
       if (!ctx) return;
       this._destroyIfExists(this.membersInstance);
 
-      const labels = ["Jan","Feb","Mar","Apr","May","Jun"];
-      const newMembers = [20,25,30,28,35,40];
+      const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+      const newMembers = [20, 25, 30, 28, 35, 40];
 
       this.membersInstance = new Chart(ctx, {
         type: "line",

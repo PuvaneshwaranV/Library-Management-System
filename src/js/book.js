@@ -15,8 +15,7 @@ $(document).ready(()=>{
 
 
 // ---------------------------------------------------------
-if (typeof window.Books === "undefined") {
-    window.Books = function () {
+const Books = function () {
   // ----------------- CENTRAL SELECTOR MAP -----------------
 const selectors = {
   loader:              "#loader",
@@ -349,10 +348,9 @@ const selectors = {
 };
     
 };
-}
 // ------------------- INITIALISE -------------------------
-if (!window.books) {
-    window.books = new Books();
+
+    const books = new Books();
     books.displayBooksTable();
     books.generateAvailableBookPdf();
     books.getBookDetailsById();
@@ -362,4 +360,4 @@ if (!window.books) {
     books.toggleFilters();
     books.changeFilterValue();
     books.toggleFilterInput();
-}
+
