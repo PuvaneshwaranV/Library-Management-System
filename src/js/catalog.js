@@ -1,6 +1,5 @@
 /* ===================== Rental Transactions ===================== */
-if (typeof window.RentalTransaction === "undefined") {
-    window.RentalTransaction = function () {
+const RentalTransaction = function () {
 
         /* ---------- CENTRAL SELECTORS ---------- */
         const s = {
@@ -196,6 +195,36 @@ if (typeof window.RentalTransaction === "undefined") {
         /* ---------- BORROW ---------- */
         this.bindBorrowHandlers = function () {
             const container = document.querySelector(s.booksContainer);
+
+            // Initial validation setup for the main form.
+            // This part is already correct in your code.
+            const $form = $(s.borrowForm);
+            if (!$form.data('validator')) {
+                $form.validate({
+                    rules: {
+                        "member_id": { required: true, numbersOnly: true },
+                        "book_id[]": { required: true, numbersOnly: true },
+                        "quantity[]": { required: true, numbersOnly: true, min: 1 },
+                        "due_date[]": { required: true, dateISO: true, futureDate: true }
+                    },
+                    messages: {
+                        "member_id": { required: "Member ID is required", numbersOnly: "Digits only" },
+                        "book_id[]": { required: "Book ID is required", numbersOnly: "Digits only" },
+                        "quantity[]": { required: "Quantity is required", numbersOnly: "Digits only", min: "Quantity must be at least 1" },
+                        "due_date[]": { required: "Due date is required", dateISO: "Use YYYY-MM-DD", futureDate: "Due date must be after today" }
+                    },
+                    errorElement: "span",
+                    errorClass: "text-danger small",
+                    errorPlacement: function (error, element) {
+                        if (element.closest(".input-group").length) {
+                            error.insertAfter(element.closest(".input-group"));
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    },
+                });
+            }
+
             const updateRemoveButtons = () => {
                 container.querySelectorAll(".book-entry").forEach((e, i) =>
                     e.querySelector(".remove-book-btn").style.display = i === 0 ? "none" : "block"
@@ -207,19 +236,54 @@ if (typeof window.RentalTransaction === "undefined") {
                     <div class="book-entry mb-3 border p-3 rounded position-relative">
                         <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn">✖</button>
                         <input type="text" class="form-control mb-2" placeholder="Book Id" name="book_id[]"/>
-                        
                         <input type="number" class="form-control mb-2" placeholder="Quantity" name="quantity[]"/>
-                        
                         <div class="input-group mb-2">
                             <input type="text" class="form-control due_date border-end-0" placeholder="YYYY-MM-DD" name="due_date[]"/>
                             <span class="input-group-text border border-black border-start-0">
                                 <i class="fa fa-calendar update_due_date_calendar_icon" style="color:#1e3a8a;cursor:pointer"></i>
                             </span>
                         </div>
-                        
                     </div>`);
-                entry.find(".remove-book-btn").on("click", () => entry.remove());
 
+                entry.find(".remove-book-btn").on("click", () => {entry.remove();});
+
+                // --- THE KEY CHANGE ---
+                // Add the new elements to the form container.
+                $(container).append(entry);
+                    
+                // Manually apply validation rules to the new inputs.
+                entry.find('input[name="book_id[]"]').rules("add", {
+                    required: true,
+                    numbersOnly: true,
+                    messages: {
+                        required: "Book ID is required",
+                        numbersOnly: "Digits only"
+                    }
+                });
+
+                entry.find('input[name="quantity[]"]').rules("add", {
+                    required: true,
+                    numbersOnly: true,
+                    min: 1,
+                    messages: {
+                        required: "Quantity is required",
+                        numbersOnly: "Digits only",
+                        min: "Quantity must be at least 1"
+                    }
+                });
+                
+                entry.find('input[name="due_date[]"]').rules("add", {
+                    required: true,
+                    dateISO: true,
+                    futureDate: true,
+                    messages: {
+                        required: "Due date is required",
+                        dateISO: "Use YYYY-MM-DD",
+                        futureDate: "Due date must be after today"
+                    }
+                });
+                // --- END OF KEY CHANGE ---
+                
                 const dateInput = entry.find(".due_date")[0];
                 new tempusDominus.TempusDominus(dateInput, {
                     localization: { format: "yyyy-MM-dd" },
@@ -228,98 +292,62 @@ if (typeof window.RentalTransaction === "undefined") {
                 });
 
                 entry.find(".due_date").inputmask("9999-99-99");
-                $(container).append(entry);
                 updateRemoveButtons();
             });
 
             $(s.borrowCancel).on("click", () => this.resetBorrowModal(container, updateRemoveButtons));
+            
             $(s.borrowSubmit).on("click", () => {
-                if (!this.validateBorrow(container)) return;
+                // The form.valid() call will now check all elements, including the dynamically added ones.
+                if (!$(s.borrowForm).valid()) return;
                 const payload = this.collectBorrowData(container);
                 this.ajaxBorrow(payload, container, updateRemoveButtons);
             });
-            $(s.borrowModal).on("hidden.bs.modal", () => { 
-                this.resetBorrowModal(container, updateRemoveButtons)
+
+            $(s.borrowModal).on("hidden.bs.modal", () => {
+                this.resetBorrowModal(container, updateRemoveButtons);
                 clearValidationErrors(s.borrowModal);
-                $(s.memberIdError).text("");         // make sure member-id error disappears
             });
-           
+
             updateRemoveButtons();
         };
 
-        this.resetBorrowModal = function (container, updater) {
-            $(s.borrowForm)[0].reset();
-            $(s.memberIdError).text("");                  // 🔑 clear member id error
-            $(s.borrowModal).find(".text-danger.small").text("");
-            container.innerHTML = "";
-            $(s.addBookBtn).trigger("click");
-            updater();
-        };
+                this.resetBorrowModal = function (container, updater) {
+                    $(s.borrowForm)[0].reset();
+                    $(s.memberIdError).text("");                  // 🔑 clear member id error
+                    $(s.borrowModal).find(".text-danger.small").text("");
+                    container.innerHTML = "";
+                    $(s.addBookBtn).trigger("click");
+                    updater();
+                };
 
-        jQuery.validator.addMethod("numbersOnly", function (value, element) {
-            return this.optional(element) || /^\d+$/.test(value);
-        }, "Please enter digits only.");
+                jQuery.validator.addMethod("numbersOnly", function (value, element) {
+                    return this.optional(element) || /^\d+$/.test(value);
+                }, "Please enter digits only.");
 
-        jQuery.validator.addMethod("futureDate", function (value, element) {
-            if (this.optional(element)) return true;
-            // must be YYYY-MM-DD and after today
-            const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-            if (!m) return false;
-            const inputDate = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00`);
-            const today     = new Date();
-            today.setHours(0,0,0,0);
-            return inputDate > today;
-        }, "Enter a valid date (YYYY-MM-DD) greater than today.");
+                jQuery.validator.addMethod("futureDate", function (value, element) {
+                    if (this.optional(element)) return true;
+                    // must be YYYY-MM-DD and after today
+                    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+                    if (!m) return false;
+                    const inputDate = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00`);
+                    const today     = new Date();
+                    today.setHours(0,0,0,0);
+                    return inputDate > today;
+                }, "Enter a valid date (YYYY-MM-DD) greater than today.");
 
-        this.validateBorrow = function (container) {
-            if ($(s.borrowForm).length) {
-        const $form = $(s.borrowForm);   // ✅ cache the form jQuery object
-
-        // If the validator hasn’t been attached yet, attach it once
-        if (!$form.data('validator')) {
-            $form.validate({
-                rules: {
-                    "member_id": { required: true, numbersOnly: true },
-                    "book_id[]": { required: true, numbersOnly: true },
-                    "quantity[]": { required: true, numbersOnly: true, min: 1 },
-                    "due_date[]": { required: true, dateISO: true, futureDate: true }
-                },
-                messages: {
-                    "member_id": { required: "Member ID is required", numbersOnly: "Digits only" },
-                    "book_id[]": { required: "Book ID is required", numbersOnly: "Digits only" },
-                    "quantity[]": { required: "Quantity is required", numbersOnly: "Digits only", min: "Quantity must be at least 1" },
-                    "due_date[]": { required: "Due date is required", dateISO: "Use YYYY-MM-DD", futureDate: "Due date must be after today" }
-                },
-                errorElement: "span",
-                errorClass: "text-danger small",
-                errorPlacement: function(error, element) {
-                    // if inside .input-group, put the error after the group
-                    if (element.closest(".input-group").length) {
-                        error.insertAfter(element.closest(".input-group"));
-                    } else {
-                        error.insertAfter(element);
-                    }
-                },
-                // highlight: el => $(el).addClass("is-invalid"),
-                // unhighlight: el => $(el).removeClass("is-invalid")
-            });
-        }
-
-        // ✅ call valid() on the jQuery form object
-        return $form.valid();
-    }
-    return false;
-        };
+            
 
         this.collectBorrowData = function (container) {
             const books = [];
             container.querySelectorAll(".book-entry").forEach(entry => {
                 books.push({
-                    bookId: +entry.querySelector('[name="book_id"]').value,
-                    quantity: +entry.querySelector('[name="quantity"]').value,
-                    returnDueDate: entry.querySelector('[name="due_date"]').value
+                    bookId: +entry.querySelector('[name="book_id[]"]').value,
+                    quantity: +entry.querySelector('[name="quantity[]"]').value,
+                    returnDueDate: entry.querySelector('[name="due_date[]"]').value
                 });
             });
+            
             return {
                 memberId: +$(s.memberId).val().trim(),
                 books
@@ -344,14 +372,47 @@ if (typeof window.RentalTransaction === "undefined") {
             });
         };
 
+        $("#return_modal").on("shown.bs.modal", function () {
+            const form = $("#return_form");
+
+            if (!form.data("validator")) { // Only initialize once
+                form.validate({
+                    rules: {
+                        "book-id[]": { required: true, number: true },
+                        "quantity[]": { required: true, number: true, min: 1 },
+                        "transaction-id[]": { required: true, number: true }
+                    },
+                    messages: {
+                        "book-id[]": { required: "Book ID is required", number: "Book ID must be a number" },
+                        "quantity[]": { required: "Quantity is required", number: "Quantity must be a number", min: "Quantity must be at least 1" },
+                        "transaction-id[]": { required: "Transaction ID is required", number: "Transaction ID must be a number" }
+                    },
+                    errorElement: "span",             // use <span> for error
+                    errorClass: "text-danger small",  // bootstrap class + custom size
+                    errorPlacement: function (error, element) {
+                        // place the error immediately after the input
+                        error.insertAfter(element);
+                    },
+                    
+                });
+            }
+        });
+
         /* ---------- RETURN ---------- */
         this.bindReturnHandlers = function () {
             const resetReturnModal = () => {
+                const form = $("#return_form");
+                form[0].reset();
+
+                // Reset validation errors
+                if (form.data("validator")) {
+                    form.validate().resetForm(); // clears all error messages and classes
+                }
                 const first = $(".book-group").first().clone();
                 $(s.bookGroups).html(first);
-                $(`${s.bookGroups} .book-group input`).val("");
+                
                 $(`${s.bookGroups} .remove-group`).hide();
-                $(`${s.bookGroups} .text-danger`).text("");
+                
             };
 
             $(s.addReturnGroup).on("click", () => {
@@ -360,6 +421,9 @@ if (typeof window.RentalTransaction === "undefined") {
                 g.find(".text-danger").text("");
                 g.find(".remove-group").show();
                 $(s.bookGroups).append(g);
+                g.find('input[name="book-id[]"]').rules("add", { required: true, number: true });
+                g.find('input[name="quantity[]"]').rules("add", { required: true, number: true, min: 1 });
+                g.find('input[name="transaction-id[]"]').rules("add", { required: true, number: true });
             });
 
             $(document).on("click", ".remove-group", function () {
@@ -374,20 +438,22 @@ if (typeof window.RentalTransaction === "undefined") {
                 clearValidationErrors("#return_modal");
                 resetReturnModal();
             });
+
+       
+
             $(s.returnBtn).on("click", () => {
+                const form = $("#return_form");
+                
+                if (!form.valid()) return;
                 const books = [];
-                let valid = true;
+                
                 $(`${s.bookGroups} .book-group`).each(function () {
                     const id   = $(this).find(".book-id").val().trim();
                     const qty  = $(this).find(".quantity").val().trim();
                     const trans= $(this).find(".transaction-id").val().trim();
-                    $(this).find(".text-danger").text("");
-                    if (!id)  { $(this).find(".error-book-id").text("Book ID is required"); valid = false; }
-                    if (!qty || isNaN(qty) || qty <= 0) { $(this).find(".error-quantity").text("Quantity must be positive"); valid = false; }
-                    if (!trans){ $(this).find(".error-transaction-id").text("Transaction ID is required"); valid = false; }
-                    if (valid && id && qty && trans) books.push({ bookId: +id, quantity: +qty, transactionId: +trans });
+                    books.push({ bookId: +id, quantity: +qty, transactionId: +trans });
                 });
-                if (!valid) return;
+                
                 $(s.loader).show();
                 $.ajax({
                     url: `${apiBase}/returnBooks`,
@@ -498,10 +564,9 @@ if (typeof window.RentalTransaction === "undefined") {
             Swal.fire({ icon: "error", title: "Error", text: `❌ ${msg}`, confirmButtonColor: "#3085d6" });
         };
     };
-}
+
 
 /* ---------- INITIALIZE ---------- */
-$(document).ready(function () {
-    window.RentalTransactionInstance = new window.RentalTransaction();
-    window.RentalTransactionInstance.init();
-});
+
+    const RentalTransactionInstance = new RentalTransaction();
+    RentalTransactionInstance.init();
