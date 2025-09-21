@@ -222,8 +222,8 @@
           penalty_reason: { required: true, pattern: /^[a-zA-Z ]+$/, minlength: 5 },
         },
         messages: {
-          penalty_transactionid: { required: "Please Fill Transaction ID", pattern: "Transaction ID must be Number" },
-          penalty_amount: { required: "Please Fill Penalty Amount", pattern: "Penalty Amount must be Number" },
+          penalty_transactionid: { required: "Please Fill Transaction ID", pattern: "Transaction ID must be +ve Number" },
+          penalty_amount: { required: "Please Fill Penalty Amount", pattern: "Penalty Amount must be +ve Number" },
           penalty_reason: { required: "Please Fill Penalty Reason", pattern: "Penalty Reason Only Letters", minlength: "Minimum 5 characters" },
         },
       });

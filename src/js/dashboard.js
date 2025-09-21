@@ -1,4 +1,4 @@
-(function () {
+
   const Dashboard = function () {
     this.selectors = {
       loader: "#loader",
@@ -14,7 +14,8 @@
     this.bookStatusInstance = null;
     this.rentalsInstance = null;
     this.membersInstance = null;
-
+    
+   // $("#dashboardContainer .row:first .col-lg-4:first").css("cursor", "pointer");
     // ---------------- INIT -----------------
     this.init = () => {
       const s = this.selectors;
@@ -39,9 +40,11 @@
       }
     };
 
+    const apiUrl ="http://localhost:8080/LibraryManagementSystem";
+
     this._fetchMembers = () =>
       $.ajax({
-        url: "http://localhost:8080/LibraryManagementSystem/Members/getAllMembers",
+        url: `${apiUrl}/Members/getAllMembers`,
         data: { start: 0, length: 25, memberStatusFilter: "active", order: "asec" },
         method: "GET",
         dataType: "json"
@@ -49,7 +52,7 @@
 
     this._fetchPenalties = () =>
       $.ajax({
-        url: "http://localhost:8080/LibraryManagementSystem/Penalty/getPenalty",
+        url: `${apiUrl}/Penalty/getPenalty`,
         data: { start: 0, length: 10, order: "asc", paymentStatus: "pending" },
         method: "GET",
         dataType: "json"
@@ -58,7 +61,7 @@
     // 🔹 New Books API
     this._fetchBooks = () =>
       $.ajax({
-        url: "http://localhost:8080/LibraryManagementSystem/Books/getAllBooks",
+        url: `${apiUrl}/Books/getAllBooks`,
         data: { start: 0, length: 20, BookAvailablity: "available" },
         method: "GET",
         dataType: "json"
@@ -194,8 +197,7 @@
   };
 
   // Instantiate immediately on DOM ready
-  $(function () {
-    window.DashboardInstance = new Dashboard();
-    window.DashboardInstance.init();
-  });
-})();
+  const DashboardInstance = new Dashboard();
+  DashboardInstance.init();
+  
+
