@@ -31,7 +31,7 @@ const App = function () {
     this.checkLogin = function () {
         const loggedUser = localStorage.getItem("libraryUsername");
         if (!loggedUser) {
-            window.location.href = "Login.html";
+            window.location.href = "library-login.html";
         }
     };
 
@@ -40,7 +40,7 @@ const App = function () {
         const s = this.selectors;
 
         // Load header
-        $(s.header).load("header.html", () => {
+        $(s.header).load("library-common-header.html", () => {
             const lastTitle = localStorage.getItem("lastTitle") || "Dashboard";
             this.updateHeader(lastTitle);
 
@@ -51,7 +51,7 @@ const App = function () {
         });
 
         // Load sidebar
-        $(s.sidebar).load("sidebar.html", () => {
+        $(s.sidebar).load("library-common-sidebar.html", () => {
             this.setActiveLink();
             this.bindLogout();
         });
@@ -78,7 +78,7 @@ const App = function () {
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    setTimeout(() => window.location.href = "Login.html", 1600);
+                    setTimeout(() => window.location.href = "library-login.html", 1600);
                 }
             });
         });
@@ -91,7 +91,7 @@ const App = function () {
      */
    
     this.restoreLastPage = function () {
-        const lastPage = localStorage.getItem("lastPage") || "dashboard.html";
+        const lastPage = localStorage.getItem("lastPage") || "library-dashboard.html";
         this.loadPage(lastPage);
 
         // Collapse sidebar initially without transition
@@ -142,11 +142,11 @@ const App = function () {
         const s = this.selectors;
         $(s.mainBody).load(page, () => {
             // Load page-specific JS
-            if (page === "users.html") $.getScript("js/users.js");
-            else if (page === "penalty.html") $.getScript("js/penalty.js");
-            else if (page === "catalog.html") $.getScript("js/catalog.js");
-            else if (page === "books.html") $.getScript("js/book.js");
-            else if (page === "dashboard.html") $.getScript("js/dashboard.js", function () {
+            if (page === "library-users-management.html") $.getScript("js/library.users.management.js");
+            else if (page === "library-penalty-management.html") $.getScript("js/library.penalty.management.js");
+            else if (page === "library-catalog.html") $.getScript("js/library.catalog.js");
+            else if (page === "library-books-management.html") $.getScript("js/library.books-management.js");
+            else if (page === "library-dashboard.html") $.getScript("js/library.dashboard.js", function () {
                 $(document).trigger("dashboardLoaded");
             });
             
@@ -158,11 +158,11 @@ const App = function () {
         const s = this.selectors;
 
         const cardMap = [
-            { selector: ".row:first .col-lg-4:nth-child(1)", page: "books.html", title: "Books", sidebarLink: '#sidebar .nav-link[href="books.html"]' },
-            { selector: ".row:first .col-lg-4:nth-child(2)", page: "penalty.html", title: "Penalty", sidebarLink: '#sidebar .nav-link[href="penalty.html"]' },
-            { selector: ".row:last .col-md-4:nth-child(2)", page: "penalty.html", title: "Penalty", sidebarLink: '#sidebar .nav-link[href="penalty.html"]' },
-            { selector: ".row:first .col-lg-4:nth-child(3)", page: "users.html", title: "Users", sidebarLink: '#sidebar .nav-link[href="users.html"]' },
-            { selector: ".row:last .col-md-4:nth-child(1)", page: "users.html", title: "Users", sidebarLink: '#sidebar .nav-link[href="users.html"]' }
+            { selector: ".row:first .col-lg-4:nth-child(1)", page: "library-books-management.html", title: "Books", sidebarLink: '#sidebar .nav-link[href="library-books-management.html.html"]' },
+            { selector: ".row:first .col-lg-4:nth-child(2)", page: "library-penalty-management.html", title: "Penalty", sidebarLink: '#sidebar .nav-link[href="library-penalty-management.html"]' },
+            { selector: ".row:last .col-md-4:nth-child(2)", page: "library-penalty-management.html", title: "Penalty", sidebarLink: '#sidebar .nav-link[href="library-penalty-management.html"]' },
+            { selector: ".row:first .col-lg-4:nth-child(3)", page: "library-users-management.html", title: "Users", sidebarLink: '#sidebar .nav-link[href="library-users-management.html"]' },
+            { selector: ".row:last .col-md-4:nth-child(1)", page: "library-users-management.html", title: "Users", sidebarLink: '#sidebar .nav-link[href="library-users-management.html"]' }
         ];
 
         cardMap.forEach(card => {
@@ -185,7 +185,7 @@ const App = function () {
         $(s.navLink).removeClass("active");
         if ($link) $link.addClass("active");
         else {
-            const lastPage = localStorage.getItem("lastPage") || "dashboard.html";
+            const lastPage = localStorage.getItem("lastPage") || "library-dashboard.html";
             $(`${s.navLink}[href="${lastPage}"]`).addClass("active");
         }
     };
@@ -202,7 +202,7 @@ $(document).ready(function () {
     window.appInstance = new App();
     window.appInstance.init();
 
-    // Attach dashboard card clicks when dashboard.js finishes loading
+    // Attach dashboard card clicks when library.dashboard.js finishes loading
     $(document).on("dashboardLoaded", () => {
         window.appInstance.attachDashboardCardClicks();
     });

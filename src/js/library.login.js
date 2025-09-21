@@ -119,7 +119,7 @@ const LibraryLogin = function () {
 
                 // Redirect after toast hides
                 toastEl.addEventListener("hidden.bs.toast", () => {
-                    window.location.href = "index.html";
+                    window.location.href = "library-main-page.html";
                 }, { once: true });
 
             } else {

@@ -79,6 +79,10 @@ const RentalTransaction = function () {
             } else {
                 $(s.filterValue).prop("disabled", true).val("");
             }
+            if ($.fn.DataTable.isDataTable(s.table)) {
+                $(s.table).DataTable().clear().destroy();
+                $(s.table).hide();
+            }
         };
         this.changeFilterInput = function () {
             if ($.fn.DataTable.isDataTable(s.table)) {

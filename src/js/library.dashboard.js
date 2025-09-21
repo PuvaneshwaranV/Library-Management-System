@@ -15,7 +15,7 @@
     this.rentalsInstance = null;
     this.membersInstance = null;
     
-   // $("#dashboardContainer .row:first .col-lg-4:first").css("cursor", "pointer");
+   
     // ---------------- INIT -----------------
     this.init = () => {
       const s = this.selectors;
