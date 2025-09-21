@@ -145,7 +145,7 @@ const App = function () {
             if (page === "library-users-management.html") $.getScript("js/library.users.management.js");
             else if (page === "library-penalty-management.html") $.getScript("js/library.penalty.management.js");
             else if (page === "library-catalog.html") $.getScript("js/library.catalog.js");
-            else if (page === "library-books-management.html") $.getScript("js/library.books-management.js");
+            else if (page === "library-books-management.html") $.getScript("js/library.books.management.js");
             else if (page === "library-dashboard.html") $.getScript("js/library.dashboard.js", function () {
                 $(document).trigger("dashboardLoaded");
             });

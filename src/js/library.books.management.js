@@ -1,21 +1,23 @@
 
 
+
 $(document).ready(()=>{
   const custom_elements = "./template-custom-elements.html";
-  $("#book_add").load(custom_elements, () => {
+  $("#book_add").load(custom_elements, () => { 
     $("#book_add").append("<book-add-edit-modal></book-add-edit-modal>");
       const script =document.createElement("script");
       script.src = "js/add.or.update.book.js"
       document.body.appendChild(script);
   })
 })
-
       
 
 
 
 // ---------------------------------------------------------
 const Books = function () {
+
+  
   // ----------------- CENTRAL SELECTOR MAP -----------------
 const selectors = {
   loader:              "#loader",
@@ -30,30 +32,14 @@ const selectors = {
   filterLength:        "#custom_length",
   filters:             ".filters",
 
-  // Add book modal
-  addModal:            "#book_modal",
-  addBtn:              "#add_btn",
-  addCancelBtn:        "#cancel",
-  addTitle:            "#title",
-  addAuthor:           "#author",
-  addLanguage:         "#language",
-  addQuantity:         "#quantity",
-  addTitleError:       "#title_error",
-  addAuthorError:      "#author_error",
-  addLanguageError:    "#language_error",
-  addQuantityError:    "#quantity_error",
+
 
   // Update book modal
-  updateModal:         "#update_modal",
-  updateBtn:           "#update_btn",
   updateTitle:         "#title_update",
   updateAuthor:        "#author_update",
   updateLanguage:      "#language_update",
   updateTotalCount:    "#total_count",
-  updateTitleError:    "#update_title_error",
-  updateAuthorError:   "#update_author_error",
-  updateLanguageError: "#language_error",
-  updateTotalError:    "#update_total_error",
+
 
   // Table row actions
   updateBookBtn:       ".update-book",

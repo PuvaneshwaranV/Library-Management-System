@@ -2,7 +2,6 @@ if (!customElements.get("book-add-edit-modal")) {
   class BookAddEditModal extends HTMLElement {
     constructor() {
       super();
-
       const tmpl = $("#book_add_edit_modal").get(0);
       this.appendChild(tmpl.content.cloneNode(true));
 
@@ -36,7 +35,7 @@ if (!customElements.get("book-add-edit-modal")) {
     /** All event bindings */
     attachEvents() {
       this.initValidation();
-
+      
       // --------- Save Button ----------
       $(this.selectors.saveButton).on("click", () => {
         const form = $(this.selectors.form);
