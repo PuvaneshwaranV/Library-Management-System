@@ -18,9 +18,23 @@ $color-muted:        #999999;   // Disabled text
   font-weight: 400;
 }
 
+.btn-outline-dark{
+  color:$color-primary !important;
+  font-weight:600;
+  border: 3px solid $color-primary;
+  &:hover {
+    border:3px solid #f3f4f6;
+    color:$color-secondary !important;
+    background-color: $color-accent;
+    font-weight:normal;
+  }
+}
+
+.text-grey { color:$color-muted; }
+
 .text-secondary { color: $color-primary !important; }
 
-td, th { text-align: center !important; }
+td, th { text-align: left !important; }
 
 input[type=text],
 input[type=number],
@@ -43,48 +57,113 @@ textarea:disabled:hover {
 }
 
 // ======================= Sidebar ===========================
-#sidebar {
-  margin-top: 35px;
-  width: 200px;
-  color: $color-secondary;
-  background-color: $color-primary;
+/* ----- Collapsed sidebar: icons only ----- */
+/* ===== Collapsible Sidebar ===== */
+#sidebar{
+  margin-top: 30px; 
+  width: 180px; 
+  color: $color-secondary; 
+  background-color: 
+  $color-primary;
   transition: all 0.3s ease;
-
-  ul {
-    margin-top: 50px !important;
-    li {
-      i { color: $color-secondary; }
-      a {
-        font-size: 20px;
-        border-radius: 0;
-        background-color: $color-primary;
+  z-index: 1000;
+  ul{
+    li{
+      i {
+        color: $color-secondary;
+        min-width: 24px;
+        text-align: center;
+      }
+      a{
+        border-radius: 0; 
+        background-color: 
+        $color-primary; 
         color: #d1d5db;
-        cursor: pointer;
-
-        &.active {
-          background-color: $color-accent;
-          color: $color-primary;
-          i { color: $color-primary; }
-        }
-        &:hover {
-          color: $color-primary;
-          background-color: $color-secondary;
-          i { color: $color-primary; }
+        &.active { 
+          
+          background-color: $color-accent; 
+          color: $color-primary; 
+          i { 
+            color: $color-primary; 
+          } 
+        } 
+        &:hover 
+        { 
+          color: $color-primary; 
+          background-color: $color-secondary; 
+          i { 
+            color: $color-primary; 
+            } 
         }
       }
     }
   }
-
   &.no-transition { transition: none !important; }
-  &.collapsed    { margin-left: -200px; }
 }
+#sidebar.collapsed {
+  width: 60px;               
+  overflow-x: hidden;
+}
+
+#sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  
+  span {
+    transition: opacity 0.2s ease;
+  }
+}
+
+/* Hide labels when collapsed */
+#sidebar.collapsed .nav-link span {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  overflow: hidden;
+}
+
+#sidebar.collapsed:not(:hover) {
+  .nav-link.active {
+    background: $color-primary !important;   
+   i {
+    color:$color-accent !important;
+      background-color: rgba(255,255,255, 0.2); 
+      border-radius: 50% !important;
+                  
+      transition: background-color 0.2s ease;
+   }
+  }
+}
+
+/* Optional hover-expand effect */
+#sidebar.collapsed:hover {
+  width: 180px;
+}
+
+#sidebar.collapsed:hover .nav-link span {
+  opacity: 1;
+  width: auto;
+  pointer-events: auto;
+}
+
+/* Shift main body accordingly */
+
+
+
+
+
+
+
 
 #logout { margin-top: 300px; }
 
 // ======================= Main Content ===========================
 #main_body {
+  margin-left:60px;
   transition: all 0.3s;
-  &.collapsed { margin-left: 200px; }
+  &.collapsed { 
+    margin-left: 200px; 
+  }
 }
 
 #content {
@@ -94,7 +173,7 @@ textarea:disabled:hover {
   table {
     background-color: $color-secondary;
     padding: 15px;
-    border-radius: 40px;
+    border-radius: 20px;
   }
 }
 

@@ -7,12 +7,28 @@
   font-weight: 400;
 }
 
+.btn-outline-dark {
+  color: #1e3a8a !important;
+  font-weight: 600;
+  border: 3px solid #1e3a8a;
+}
+.btn-outline-dark:hover {
+  border: 3px solid #f3f4f6;
+  color: #ffffff !important;
+  background-color: #fbbf24;
+  font-weight: normal;
+}
+
+.text-grey {
+  color: #999999;
+}
+
 .text-secondary {
   color: #1e3a8a !important;
 }
 
 td, th {
-  text-align: center !important;
+  text-align: left !important;
 }
 
 input[type=text],
@@ -38,25 +54,25 @@ textarea:disabled:hover {
   cursor: not-allowed;
 }
 
+/* ----- Collapsed sidebar: icons only ----- */
+/* ===== Collapsible Sidebar ===== */
 #sidebar {
-  margin-top: 35px;
-  width: 200px;
+  margin-top: 30px;
+  width: 180px;
   color: #ffffff;
   background-color: #1e3a8a;
   transition: all 0.3s ease;
-}
-#sidebar ul {
-  margin-top: 50px !important;
+  z-index: 1000;
 }
 #sidebar ul li i {
   color: #ffffff;
+  min-width: 24px;
+  text-align: center;
 }
 #sidebar ul li a {
-  font-size: 20px;
   border-radius: 0;
   background-color: #1e3a8a;
   color: #d1d5db;
-  cursor: pointer;
 }
 #sidebar ul li a.active {
   background-color: #fbbf24;
@@ -75,15 +91,56 @@ textarea:disabled:hover {
 #sidebar.no-transition {
   transition: none !important;
 }
+
 #sidebar.collapsed {
-  margin-left: -200px;
+  width: 60px;
+  overflow-x: hidden;
 }
 
+#sidebar .nav-link {
+  display: flex;
+  align-items: center;
+}
+#sidebar .nav-link span {
+  transition: opacity 0.2s ease;
+}
+
+/* Hide labels when collapsed */
+#sidebar.collapsed .nav-link span {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  overflow: hidden;
+}
+
+#sidebar.collapsed:not(:hover) .nav-link.active {
+  background: #1e3a8a !important;
+}
+#sidebar.collapsed:not(:hover) .nav-link.active i {
+  color: #fbbf24 !important;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50% !important;
+  transition: background-color 0.2s ease;
+}
+
+/* Optional hover-expand effect */
+#sidebar.collapsed:hover {
+  width: 180px;
+}
+
+#sidebar.collapsed:hover .nav-link span {
+  opacity: 1;
+  width: auto;
+  pointer-events: auto;
+}
+
+/* Shift main body accordingly */
 #logout {
   margin-top: 300px;
 }
 
 #main_body {
+  margin-left: 60px;
   transition: all 0.3s;
 }
 #main_body.collapsed {
@@ -97,7 +154,7 @@ textarea:disabled:hover {
 #content table {
   background-color: #ffffff;
   padding: 15px;
-  border-radius: 40px;
+  border-radius: 20px;
 }
 
 .modal-title {

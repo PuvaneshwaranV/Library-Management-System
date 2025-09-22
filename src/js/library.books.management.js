@@ -32,15 +32,6 @@ const selectors = {
   filterLength:        "#custom_length",
   filters:             ".filters",
 
-
-
-  // Update book modal
-  updateTitle:         "#title_update",
-  updateAuthor:        "#author_update",
-  updateLanguage:      "#language_update",
-  updateTotalCount:    "#total_count",
-
-
   // Table row actions
   updateBookBtn:       ".update-book",
   deleteBookBtn:       ".delete-book",
@@ -105,9 +96,10 @@ const selectors = {
 
           $(selectors.dataTable).DataTable({
             data,
+            autoWidth: false,
             sort: false,
             destroy: true,
-            dom: '<"top"<"custom-length">lp>t<"bottom"ip>',
+            dom: '<"top d-flex justify-content-between"<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
             lengthMenu: [10, 25, 50, 100],
             language: { emptyTable: "No data found" },
             columns: [
@@ -122,43 +114,67 @@ const selectors = {
               { title: "Title", data: "title" },
               { title: "Language", data: "language" },
               { title: "Author", data: "author" },
-              { title: "Book Reg. Date", data: "bookRegistrationDate" },
+              { title: "Book Reg. Date", data: "bookRegistrationDate",
+                width: "200px"
+               },
               { title: "Total Count", data: "totalCount" },
               {
                 title: "Status",
                 data: "bookStatus",
                 render: (d, t, row) => {
-                  const cls = row.bookStatus === "Available" ? "bg-success" : "bg-danger";
-                  return `<p class="${cls} rounded-5 text-white mb-0 px-2">${row.bookStatus}</p>`;
+                  const bgColor = row.bookStatus === "Available" ? "#d4edda" : "#f8d7da"; // light green / light red
+                  const textColor = row.bookStatus === "Available" ? "#155724" : "#721c24"; // dark text for contrast
+
+                  return `<p style="
+                      background-color: ${bgColor}; 
+                      color: ${textColor}; 
+                      border-radius: 12px; 
+                      padding: 2px 12px; 
+                      margin: 0 auto;
+                      width: 100px;
+                      text-align: center;
+                      font-weight: 500;
+                  ">${row.bookStatus}</p>`;
                 },
+                className: "text-center", // center the column itself
+                width: "100px !important"
               },
               {
                 title: "Actions",
                 data: null,
                 orderable: false,
                 render: (d, t, row) => `
-                  <button class="btn btn-sm btn-warning me-2 update-book" data-bs-toggle="tooltip"
+                  <button class="btn btn-md me-1 update-book" data-bs-toggle="tooltip"
                     data-bs-placement="top"
                     title="Edit"
                           data-id="${row.bookId}">
-                    <i class="fa-solid fa-pen-to-square text-white"></i>
+                    <i class="fa-solid fa-pen-to-square text-grey"></i>
                   </button>
-                  <button class="btn btn-sm btn-danger delete-book" data-bs-toggle="tooltip"
+                  <button class="btn btn-md  delete-book" data-bs-toggle="tooltip"
                     data-bs-placement="top"
                     title="Delete" data-id="${row.bookId}">
-                    <i class="fa-solid fa-trash"></i>
+                    <i class="fa-solid fa-trash text-danger" ></i>
                   </button>`,
               },
             ],
             drawCallback: function () {
-        const tipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        tipEls.forEach(el => {
-            // avoid duplicates
-            if (!bootstrap.Tooltip.getInstance(el)) {
-                new bootstrap.Tooltip(el);
-            }
-        });
-    }
+              const tipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+              tipEls.forEach(el => {
+                  // avoid duplicates
+                  if (!bootstrap.Tooltip.getInstance(el)) {
+                      new bootstrap.Tooltip(el);
+                  }
+              });
+              
+              const dtLeft = $('.dt-left');
+              if (dtLeft.children().length === 0) { // avoid duplicates
+                  dtLeft.append(`
+                      <button id="book_pdf" class="btn btn-md btn-warning text-white  ms-3">
+                          <i class="fa-solid fa-file-lines fa-lg "></i>Generate Available Books PDF
+                      </button>
+                  `);
+              }
+          }
           });
 
           $(selectors.loader).hide();
@@ -198,7 +214,7 @@ const selectors = {
 
   // -------------------------------------------------------
   this.generateAvailableBookPdf = function () {
-    $(document).on("click", selectors.generatePdfBtn, function () {
+    $(document).on("click", selectors.generatePdfBtn, function () {      
       $(selectors.loader).show();
       $.ajax({
         url: "http://localhost:8080/LibraryManagementSystem/Books/getBookPDF",
@@ -230,10 +246,6 @@ const selectors = {
           const book = res.object;
           bookId = book.bookId;
           totalCountPrev = book.totalCount;
-          $(selectors.updateTitle).val(book.title);
-          $(selectors.updateAuthor).val(book.author);
-          $(selectors.updateLanguage).val(book.language);
-          $(selectors.updateTotalCount).val(book.totalCount);
           const modalEl = document.querySelector("book-add-edit-modal");
           if (modalEl) {
             modalEl.open({

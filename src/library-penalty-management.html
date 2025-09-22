@@ -2,16 +2,17 @@
   <div class="d-flex flex-column mb-3">
     <div
       class="modal fade"
-      id="penalty_modal"
+      id="lm_penalty_modal"
       tabindex="-1"
-      aria-labelledby="penalty_modal_label" data-bs-backdrop="static"
+      aria-labelledby="lm_penalty_modal_label"
+      data-bs-backdrop="static"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-body position-relative mx-3">
-            <h3 class="modal-title" id="penalty_modal_label">
-              <i class="fa-solid fa-indian-rupee-sign me-3"></i>Add Peanlty
+            <h3 class="modal-title" id="lm_penalty_modal_label">
+              <i class="fa-solid fa-indian-rupee-sign me-3"></i>Add Penalty
             </h3>
             <button
               type="button"
@@ -22,50 +23,42 @@
               <i class="fa-regular fa-circle-xmark"></i>
             </button>
             <hr class="border border-1 border-dark opacity-100" />
-            <form class="mx-5 my-4" id="penalty_add_form">
+            <form class="mx-5 my-4" id="lm_penalty_add_form">
               <div class="mb-3">
                 <input
                   type="text"
                   class="form-control"
-                  id="penalty_transactionid" name="penalty_transactionid"
+                  id="lm_penalty_transactionid"
+                  name="lm_penalty_transactionid"
                   placeholder="Transaction ID"
                 />
-               
               </div>
               <div class="mb-3">
                 <input
                   type="number"
                   class="form-control"
-                  id="penalty_amount" name="penalty_amount"
-                  placeholder="Amount" 
+                  id="lm_penalty_amount"
+                  name="lm_penalty_amount"
+                  placeholder="Amount"
                 />
-               
               </div>
               <div class="mb-3">
                 <input
                   type="text"
                   class="form-control"
-                  id="penalty_reason" name="penalty_reason"
+                  id="lm_penalty_reason"
+                  name="lm_penalty_reason"
                   placeholder="Reason"
                 />
-                
               </div>
               <div class="row">
                 <div class="col-6">
-                  <button
-                    id="reset"
-                    type="button"
-                    class="btn btn-dark w-100" 
-                  >
+                  <button id="lm_penalty_reset" type="button" class="btn btn-dark w-100">
                     Reset
                   </button>
                 </div>
                 <div class="col-6">
-                  <button
-                    id="penalty_add_btn"
-                    type="button"
-                    class="btn btn-dark w-100"
-                  >
+                  <button id="lm_penalty_add_btn" type="button" class="btn btn-dark w-100">
                     Save
                   </button>
                 </div>
@@ -75,18 +68,19 @@
         </div>
       </div>
     </div>
+
     <div
       class="modal fade"
-      id="penalty_pay_modal"
+      id="lm_penalty_pay_modal"
       tabindex="-1"
-      aria-labelledby="penalty_pay_modal_label"
+      aria-labelledby="lm_penalty_pay_modal_label"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-body position-relative mx-3">
-            <h3 class="modal-title" id="penalty_pay_modal_label">
-              <i class="fa-solid fa-indian-rupee-sign me-3"></i>Pay Peanlty
+            <h3 class="modal-title" id="lm_penalty_pay_modal_label">
+              <i class="fa-solid fa-indian-rupee-sign me-3"></i>Pay Penalty
             </h3>
             <button
               type="button"
@@ -102,36 +96,26 @@
                 <input
                   type="text"
                   class="form-control"
-                  id="penalty_pay_penaltyid"
+                  id="lm_penalty_pay_penaltyid"
                   placeholder="Penalty ID" disabled
                 />
-                <div id="penalty_pay_penaltyid_error" class="text-danger small"></div>
               </div>
               <div class="mb-3">
                 <input
                   type="text"
                   class="form-control"
-                  id="penalty_pay_amount"
+                  id="lm_penalty_pay_amount"
                   placeholder="Amount" disabled
                 />
-                <div id="penalty_pay_amount_error" class="text-danger small"></div>
               </div>
               <div class="row">
                 <div class="col-6">
-                  <button
-                    id="cancel"
-                    type="button"
-                    class="btn btn-dark w-100"
-                  >
+                  <button id="lm_penalty_cancel" type="button" class="btn btn-dark w-100">
                     Reset
                   </button>
                 </div>
                 <div class="col-6">
-                  <button
-                    id="penalty_pay_btn"
-                    type="button"
-                    class="btn btn-dark w-100"
-                  >
+                  <button id="lm_penalty_pay_btn" type="button" class="btn btn-dark w-100">
                     Pay
                   </button>
                 </div>
@@ -141,43 +125,40 @@
         </div>
       </div>
     </div>
+
     <div class="d-flex justify-content-end gap-2 mb-3">
       <button
-        id=""
         class="btn btn-dark"
         data-bs-toggle="modal"
-        data-bs-target="#penalty_modal"
+        data-bs-target="#lm_penalty_modal"
       >
-        <i class="fa-solid fa-indian-rupee-sign fa-lg me-1" style="color: #ffffff"></i
-        >Add Penalty
+        <i class="fa-solid fa-indian-rupee-sign fa-lg me-1" style="color: #ffffff"></i>
+        Add Penalty
       </button>
     </div>
-    <div id="penalty_filters" class="d-flex justify-content-between mb-3">
-      <!-- Show Dropdown (aligned left) -->
-    
 
-      <!-- Other Filters (aligned right) -->
+    <div id="lm_penalty_filters" class="d-flex justify-content-between mb-3">
       <div class="d-flex gap-2">
-          <div class="d-flex flex-column">
-        <label for="penalty_length" class="ms-2">Show </label>
-        <select id="penalty_length" class="form-select filters w-auto">
-          <option value="10">10</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
-      </div>
         <div class="d-flex flex-column">
-          <label for="penalty_filter_status" class="ms-2">Penalty Status</label>
-          <select id="penalty_filter_status" class="form-select filters w-auto">
+          <label for="lm_penalty_length" class="ms-2">Show </label>
+          <select id="lm_penalty_length" class="form-select lm_penalty_filters w-auto">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        <div class="d-flex flex-column">
+          <label for="lm_penalty_filter_status" class="ms-2">Penalty Status</label>
+          <select id="lm_penalty_filter_status" class="form-select lm_penalty_filters w-auto">
             <option value="all">All</option>
             <option value="paid">Paid</option>
             <option value="pending">Pending</option>
           </select>
         </div>
         <div class="d-flex flex-column">
-          <label for="penalty_filter_type" class="ms-2">Search By</label>
-          <select id="penalty_filter_type" class="form-select filters w-auto">
+          <label for="lm_penalty_filter_type" class="ms-2">Search By</label>
+          <select id="lm_penalty_filter_type" class="form-select lm_penalty_filters w-auto">
             <option value="all">All</option>
             <option value="transactionid">Transaction ID</option>
             <option value="memberid">Member ID</option>
@@ -185,27 +166,29 @@
           </select>
         </div>
         <div class="d-flex flex-column">
-          <label for="penalty_filter_value" class="ms-2">Enter Value</label>
+          <label for="lm_penalty_filter_value" class="ms-2">Enter Value</label>
           <input
             type="text"
-            id="penalty_filter_value"
-            class="form-control filters w-auto"
+            id="lm_penalty_filter_value"
+            class="form-control lm_penalty_filters w-auto"
             placeholder="🔍 Enter Value"
           />
         </div>
       </div>
     </div>
+
     <div class="d-flex justify-content-end gap-2">
-      <button id="apply_penalty_filters" class="btn btn-dark">Submit</button>
-      <button id="reset_penalty_filters" class="btn btn-dark">
-        Reset
-      </button>
+      <button id="lm_penalty_apply_filters" class="btn btn-dark">Submit</button>
+      <button id="lm_penalty_reset_filters" class="btn btn-dark">Reset</button>
+    </div>
+    <div class="d-flex justify-content-end mt-2">
+      <h6 class="text-warning"  style="display:none;font-weight:500;" id="lm_filer_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
     </div>
   </div>
 
- <div id="loader">
-  <div class="circle-loader"></div>
-</div>
+  <div id="loader">
+    <div class="circle-loader"></div>
+  </div>
 
   <table id="user_table" class="display" style="width: 100%; display: none">
     <thead></thead>

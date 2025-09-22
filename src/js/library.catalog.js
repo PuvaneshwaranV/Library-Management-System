@@ -129,9 +129,10 @@ const RentalTransaction = function () {
             }
             $(s.table).DataTable({
                 data,
+                autoWidth: false,
                 sort: false,
                 destroy: true,
-                dom: '<"top"lp>t<"bottom"ip>',
+                dom: '<"top d-flex justify-content-between"<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
                 lengthMenu: [10, 25, 50, 100],
                 language: { emptyTable: "No data found" },
                 columns: [
@@ -149,11 +150,18 @@ const RentalTransaction = function () {
                     {
                         title: "Status",
                         data: "bookRentalStatus",
-                        render: (d,t,row) =>
-                            `<p class="${row.bookRentalStatus === "Returned"
-                                        ? "bg-success"
-                                        : "bg-danger"} rounded-5 text-white mb-0 px-2">
-                              ${row.bookRentalStatus}</p>`
+                        render: (d,t,row) => {
+                             const bgColor = row.bookRentalStatus === "Returned" ? "#d4edda" : "#f8d7da"; // light green / light red
+                            const textColor = row.bookRentalStatus === "Returned" ? "#155724" : "#721c24"; // dark text for contrast
+                            return `<span class=" text-center mb-0 px-2" style="background-color:${bgColor};color:${textColor};
+                                border-radius: 12px; 
+                                padding: 2px 12px; 
+                                margin: 0 auto;
+                                width: 100px;
+                                font-weight: 500;
+                            ">
+                              ${row.bookRentalStatus}</span>`
+                        }
                     },
                     {
                         title: "Actions",
@@ -161,15 +169,15 @@ const RentalTransaction = function () {
                         orderable: false,
                         render: (d,t,row) =>
                             row.bookRentalStatus === "Borrowed"
-                                ? `<button class="btn btn-sm btn-warning update-rental"
+                                ? `<button class="btn btn-md  update-rental"
                                         data-bs-toggle="tooltip"
                                        data-id="${row.transactionId}"
                                        data-bookid="${row.bookId}"
                                        data-quantity="${row.quantity}" title="Return Book">
-                                       <i class="fa-solid fa-pen-to-square text-white"></i>
+                                       <img src="../../assets/returning.png" alt="return book" height="25" width="25">
                                    </button>`
-                                : `<span data-bs-toggle="tooltip" title="Already Returned"><button class="btn btn-sm btn-secondary" disabled>
-                                       <i class="fa-solid fa-pen-to-square text-white"></i>
+                                : `<span data-bs-toggle="tooltip" title="Already Returned"><button class="btn btn-md border-0" disabled>
+                                       <img src="../../assets/already return.png" alt="already returned" height="25" width="25">
                                    </button></span>`
                     }
                 ],
@@ -177,6 +185,14 @@ const RentalTransaction = function () {
                     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
                         if (!bootstrap.Tooltip.getInstance(el)) new bootstrap.Tooltip(el);
                     });
+                    const dtLeft = $('.dt-left');
+                    if (dtLeft.children().length === 0) { // avoid duplicates
+                        dtLeft.append(`
+                            <button id="transaction_pdf" class="btn btn-warning text-white ms-3">
+                                <i class="fa-solid fa-file-lines fa-lg me-1" style="color: #ffffff"></i>Generate All Transaction Pdf
+                            </button>
+                        `);
+                    }
                 }
             });
             $(s.loader).hide();
@@ -546,12 +562,12 @@ const RentalTransaction = function () {
 
         /* ---------- PDF ---------- */
         this.bindPDFHandler = function () {
-            $(s.pdfBtn).on("click", () => {
+            $(document).on("click", s.pdfBtn, () => {
                 $(s.loader).show();
                 $.ajax({
                     url: `${apiBase}/getTransactionPDF`,
                     type: "GET",
-                    dataType: "json",
+                    dataType: "json",                    
                     success: (res) => {
                         $(s.loader).hide();
                         Swal.fire({ icon: "success", title: "Generated", text: `✅ ${res.object}`, timer: 2000, showConfirmButton: false });

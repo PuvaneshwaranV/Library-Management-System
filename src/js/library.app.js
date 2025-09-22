@@ -112,6 +112,21 @@ const App = function () {
         });
     };
 
+//     const sidebar = document.getElementById("sidebar");
+// const mainBody = document.getElementById("main_body");
+
+// sidebar.addEventListener("mouseenter", () => {
+  
+//     mainBody.style.marginLeft = "200px";
+  
+// });
+
+// sidebar.addEventListener("mouseleave", () => {
+ 
+//     mainBody.style.marginLeft = "60px";
+  
+// });
+
     /* ---------- NAVIGATION LINKS ---------- */
     this.bindSidebarLinks = function () {
         const s = this.selectors;

@@ -5,7 +5,9 @@
         <div class="modal-content">
           <div class="modal-body position-relative mx-3">
             <h3 class="modal-title" id="borrow_modal_label">
-              <i class="fa-solid fa-database me-3"></i>Borrow Book
+              <!-- <i class="fa-solid fa-database me-3"></i> -->
+              <img src="../assets/borrow Primary.png" alt="borrow book" height="35" width="35">
+              Borrow Book
             </h3>
             <button type="button" class="btn-close-custom position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"
               aria-label="Close">
@@ -70,7 +72,9 @@
         <div class="modal-content">
           <div class="modal-body position-relative mx-3">
             <h3 class="modal-title">
-              <i class="fa-solid fa-pen-to-square me-3"></i>Update Rental
+              <!-- <i class="fa-solid fa-pen-to-square me-3"></i> -->
+               <img src="../assets/return book modal.png" alt="return book" height="35" width="35">
+              Update Rental
             </h3>
             <button type="button" class="btn-close-custom position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"
               aria-label="Close">
@@ -110,7 +114,9 @@
 
           <div class="modal-body position-relative mx-3">
             <h3 class="modal-title" id="return_modal_label">
-              <i class="fa-solid fa-database me-3"></i>Return Book
+              <!-- <i class="fa-solid fa-database me-3"></i> -->
+               <img src="../assets/return book modal.png" alt="return book" height="35" width="35">
+              Return Book
             </h3>
             <button type="button" class="btn-close-custom position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"
               aria-label="Close">
@@ -163,22 +169,12 @@
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-end gap-2 mb-3">
-      <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#borrow_modal">
-        <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i>Borrow
-      </button>
-      <button data-bs-toggle="modal" data-bs-target="#return_modal" class="btn btn-dark">
-        <i class="fa-solid fa-circle-minus me-1" style="color: #fff;"></i></i>Return
-      </button>
-    </div>
-    <div id="rental_filters" class="d-flex justify-content-between mb-3">
-      <!-- Show Dropdown (aligned left) -->
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
 
-
-      <!-- Other Filters (aligned right) -->
-      <div class="d-flex gap-2">
+      <!-- Filters (left) -->
+      <div id="rental_filters" class="d-flex gap-2 flex-wrap">
         <div class="d-flex flex-column">
-          <label for="rental_length" class="ms-2">Show </label>
+          <label for="rental_length" class="ms-2">Show</label>
           <select id="rental_length" class="form-select filters w-auto">
             <option value="10">10</option>
             <option value="25">25</option>
@@ -204,15 +200,30 @@
         </div>
         <div class="d-flex flex-column">
           <label for="rental_filter_value" class="ms-2">Enter Value</label>
-          <input type="text" id="rental_filter_value" class="form-control filters w-auto" placeholder="🔍 Enter Value"
-            disabled />
+          <input type="text" id="rental_filter_value" class="form-control filters w-auto"
+                 placeholder="🔍 Enter Value" disabled />
         </div>
       </div>
+
+      <!-- Borrow / Return Buttons (right) -->
+      <div class="d-flex gap-2">
+        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#borrow_modal">
+          <!-- <i class="fa-solid fa-circle-plus fa-lg me-1"></i> -->
+           <img src="../assets/borrow.png" alt="borrow book" height="25" width="25">
+          Borrow
+        </button>
+        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#return_modal">
+          <!-- <i class="fa-solid fa-circle-minus fa-lg me-1"></i> -->
+           <img src="../assets/return.png" alt="return book" height="22" width="22" >
+          Return
+        </button>
+        
+      </div>
+
     </div>
+    <!-- ✅ End single row -->
+
     <div class="d-flex justify-content-end gap-2">
-      <button id="transaction_pdf" class="btn btn-dark">
-        <i class="fa-solid fa-file-lines fa-lg me-1" style="color: #ffffff"></i>Generate All Transaction Pdf
-      </button>
       <button id="apply_rental_filters" class="btn btn-dark">Submit</button>
       <button id="reset_rental_filters" class="btn btn-dark">Reset</button>
     </div>

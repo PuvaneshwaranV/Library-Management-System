@@ -1,46 +1,33 @@
 <div class="container-fluid">
-  <div class="d-flex flex-column mb-3">
+  <div class="d-flex flex-column mb-5">
+    
     <div id="book_add"></div>
 
-    <div class="d-flex justify-content-end gap-2 mb-3">
-      <button
-        id="add_new_book"
-        class="btn btn-dark"
-      >
-        <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i
-        >Add Book
-      </button>
-      <button id="book_pdf" class="btn btn-dark">
-        <i class="fa-solid fa-file-lines fa-lg me-1" style="color: #ffffff"></i
-        >Generate Available Books Pdf
-      </button>
-    </div>
-    <div id="custom_filters" class="d-flex justify-content-start mb-3">
-      <!-- Show Dropdown (aligned left) -->
+    <!-- Filters + Buttons Row -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
       
-
-      <!-- Other Filters (aligned right) -->
-      <div class="d-flex gap-2">
-         <div class="d-flex flex-column">
-        <label for="custom_length" class="ms-2">Show </label>
-        <select id="custom_length" class="form-select filters w-auto">
-          <option value="10">10</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
-      </div>
+      <!-- Filters (aligned left/start) -->
+      <div id="custom_filters" class="d-flex gap-2">
         <div class="d-flex flex-column">
-          <label for="filter_status" class="ms-2">Status</label>
-          <select id="filter_status" class="form-select filters w-auto">
+          <label for="custom_length" class="ms-2 text-secondary">Show</label>
+          <select id="custom_length" class="form-select filters w-auto text-secondary">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        <div class="d-flex flex-column">
+          <label for="filter_status" class="ms-2 text-secondary">Status</label>
+          <select id="filter_status" class="form-select filters w-auto text-secondary">
             <option value="all">All</option>
             <option value="Available">Available</option>
             <option value="Borrowed">Borrowed</option>
           </select>
         </div>
         <div class="d-flex flex-column">
-          <label for="filter_type" class="ms-2">Search By</label>
-          <select id="filter_type" class="form-select filters w-auto">
+          <label for="filter_type" class="ms-2 text-secondary">Search By</label>
+          <select id="filter_type" class="form-select filters w-auto text-secondary">
             <option value="all">All</option>
             <option value="language">Language</option>
             <option value="author">Author</option>
@@ -49,29 +36,45 @@
           </select>
         </div>
         <div class="d-flex flex-column">
-          <label for="filter_value" class="ms-2">Enter Value</label>
+          <label for="filter_value" class="ms-2 text-secondary">Enter Value</label>
           <input
             type="text"
             id="filter_value"
-            class="form-control text-capitalize filters w-auto"
-            placeholder="🔍 Enter Value" disabled
+            class="form-control text-capitalize filters w-auto text-secondary"
+            placeholder="🔍 Enter Value"
+            disabled
           />
         </div>
       </div>
-    </div>
+
+      <!-- Buttons (aligned right/end) -->
+      <div class="d-flex gap-2">
+        <button id="add_new_book" class="btn btn-dark">
+          <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i>
+          Add Book
+        </button>
+        <!-- <button id="book_pdf" class="btn btn-warning text-white">
+          <i class="fa-solid fa-file-lines fa-lg me-1" style="color: #fff"></i>
+          Generate Available Books Pdf
+        </button> -->
+      </div>
+
+    </div> <!-- end of filters+buttons row -->
+
+    <!-- Submit/Reset Row -->
     <div class="d-flex justify-content-end gap-2">
+      <button id="reset_filters" class="btn btn-outline-dark">Reset</button>
       <button id="apply_filters" class="btn btn-dark">Submit</button>
-      <button id="reset_filters" class="btn btn-dark">Reset</button>
     </div>
+
   </div>
- <div id="loader">
+
+  <div id="loader">
     <div class="circle-loader"></div>
   </div>
-  
 
   <table id="user_table" class="display" style="width: 100%; display: none">
     <thead></thead>
     <tbody></tbody>
   </table>
 </div>
-

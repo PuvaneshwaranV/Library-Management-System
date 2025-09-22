@@ -9,7 +9,7 @@ if (!customElements.get("book-add-edit-modal")) {
       this.selectors = {
         modal: "#book_modal",
         form: "#book_form",
-        titleInput: "#title",
+        titleInput: "#lm_book_add_edit_title",
         authorInput: "#author",
         languageSelect: "#language",
         quantityInput: "#quantity",

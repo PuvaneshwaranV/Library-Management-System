@@ -406,7 +406,7 @@ const UserManagement = function () {
           data: res.object?.data || [],
           sort: false,
           destroy: true,
-          dom: '<"top"lp>t<"bottom"ip>',
+          dom: '<"top"p>t<"bottom"ip>',
           lengthMenu: [10, 25, 50, 100],
           language: { emptyTable: "No data found" },
           columns: [
@@ -418,8 +418,24 @@ const UserManagement = function () {
             {
               title: "MemberShip Status", data: "memberShipStatus",
               render: (d, t, row) => {
-                const cls = row.memberShipStatus === "ACTIVE" ? "bg-success" : "bg-danger";
-                return `<span class="status-click ${cls} rounded-5 text-white mb-0 px-2" style="cursor:pointer; display:inline-block" data-id="${row.memberId}" data-bs-toggle="tooltip" data-bs-placement="top" title="Change Status" data-status="${row.memberShipStatus}">${row.memberShipStatus}</span>`;
+
+                const bgColor = row.memberShipStatus === "ACTIVE" ? "#d4edda" : "#f8d7da"; // light green / light red
+                  const textColor = row.memberShipStatus === "ACTIVE" ? "#155724" : "#721c24"; // dark text for contrast
+
+                  return `<span style="
+                      background-color: ${bgColor}; 
+                      color: ${textColor}; 
+                      border-radius: 12px; 
+                      padding: 2px 12px; 
+                      margin: 0 auto;
+                      width: 100px;
+                      text-align: center;
+                      font-weight: 500;
+                      cursor:pointer;
+                  " class="status-click"
+                  data-id="${row.memberId}"
+                  data-bs-toggle="tooltip" data-bs-placement="top" title="Change Status" data-status="${row.memberShipStatus}"
+                  >${row.memberShipStatus}</span>`;
               }
             },
             { title: "Work Status", data: "memberWorkStatus" },
