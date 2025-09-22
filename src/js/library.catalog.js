@@ -138,9 +138,15 @@ const RentalTransaction = function () {
                 columns: [
                     { title: "S.No", data: null, orderable: false,
                       render: (d, t, r, m) => m.row + 1 },
-                    { title: "Transaction ID", data: "transactionId" },
-                    { title: "Member Id",      data: "memberId" },
-                    { title: "Book Id",        data: "bookId" },
+                    { title: "Transaction ID", data: "transactionId",
+                       render:(d,t,r) => `#${r.transactionId}`
+                     },
+                    { title: "Member Id",      data: "memberId",
+                        render:(d,t,r) => `#${r.memberId}`
+                     },
+                    { title: "Book Id",        data: "bookId",
+                        render:(d,t,r) => `#${r.bookId}`
+                     },
                     { title: "Book Title",     data: "bookTittle" },
                     { title: "Quantity",       data: "quantity" },
                     { title: "Returned Qty",   data: "bookReturnedQuantity" },
@@ -151,7 +157,7 @@ const RentalTransaction = function () {
                         title: "Status",
                         data: "bookRentalStatus",
                         render: (d,t,row) => {
-                             const bgColor = row.bookRentalStatus === "Returned" ? "#d4edda" : "#f8d7da"; // light green / light red
+                            const bgColor = row.bookRentalStatus === "Returned" ? "#d4edda" : "#f8d7da"; // light green / light red
                             const textColor = row.bookRentalStatus === "Returned" ? "#155724" : "#721c24"; // dark text for contrast
                             return `<span class=" text-center mb-0 px-2" style="background-color:${bgColor};color:${textColor};
                                 border-radius: 12px; 

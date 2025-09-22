@@ -157,7 +157,7 @@ const Penalty = function () {
           data: rows,
           sort: false,
           destroy: true,
-          dom: '<"top"lp>t<"bottom"ip>',
+          dom: '<"top"p>t<"bottom"ip>',
           lengthMenu: [10, 25, 50, 100],
           language: { emptyTable: "No data found" },
           columns: this.columnsConfig(true),
@@ -329,10 +329,18 @@ const Penalty = function () {
       { title: "Penalty Added Flag", data: "penaltyAddedFlag" },
       { title: "Penalty Amount", data: "penaltyAmount" },
       { title: "Reason", data: "reason" },
-      { title: "Status", data: "status", render: (data, type, row) =>
-        row.status === "Paid"
-          ? `<div><p class="bg-success rounded-5 text-white">${row.status}</p></div>`
-          : `<div><p class="bg-danger rounded-5 text-white">${row.status}</p></div>` },
+      { title: "Status", data: "status", render: (data, type, row) =>{
+
+            const bgColor = row.status === "Paid" ? "#d4edda" : "#f8d7da"; // light green / light red
+            const textColor = row.status === "Paid" ? "#155724" : "#721c24"; // dark text for contrast
+                  return `<span class=" text-center  px-2" style="background-color:${bgColor};color:${textColor};
+                        border-radius: 12px; 
+                        padding: 2px 12px; 
+                        width: 100px;
+                        font-weight: 500;
+                        ">${row.status}</span>`  
+          },
+      },
       { title: "Payment Date", data: "paymentDate" },
     ];
 

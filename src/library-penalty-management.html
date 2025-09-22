@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div class="d-flex flex-column mb-3">
+  <div class="d-flex flex-column mb-5">
     <div
       class="modal fade"
       id="lm_penalty_modal"
@@ -126,7 +126,47 @@
       </div>
     </div>
 
-    <div class="d-flex justify-content-end gap-2 mb-3">
+    
+
+    <div id="lm_penalty_filters" class="d-flex justify-content-between align-items-end mb-5">
+      <div class="d-flex gap-2">
+        <div class="d-flex flex-column">
+          <label for="lm_penalty_length" class="ms-2 text-secondary">Show </label>
+          <select id="lm_penalty_length" class="form-select text-secondary lm_penalty_filters w-auto">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        <div class="d-flex flex-column">
+          <label for="lm_penalty_filter_status" class="ms-2 text-secondary">Penalty Status</label>
+          <select id="lm_penalty_filter_status" class="form-select text-secondary lm_penalty_filters w-auto">
+            <option value="all">All</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+        <div class="d-flex flex-column">
+          <label for="lm_penalty_filter_type" class="ms-2 text-secondary">Search By</label>
+          <select id="lm_penalty_filter_type" class="form-select text-secondary lm_penalty_filters w-auto">
+            <option value="all">All</option>
+            <option value="transactionid">Transaction ID</option>
+            <option value="memberid">Member ID</option>
+            <option value="reason">Reason</option>
+          </select>
+        </div>
+        <div class="d-flex flex-column">
+          <label for="lm_penalty_filter_value" class="ms-2 text-secondary">Enter Value</label>
+          <input
+            type="text"
+            id="lm_penalty_filter_value"
+            class="form-control lm_penalty_filters text-secondary w-auto"
+            placeholder="🔍 Enter Value"
+          />
+        </div>
+      </div>
+      <div class="d-flex justify-content-end gap-2 mb-3">
       <button
         class="btn btn-dark"
         data-bs-toggle="modal"
@@ -136,50 +176,11 @@
         Add Penalty
       </button>
     </div>
-
-    <div id="lm_penalty_filters" class="d-flex justify-content-between mb-3">
-      <div class="d-flex gap-2">
-        <div class="d-flex flex-column">
-          <label for="lm_penalty_length" class="ms-2">Show </label>
-          <select id="lm_penalty_length" class="form-select lm_penalty_filters w-auto">
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-        </div>
-        <div class="d-flex flex-column">
-          <label for="lm_penalty_filter_status" class="ms-2">Penalty Status</label>
-          <select id="lm_penalty_filter_status" class="form-select lm_penalty_filters w-auto">
-            <option value="all">All</option>
-            <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
-          </select>
-        </div>
-        <div class="d-flex flex-column">
-          <label for="lm_penalty_filter_type" class="ms-2">Search By</label>
-          <select id="lm_penalty_filter_type" class="form-select lm_penalty_filters w-auto">
-            <option value="all">All</option>
-            <option value="transactionid">Transaction ID</option>
-            <option value="memberid">Member ID</option>
-            <option value="reason">Reason</option>
-          </select>
-        </div>
-        <div class="d-flex flex-column">
-          <label for="lm_penalty_filter_value" class="ms-2">Enter Value</label>
-          <input
-            type="text"
-            id="lm_penalty_filter_value"
-            class="form-control lm_penalty_filters w-auto"
-            placeholder="🔍 Enter Value"
-          />
-        </div>
-      </div>
     </div>
 
     <div class="d-flex justify-content-end gap-2">
+      <button id="lm_penalty_reset_filters" class="btn btn-outline-dark">Reset</button>
       <button id="lm_penalty_apply_filters" class="btn btn-dark">Submit</button>
-      <button id="lm_penalty_reset_filters" class="btn btn-dark">Reset</button>
     </div>
     <div class="d-flex justify-content-end mt-2">
       <h6 class="text-warning"  style="display:none;font-weight:500;" id="lm_filer_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
