@@ -111,13 +111,13 @@ const selectors = {
             searchable: false,
             render: (data, type, row, meta) => meta.row + 1 // row index + 1
             },
-              { title: "Book ID", data: "bookId",
+              { title: "ID", data: "bookId",
                 render:(d,t,r) => `#${r.bookId}`
                },
               { title: "Title", data: "title" },
               { title: "Language", data: "language" },
               { title: "Author", data: "author" },
-              { title: "Book Reg. Date", data: "bookRegistrationDate",
+              { title: "Registration Date", data: "bookRegistrationDate",
                 width: "200px"
                },
               { title: "Total Count", data: "totalCount" },

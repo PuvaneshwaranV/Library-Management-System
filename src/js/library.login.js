@@ -23,9 +23,13 @@ const LibraryLogin = function () {
         }
     };
 
+    
+
+
     // ---------- Password toggle ----------
     this.passwordToggler = function () {
         const s = this.selectors;
+        $(s.passwordField).attr("type", "password").val("");
         $(s.toggleButton).on("click", () => {
             if ($(s.passwordField).attr("type") === "password") {
                 $(s.passwordField).attr("type", "text");

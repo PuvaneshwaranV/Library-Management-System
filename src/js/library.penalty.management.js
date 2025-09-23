@@ -326,7 +326,7 @@ const Penalty = function () {
   this.columnsConfig = function (withActions) {
     const baseCols = [
       { title: "S.No", data: null, orderable: false, searchable: false, render: (data, type, row, meta) => meta.row + 1 },
-      { title: "Penalty ID", data: "penaltyId",
+      { title: "ID", data: "penaltyId",
         render:(d,t,r) => `#${r.penaltyId}`
        },
       { title: "Transaction ID", data: "transactionId",

@@ -416,10 +416,10 @@ const UserManagement = function () {
           language: { emptyTable: "No data found" },
           columns: [
             { title: "S.No", data: null, orderable: false, searchable: false, render: (d, t, row, meta) => meta.row + 1 },
-            { title: "Member ID", data: "memberId",
+            { title: "ID", data: "memberId",
               render:(d,t,r) => `#${r.memberId}`
              },
-            { title: "Member Name", data: "memberName" },
+            { title: "Name", data: "memberName" },
             { title: "MemberShip Start Date", data: "memberShipStartDate" },
             { title: "MemberShip End Date", data: "memberShipEndDate" },
             {
