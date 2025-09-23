@@ -31,6 +31,7 @@ const selectors = {
   filterStatus:        "#filter_status",
   filterLength:        "#custom_length",
   filters:             ".filters",
+  lmFilterChanged:     "#lm_filter_changed",
 
   // Table row actions
   updateBookBtn:       ".update-book",
@@ -63,7 +64,7 @@ const selectors = {
     $(document).on("click", selectors.filterApplyBtn, function () {
       $(selectors.loader).show();
       $(selectors.dataTable).hide();
-
+      $(selectors.lmFilterChanged).css("display","none");
       const filterType  = $(selectors.filterType).val();
       const filterValue = $(selectors.filterValue).val().trim();
       const status      = $(selectors.filterStatus).val();
@@ -110,7 +111,9 @@ const selectors = {
             searchable: false,
             render: (data, type, row, meta) => meta.row + 1 // row index + 1
             },
-              { title: "Book ID", data: "bookId" },
+              { title: "Book ID", data: "bookId",
+                render:(d,t,r) => `#${r.bookId}`
+               },
               { title: "Title", data: "title" },
               { title: "Language", data: "language" },
               { title: "Author", data: "author" },
@@ -190,17 +193,7 @@ const selectors = {
             destroy: true,
             dom: '<"top">t<"bottom"ip>',
             language: { emptyTable: "No data found" },
-            columns: [
-              { title: "Book ID", data: "bookId" },
-              { title: "Title", data: "title" },
-              { title: "Language", data: "language" },
-              { title: "Author", data: "author" },
-              { title: "Book Reg. Date", data: "bookRegistrationDate" },
-              { title: "Total Count", data: "totalCount" },
-              { title: "Status", data: "bookStatus" },
-              { title: "Borrowed Count", data: "borrowedCount" },
-              { title: "Actions", data: null },
-            ],
+            
           });
           $(selectors.loader).hide();
           $(selectors.dataTable).show();
@@ -270,12 +263,15 @@ const selectors = {
     $(document).on("click", selectors.deleteBookBtn, function () {
       const id = $(this).data("id");
       Swal.fire({
-        icon: "warning",
-        title: "Are you sure?",
+        icon: "danger",
+        title: '<i class="fa-solid fa-trash-can me-2 text-danger" style="font-size:60px;"></i> <br><br> Are you sure?',
         text: "This action cannot be undone!",
         showCancelButton: true,
         confirmButtonText: "Yes, delete it!",
         cancelButtonText: "Cancel",
+        customClass: {
+        confirmButton: "btn-dark"
+      },
       }).then((result) => {
         if (result.isConfirmed) {
           $(selectors.loader).show();
@@ -309,6 +305,7 @@ const selectors = {
       if ($.fn.DataTable.isDataTable(selectors.dataTable)) {
         $(selectors.dataTable).DataTable().clear().destroy();
         $(selectors.dataTable).hide();
+        $(selectors.lmFilterChanged).css("display","none");
       }
     });
   };
@@ -318,6 +315,7 @@ const selectors = {
         if ($.fn.DataTable.isDataTable(selectors.dataTable)) {
         $(selectors.dataTable).DataTable().clear().destroy();
         $(selectors.dataTable).hide();
+        $(selectors.lmFilterChanged).css("display","block");
       }
     })
   }
@@ -327,6 +325,7 @@ const selectors = {
       if ($.fn.DataTable.isDataTable(selectors.dataTable)) {
         $(selectors.dataTable).DataTable().clear().destroy();
         $(selectors.dataTable).hide();
+        $(selectors.lmFilterChanged).css("display","block");
       }
     })
   }
@@ -338,9 +337,11 @@ const selectors = {
 
     if (selected && selected.toLowerCase() !== "all") {
       $(selectors.filterValue).prop("disabled", false);
+      $(selectors.lmFilterChanged).css("display","block");
     } else {
       // disable and clear when “all” is chosen
       $(selectors.filterValue).prop("disabled", true).val("");
+      $(selectors.lmFilterChanged).css("display","block");
     }
   });
 };

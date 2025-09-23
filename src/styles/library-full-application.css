@@ -190,10 +190,9 @@ textarea:disabled:hover {
   border: none;
   background: transparent;
   font-size: 1.5rem;
-  color: #1e3a8a;
+  color: #ff0000;
 }
 .btn-close-custom:hover {
-  color: #ff0000;
   transform: scale(1.1);
 }
 
@@ -228,6 +227,10 @@ textarea:disabled:hover {
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.current):not(.disabled) {
   background-color: #fbbf24 !important;
   color: #ffffff !important;
+}
+
+table.dataTable td.dataTables_empty {
+  text-align: center !important;
 }
 
 #loader {

@@ -8,6 +8,7 @@ const UserManagement = function () {
     filters: ".filters",
     applyFiltersBtn: "#apply_member_filters",
     resetFiltersBtn: "#reset_member_filters",
+    lmFilterChanged: "#lm_filter_changed",
 
     // table & modals
     userTable: "#user_table",
@@ -274,6 +275,7 @@ const UserManagement = function () {
     if ($.fn.DataTable.isDataTable(this.selectors.userTable)) {
       $(this.selectors.userTable).DataTable().clear().destroy();
       $(this.selectors.userTable).hide();
+      $(this.selectors.lmFilterChanged).css("display","block")
     }
   };
 
@@ -289,6 +291,7 @@ const UserManagement = function () {
     } else {
       $(s.filterValue).prop("disabled", true).val("");
     }
+    this.changeFilterInput();
   };
 
   // ---------- Add Member (uses jQuery Validate .valid()) ----------
@@ -377,7 +380,7 @@ const UserManagement = function () {
     const s = this.selectors;
     this.showLoader(true);
     $(s.userTable).hide();
-
+    $(this.selectors.lmFilterChanged).css("display","none")
     let length = $("#member_length").val();
     let status = $("#member_filter_status").val();
     let searchColumn = $(s.filterType).val();
@@ -411,7 +414,9 @@ const UserManagement = function () {
           language: { emptyTable: "No data found" },
           columns: [
             { title: "S.No", data: null, orderable: false, searchable: false, render: (d, t, row, meta) => meta.row + 1 },
-            { title: "Member ID", data: "memberId" },
+            { title: "Member ID", data: "memberId",
+              render:(d,t,r) => `#${r.memberId}`
+             },
             { title: "Member Name", data: "memberName" },
             { title: "MemberShip Start Date", data: "memberShipStartDate" },
             { title: "MemberShip End Date", data: "memberShipEndDate" },
@@ -423,30 +428,32 @@ const UserManagement = function () {
                   const textColor = row.memberShipStatus === "ACTIVE" ? "#155724" : "#721c24"; // dark text for contrast
 
                   return `<span style="
+                      display:inline-block;
                       background-color: ${bgColor}; 
                       color: ${textColor}; 
                       border-radius: 12px; 
-                      padding: 2px 12px; 
-                      margin: 0 auto;
+                      padding: 2px 0px; 
+                     
                       width: 100px;
-                      text-align: center;
                       font-weight: 500;
                       cursor:pointer;
                   " class="status-click"
                   data-id="${row.memberId}"
                   data-bs-toggle="tooltip" data-bs-placement="top" title="Change Status" data-status="${row.memberShipStatus}"
                   >${row.memberShipStatus}</span>`;
-              }
+              },
+              className:"text-center",
+              width:"50px !important"
             },
             { title: "Work Status", data: "memberWorkStatus" },
             {
               title: "Actions", data: null, orderable: false,
               render: (d, t, row) => `
-                <button class="btn btn-sm btn-warning me-2 mb-2 update-member" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit">
-                  <i class="fa-solid fa-pen-to-square" style="color:#fff;"></i>
+                <button class="btn btn-md me-2 mb-2 update-member" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit">
+                  <i class="fa-solid fa-pen-to-square text-warning" ></i>
                 </button>
-                <button class="btn btn-sm btn-dark me-2 mb-2 view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile">
-                  <i class="fa-solid fa-eye" style="color:#fff;"></i>
+                <button class="btn btn-md  me-2 mb-2 view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile">
+                  <i class="fa-solid fa-eye" btn-dark></i>
                 </button>`
             }
           ],

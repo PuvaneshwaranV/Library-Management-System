@@ -134,7 +134,7 @@ const RentalTransaction = function () {
                 destroy: true,
                 dom: '<"top d-flex justify-content-between"<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
                 lengthMenu: [10, 25, 50, 100],
-                language: { emptyTable: "No data found" },
+                language: { emptyTable: "No data found"},
                 columns: [
                     { title: "S.No", data: null, orderable: false,
                       render: (d, t, r, m) => m.row + 1 },
@@ -160,8 +160,9 @@ const RentalTransaction = function () {
                             const bgColor = row.bookRentalStatus === "Returned" ? "#d4edda" : "#f8d7da"; // light green / light red
                             const textColor = row.bookRentalStatus === "Returned" ? "#155724" : "#721c24"; // dark text for contrast
                             return `<span class=" text-center mb-0 px-2" style="background-color:${bgColor};color:${textColor};
+                                display:inline-block;
                                 border-radius: 12px; 
-                                padding: 2px 12px; 
+                                padding: 2px 0px; 
                                 margin: 0 auto;
                                 width: 100px;
                                 font-weight: 500;

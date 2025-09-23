@@ -204,9 +204,8 @@ textarea:disabled:hover {
   border: none;
   background: transparent;
   font-size: 1.5rem;
-  color: $color-primary;
+  color: $color-danger;
   &:hover {
-    color: $color-danger;
     transform: scale(1.1);
   }
 }
@@ -253,6 +252,10 @@ textarea:disabled:hover {
       color: $color-secondary !important;
     }
   }
+}
+table.dataTable td.dataTables_empty {
+  text-align: center !important;    
+  
 }
 
 // ======================= Loader ===========================

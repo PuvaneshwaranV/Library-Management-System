@@ -21,7 +21,7 @@ const Penalty = function () {
     lmPenaltyFilters: ".lm_penalty_filters",
     lmPenaltyReset: "#lm_penalty_reset",
     lmPenaltyModal: "#lm_penalty_modal",
-    lmFilterChanged: "#lm_filer_changed",
+    lmFilterChanged: "#lm_filter_changed",
   };
 
   // ------------------ public methods ------------------
@@ -83,8 +83,9 @@ const Penalty = function () {
     if ($.fn.DataTable.isDataTable(s.userTable)) {
       $(s.userTable).DataTable().clear().destroy();
       $(s.userTable).hide();
+       $(this.selectors.lmFilterChanged).css("display","block")
     }
-    $(this.selectors.lmFilterChanged).css("display","block")
+   
   };
 
   this.toggleFilters = function () {
@@ -92,7 +93,9 @@ const Penalty = function () {
     if ($.fn.DataTable.isDataTable(s.userTable)) {
       $(s.userTable).DataTable().clear().destroy();
       $(s.userTable).hide();
+      $(this.selectors.lmFilterChanged).css("display","block")
     }
+    
   };
 
   this.toggleFilterInput = function () {
@@ -101,8 +104,9 @@ const Penalty = function () {
     if ($.fn.DataTable.isDataTable(s.userTable)) {
       $(s.userTable).DataTable().clear().destroy();
       $(s.userTable).hide();
+      $(this.selectors.lmFilterChanged).css("display","block")
     }
-
+    
     if (selected && selected.toLowerCase() !== "all") {
       $(s.lmPenaltyFilterValue).prop("disabled", false);
     } else {
@@ -121,15 +125,15 @@ const Penalty = function () {
       $(s.userTable).DataTable().clear().destroy();
       $(s.userTable).hide();
     }
-
     this.toggleFilterInput();
+     $(this.selectors.lmFilterChanged).css("display","none")
   };
 
   this.applyFilters = function () {
     const s = this.selectors;
     $(s.loader).show();
     $(s.userTable).hide();
-
+    $(this.selectors.lmFilterChanged).css("display","none")
     let length = $(s.lmPenaltyLength).val();
     let status = $(s.lmPenaltyStatus).val();
     let searchColumn = $(s.lmPenaltyFilterType).val();
@@ -321,10 +325,18 @@ const Penalty = function () {
   this.columnsConfig = function (withActions) {
     const baseCols = [
       { title: "S.No", data: null, orderable: false, searchable: false, render: (data, type, row, meta) => meta.row + 1 },
-      { title: "Penalty ID", data: "penaltyId" },
-      { title: "Transaction ID", data: "transactionId" },
-      { title: "Member ID", data: "memberId" },
-      { title: "Book ID", data: "bookId" },
+      { title: "Penalty ID", data: "penaltyId",
+        render:(d,t,r) => `#${r.penaltyId}`
+       },
+      { title: "Transaction ID", data: "transactionId",
+        render:(d,t,r) => `#${r.transactionId}`
+       },
+      { title: "Member ID", data: "memberId",
+        render:(d,t,r) => `#${r.memberId}`
+       },
+      { title: "Book ID", data: "bookId",
+        render:(d,t,r) => `#${r.bookId}`
+       },
       { title: "Amount", data: "amount" },
       { title: "Penalty Added Flag", data: "penaltyAddedFlag" },
       { title: "Penalty Amount", data: "penaltyAmount" },
@@ -334,8 +346,9 @@ const Penalty = function () {
             const bgColor = row.status === "Paid" ? "#d4edda" : "#f8d7da"; // light green / light red
             const textColor = row.status === "Paid" ? "#155724" : "#721c24"; // dark text for contrast
                   return `<span class=" text-center  px-2" style="background-color:${bgColor};color:${textColor};
+                        display:inline-block;
                         border-radius: 12px; 
-                        padding: 2px 12px; 
+                        padding: 2px 0px; 
                         width: 100px;
                         font-weight: 500;
                         ">${row.status}</span>`  
@@ -351,15 +364,15 @@ const Penalty = function () {
         orderable: false,
         render: (data, type, row) =>
           row.status === "Pending"
-            ? `<button class="btn btn-sm btn-warning me-2 mb-2 lm_penalty-pay"
+            ? `<button class="btn btn-md me-2 mb-2 lm_penalty-pay"
                   data-bs-toggle="tooltip" data-bs-placement="top"
                   title="Pay Penalty" data-bs-target="#lm_penalty_pay_modal"
                   data-id="${row.penaltyId}" data-amount="${row.amount}">
-                  <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
+                  <i class="fa-solid fa-indian-rupee-sign text-warning"></i>
               </button>`
             : `<span data-bs-toggle="tooltip" data-bs-placement="top" title="Already Paid">
-                  <button class="btn btn-sm btn-dark me-2 mb-2" disabled>
-                    <i class="fa-solid fa-indian-rupee-sign" style="color:#fff;"></i>
+                  <button class="btn btn-sm  me-2 mb-2 border-0" disabled>
+                    <i class="fa-solid fa-indian-rupee-sign text-grey" ></i>
                   </button>
               </span>`,
       });

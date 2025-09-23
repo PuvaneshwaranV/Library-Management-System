@@ -63,12 +63,15 @@ const App = function () {
         $(s.logoutLink).on("click",  (e) => {
             e.preventDefault();
             Swal.fire({
-                icon: "warning",
-                title: "Logout",
+                icon: "danger",
+                title: '<i class="fa-solid fa-right-from-bracket fa-rotate-180 me-2 text-danger" style="font-size:60px;"></i> <br> Logout',
                 text: "Are you sure you want to log out?",
                 showCancelButton: true,
                 confirmButtonText: "Yes",
-                cancelButtonText: "No"
+                cancelButtonText: "No",
+                customClass: {
+                    confirmButton: "btn-dark"
+                },
             }).then((result) => {
                 if (result.isConfirmed) {
                     localStorage.removeItem("libraryUsername");
