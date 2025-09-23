@@ -41,7 +41,7 @@ const Penalty = function () {
       .off("click", s.lmPenaltyAddBtn)
       .on("click", s.lmPenaltyAddBtn, (e) => {
         e.preventDefault();
-        this.resetPenaltyForm();
+        
         if ($(s.lmPenaltyForm).valid()) this.addPenalty();
       });
 
@@ -238,7 +238,8 @@ const Penalty = function () {
   this.addPenalty = function () {
     const s = this.selectors;
     $(s.loader).show();
-
+    console.log("HI");
+    
     let params = {
       TransactionId: parseInt($(s.lmPenaltyTransactionId).val().trim()),
       amount: parseInt($(s.lmPenaltyAmount).val().trim()),
@@ -359,22 +360,24 @@ const Penalty = function () {
 
     if (withActions) {
       baseCols.push({
-        title: "Actions",
+        
         data: null,
         orderable: false,
         render: (data, type, row) =>
           row.status === "Pending"
-            ? `<button class="btn btn-md me-2 mb-2 lm_penalty-pay"
+            ? `<button class="btn btn-sm lm_penalty-pay text-center"
                   data-bs-toggle="tooltip" data-bs-placement="top"
+                  style="background-color:#1e3a8a;color:#fff; width:80px;"
                   title="Pay Penalty" data-bs-target="#lm_penalty_pay_modal"
                   data-id="${row.penaltyId}" data-amount="${row.amount}">
-                  <i class="fa-solid fa-indian-rupee-sign text-warning"></i>
+                  Pay Now
               </button>`
-            : `<span data-bs-toggle="tooltip" data-bs-placement="top" title="Already Paid">
-                  <button class="btn btn-sm  me-2 mb-2 border-0" disabled>
-                    <i class="fa-solid fa-indian-rupee-sign text-grey" ></i>
+            : `<span data-bs-toggle="tooltip" data-bs-placement="top" class="text-center" title="Already Paid">
+                  <button class="btn btn-md  border-0" style="width:80px;" disabled>
+                    <i class="fa-solid fa-dollar-sign text-grey" ></i>
                   </button>
               </span>`,
+          
       });
     }
 

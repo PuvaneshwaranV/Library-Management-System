@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div class="d-flex flex-column mb-5">
+  <div class="d-flex flex-column mb-3">
     <div
       class="modal fade"
       id="lm_penalty_modal"
@@ -12,7 +12,7 @@
         <div class="modal-content">
           <div class="modal-body position-relative mx-3">
             <h3 class="modal-title" id="lm_penalty_modal_label">
-              <i class="fa-solid fa-indian-rupee-sign me-3"></i>Add Penalty
+              <i class="fa-solid fa-dollar-sign me-3"></i>Add Penalty
             </h3>
             <button
               type="button"
@@ -22,7 +22,7 @@
             >
               <i class="fa-regular fa-circle-xmark"></i>
             </button>
-            <hr class="border border-1 border-dark opacity-100" />
+            <hr class="border border-1 border-dark opacity-100" />  
             <form class="mx-5 my-4" id="lm_penalty_add_form">
               <div class="mb-3">
                 <input
@@ -53,7 +53,7 @@
               </div>
               <div class="row">
                 <div class="col-6">
-                  <button id="lm_penalty_reset" type="button" class="btn btn-outline-dark w-100">
+                  <button id="lm_penalty_reset" type="button" class="btn btn-secondary w-100">
                     Reset
                   </button>
                 </div>
@@ -80,7 +80,7 @@
         <div class="modal-content">
           <div class="modal-body position-relative mx-3">
             <h3 class="modal-title" id="lm_penalty_pay_modal_label">
-              <i class="fa-solid fa-indian-rupee-sign me-3"></i>Pay Penalty
+              <i class="fa-solid fa-dollar-sign me-3"></i>Pay Penalty
             </h3>
             <button
               type="button"
@@ -110,7 +110,7 @@
               </div>
               <div class="row">
                 <div class="col-6">
-                  <button id="lm_penalty_cancel" type="button" class="btn btn-outline-dark w-100">
+                  <button id="lm_penalty_cancel" type="button" class="btn btn-secondary w-100">
                     Reset
                   </button>
                 </div>
@@ -128,7 +128,7 @@
 
     
 
-    <div id="lm_penalty_filters" class="d-flex justify-content-between align-items-end mb-5">
+    <div id="lm_penalty_filters" class="d-flex justify-content-between align-items-end mb-3">
       <div class="d-flex gap-2">
         <div class="d-flex flex-column">
           <label for="lm_penalty_length" class="ms-2 text-secondary">Show </label>
@@ -172,14 +172,14 @@
         data-bs-toggle="modal"
         data-bs-target="#lm_penalty_modal"
       >
-        <i class="fa-solid fa-indian-rupee-sign fa-lg me-1" style="color: #ffffff"></i>
+        <i class="fa-solid fa-dollar-sign fa-lg me-1" style="color: #ffffff"></i>
         Add Penalty
       </button>
     </div>
     </div>
 
     <div class="d-flex justify-content-end gap-2">
-      <button id="lm_penalty_reset_filters" class="btn btn-outline-dark">Reset</button>
+      <button id="lm_penalty_reset_filters" class="btn btn-secondary">Reset</button>
       <button id="lm_penalty_apply_filters" class="btn btn-dark">Submit</button>
     </div>
     <div class="d-flex justify-content-end mt-2">

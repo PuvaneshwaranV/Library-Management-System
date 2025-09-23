@@ -64,11 +64,11 @@ const App = function () {
             e.preventDefault();
             Swal.fire({
                 icon: "danger",
-                title: '<i class="fa-solid fa-right-from-bracket fa-rotate-180 me-2 text-danger" style="font-size:60px;"></i> <br> Logout',
+                title: '<i class="fa-solid fa-right-from-bracket fa-rotate-180 me-2 text-danger" style="font-size:40px;"></i> <br> Logout',
                 text: "Are you sure you want to log out?",
                 showCancelButton: true,
-                confirmButtonText: "Yes",
                 cancelButtonText: "No",
+                confirmButtonText: "Yes",
                 customClass: {
                     confirmButton: "btn-dark"
                 },

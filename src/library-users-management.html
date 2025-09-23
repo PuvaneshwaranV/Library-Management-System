@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div class="d-flex flex-column mb-5">
+  <div class="d-flex flex-column mb-3">
     <div
       class="modal fade"
       id="member_modal"
@@ -26,7 +26,7 @@
               <div class="mb-3">
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control text-capitalize"
                   id="member_name"
                   name="member_name"
                   placeholder="Member Name"
@@ -93,7 +93,7 @@
               <div class="mb-3">
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control text-capitalize"
                   id="member_address"
                   name="member_address"
                   placeholder="Member Address"
@@ -105,7 +105,7 @@
                   <button
                     id="member_cancel_btn"
                     type="button"
-                    class="btn btn-outline-dark w-100"
+                    class="btn btn-secondary w-100"
                   >
                     Reset
                   </button>
@@ -160,7 +160,7 @@
               <div class="mb-3">
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control text-capitalize"
                   id="update_member_name"
                   name="update_member_name"
                   placeholder="Member Name"
@@ -249,7 +249,7 @@
               <div class="mb-3">
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control text-capitalize"
                   id="update_member_address"
                   name="update_member_address"
                   placeholder="Member Address"
@@ -261,7 +261,7 @@
                   <button
                     id="update_cancel_btn"
                     type="button" data-bs-dismiss="modal"
-                    class="btn btn-outline-dark w-100"
+                    class="btn btn-secondary w-100"
                   >
                     cancel  
                   </button>
@@ -349,7 +349,7 @@
             <div class="col-6">
               <button
                 type="button"
-                class="btn btn-outline-dark w-100"
+                class="btn btn-secondary w-100"
                 id="membership_cancel"
                 data-bs-dismiss="modal"
               >
@@ -429,7 +429,7 @@
 </div>
 
     
-    <div id="member_filters" class="d-flex justify-content-between align-items-end   mb-5">
+    <div id="member_filters" class="d-flex justify-content-between align-items-end mb-3">
       <!-- Show Dropdown (aligned left) -->
       
 
@@ -467,7 +467,7 @@
           <input
             type="text"
             id="member_filter_value"
-            class="form-control filters text-secondary w-auto"
+            class="form-control filters text-secondary text-capitalize w-auto"
             placeholder="🔍 Enter Value" disabled
           />
         </div>
@@ -485,7 +485,7 @@
     </div>
     </div>
     <div class="d-flex justify-content-end gap-2">
-      <button id="reset_member_filters" class="btn btn-outline-dark">Reset</button>
+      <button id="reset_member_filters" class="btn btn-secondary">Reset</button>
       <button id="apply_member_filters" class="btn btn-dark">Submit</button>
     </div>
     <div class="d-flex justify-content-end mt-2">

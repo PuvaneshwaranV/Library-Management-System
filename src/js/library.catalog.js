@@ -14,6 +14,7 @@ const RentalTransaction = function () {
             filterType:        "#rental_filter_type",
             filterValue:       "#rental_filter_value",
             filters:           ".filters",
+            lmFilterChanged:    "#lm_filter_changed",
 
             // Borrow
             booksContainer:    "#books_container",
@@ -82,24 +83,28 @@ const RentalTransaction = function () {
             if ($.fn.DataTable.isDataTable(s.table)) {
                 $(s.table).DataTable().clear().destroy();
                 $(s.table).hide();
+                $(s.lmFilterChanged).css("display","block")
             }
         };
         this.changeFilterInput = function () {
             if ($.fn.DataTable.isDataTable(s.table)) {
                 $(s.table).DataTable().clear().destroy();
                 $(s.table).hide();
+                $(s.lmFilterChanged).css("display","block")
             }
         };
         this.toggleFilters = function () {
             if ($.fn.DataTable.isDataTable(s.table)) {
                 $(s.table).DataTable().clear().destroy();
                 $(s.table).hide();
+                $(s.lmFilterChanged).css("display","block")
             }
         };
 
         this.applyFilters = function () {
             $(s.loader).show();
             $(s.table).hide();
+             $(s.lmFilterChanged).css("display","none")
             const params = this.buildFilterParams(
                 $(s.filterLength).val(),
                 $(s.filterStatus).val(),
@@ -215,6 +220,7 @@ const RentalTransaction = function () {
                 $(s.table).DataTable().clear().destroy();
                 $(s.table).hide();
             }
+             $(s.lmFilterChanged).css("display","none")
         };
         function clearValidationErrors(modalSelector) {
     $(`${modalSelector} .text-danger.small`).text("");

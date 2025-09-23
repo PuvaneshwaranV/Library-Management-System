@@ -75,6 +75,7 @@ const UserManagement = function () {
     address: "^[A-Za-z0-9 ,\\.\\-]{3,100}$",
     mobile: "^[6-9][0-9]{4}[-][0-9]{5}$",
     // email will use built-in email rule
+    email:"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}$",
     dateISO: true
   };
 
@@ -152,7 +153,7 @@ const UserManagement = function () {
       $(s.addForm).validate({
         rules: {
           member_name: { required: true, pattern: this.patterns.name },
-          member_email: { required: true, email: true },
+          member_email: { required: true, pattern: this.patterns.email },
           member_work_status: { required: true },
           mobile_number: { required: true, pattern: this.patterns.mobile },
           membership_end_date: { required: true, dateISO: true },
@@ -160,7 +161,7 @@ const UserManagement = function () {
         },
         messages: {
           member_name: { required: "Please enter name", pattern: "Only letters/numbers (3-50 chars)" },
-          member_email: { required: "Please enter email", email: "Enter a valid email" },
+          member_email: { required: "Please enter email", pattern: "Enter a valid email" },
           member_work_status: { required: "Please select status" },
           mobile_number: { required: "Please enter mobile number", pattern: "Enter a valid 10-digit number" },
           membership_end_date: { required: "Please select end date", dateISO: "Use YYYY-MM-DD" },
@@ -350,7 +351,8 @@ const UserManagement = function () {
       memberWorkStatus: $(s.updateMemberWorkStatus).val(),
       memberEmail: $(s.updateMemberEmail).val().trim()
     };
-
+    console.log(payload);
+    
     this.showLoader(true);
     $.ajax({
       url: "http://localhost:8080/LibraryManagementSystem/Members/updateMemberDetails",
@@ -450,7 +452,7 @@ const UserManagement = function () {
               title: "Actions", data: null, orderable: false,
               render: (d, t, row) => `
                 <button class="btn btn-md me-2 mb-2 update-member" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit">
-                  <i class="fa-solid fa-pen-to-square text-warning" ></i>
+                  <i class="fa-solid fa-pen-to-square text-grey" ></i>
                 </button>
                 <button class="btn btn-md  me-2 mb-2 view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile">
                   <i class="fa-solid fa-eye" btn-dark></i>
