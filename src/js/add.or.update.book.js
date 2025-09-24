@@ -40,6 +40,7 @@ if (!customElements.get("book-add-edit-modal")) {
       $(this.selectors.saveButton).on("click", () => {
         const form = $(this.selectors.form);
         if (!form.valid()) return;
+        
 
         // quantity must not drop below previous when updating
         if (
@@ -128,23 +129,24 @@ if (!customElements.get("book-add-edit-modal")) {
         ignore: [],
         onkeyup: false,
         rules: {
-          title: { required: true, pattern: /^[a-zA-Z0-9 ]+$/, minlength: 2 },
+          title: { required: true, pattern: /^[a-zA-Z][a-zA-Z0-9 ]+$/, minlength: 2 },
           author: { required: true, pattern: /^[a-zA-Z ]+$/, minlength: 2 },
           language: { required: true },
           quantity: { required: true, pattern: /^[1-9][0-9]*$/ },
         },
         messages: {
           title: {
-            required: "Please enter the Title",
+            required: "Please enter the Book Title",
+            pattern:  "Book title must start with alphabet",
             minlength: "Minimum 2 characters",
           },
           author: {
-            required: "Please enter the Author",
+            required: "Please enter the Author Name",
             minlength: "Minimum 2 characters",
           },
           language: { required: "Please select a language" },
           quantity: {
-            required: "Please enter Quantity",
+            required: "Please enter Book Quantity",
             pattern: "Quantity must be a positive number",
           },
         },

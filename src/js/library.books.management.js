@@ -143,7 +143,7 @@ const selectors = {
                 width: "100px !important"
               },
               {
-                title: "Actions",
+                title: "Action",
                 data: null,
                 orderable: false,
                 render: (d, t, row) => `

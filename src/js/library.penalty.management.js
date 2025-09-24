@@ -41,8 +41,7 @@ const Penalty = function () {
       .off("click", s.lmPenaltyAddBtn)
       .on("click", s.lmPenaltyAddBtn, (e) => {
         e.preventDefault();
-        
-        if ($(s.lmPenaltyForm).valid()) this.addPenalty();
+        this.addPenalty();
       });
 
     $(document)
@@ -236,34 +235,49 @@ const Penalty = function () {
 
   // ------------------ CRUD ------------------
   this.addPenalty = function () {
-    const s = this.selectors;
-    $(s.loader).show();
-    console.log("HI");
-    
-    let params = {
-      TransactionId: parseInt($(s.lmPenaltyTransactionId).val().trim()),
-      amount: parseInt($(s.lmPenaltyAmount).val().trim()),
-      reason: $(s.lmPenaltyReason).val().trim(),
-    };
+    if ($(this.selectors.lmPenaltyForm).valid()) {
+      // ✅ Show SweetAlert confirmation
+      Swal.fire({
+        title: "Add this penalty?",
+        text: "Please confirm the penalty details before saving.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Add",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+            const s = this.selectors;
+            $(s.loader).show();
+            console.log("HI");
+            
+            let params = {
+              TransactionId: parseInt($(s.lmPenaltyTransactionId).val().trim()),
+              amount: parseInt($(s.lmPenaltyAmount).val().trim()),
+              reason: $(s.lmPenaltyReason).val().trim(),
+            };
 
-    $.ajax({
-      url: "http://localhost:8080/LibraryManagementSystem/Penalty/add",
-      type: "POST",
-      data: params,
-      success: () => {
-        $(s.loader).hide();
-        $(s.lmPenaltyModal).modal("hide");
-        Swal.fire({
-          icon: "success",
-          title: "Added",
-          text: "✅ Penalty Added Successfully",
-          showConfirmButton: false,
-          timer: 2000,
-        }).then(() => $(s.lmPenaltyApplyFilters).click());
-        this.resetPenaltyForm();
-      },
-      error: (xhr) => this.showError(xhr),
-    });
+            $.ajax({
+              url: "http://localhost:8080/LibraryManagementSystem/Penalty/add",
+              type: "POST",
+              data: params,
+              success: () => {
+                $(s.loader).hide();
+                $(s.lmPenaltyModal).modal("hide");
+                Swal.fire({
+                  icon: "success",
+                  title: "Added",
+                  text: "✅ Penalty Added Successfully",
+                  showConfirmButton: false,
+                  timer: 2000,
+                }).then(() => $(s.lmPenaltyApplyFilters).click());
+                this.resetPenaltyForm();
+              },
+              error: (xhr) => this.showError(xhr),
+            });
+        }
+      });
+    }
   };
 
   this.openPayModal = function (e) {
@@ -275,30 +289,42 @@ const Penalty = function () {
   };
 
   this.payPenalty = function () {
-    const s = this.selectors;
-    $(s.loader).show();
+    Swal.fire({
+        title: "Pay this penalty?",
+        text: "Please confirm the penalty details before Paying.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Pay",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const s = this.selectors;
+          $(s.loader).show();
 
-    let params = {
-      penaltyId: parseInt($(s.lmPenaltyPayPenaltyId).val()),
-      amount: parseInt($(s.lmPenaltyPayAmount).val()),
-    };
+          let params = {
+            penaltyId: parseInt($(s.lmPenaltyPayPenaltyId).val()),
+            amount: parseInt($(s.lmPenaltyPayAmount).val()),
+          };
 
-    $.ajax({
-      url: "http://localhost:8080/LibraryManagementSystem/Penalty/pay",
-      method: "POST",
-      data: params,
-      success: (response) => {
-        $(s.loader).hide();
-        $(s.lmPenaltyPayModal).modal("hide");
-        Swal.fire({
-          icon: "success",
-          title: "Paid",
-          text: "✅ " + response.object,
-          showConfirmButton: false,
-          timer: 2000,
-        }).then(() => $(s.lmPenaltyApplyFilters).click());
-      },
-      error: (xhr) => this.showError(xhr),
+          $.ajax({
+            url: "http://localhost:8080/LibraryManagementSystem/Penalty/pay",
+            method: "POST",
+            data: params,
+            success: (response) => {
+              $(s.loader).hide();
+              $(s.lmPenaltyPayModal).modal("hide");
+              Swal.fire({
+                icon: "success",
+                title: "Paid",
+                text: "✅ " + response.object,
+                showConfirmButton: false,
+                timer: 2000,
+              }).then(() => $(s.lmPenaltyApplyFilters).click());
+            },
+            error: (xhr) => this.showError(xhr),
+          });
+        }
     });
   };
 
@@ -360,7 +386,7 @@ const Penalty = function () {
 
     if (withActions) {
       baseCols.push({
-        
+        title: "Action",
         data: null,
         orderable: false,
         render: (data, type, row) =>

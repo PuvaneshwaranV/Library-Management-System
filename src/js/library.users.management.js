@@ -71,7 +71,7 @@ const UserManagement = function () {
   // ---------- Regex patterns (used indirectly via pattern validator) ----------
   // keep as JS strings in rules below
   this.patterns = {
-    name: "^[A-Za-z0-9\\s]{3,50}$",
+    name: "^[A-Za-z \\s]{3,50}$",
     address: "^[A-Za-z0-9 ,\\.\\-]{3,100}$",
     mobile: "^[6-9][0-9]{4}[-][0-9]{5}$",
     // email will use built-in email rule
@@ -191,7 +191,7 @@ const UserManagement = function () {
           update_member_address: { required: true, pattern: this.patterns.address }
         },
         messages: {
-          update_member_name: { required: "Please enter name", pattern: "Only letters/numbers (3–50 chars)" },
+          update_member_name: { required: "Please enter name", pattern: "Only alphabet (3–50 chars)" },
           update_member_email: { required: "Please enter email", email: "Enter a valid email" },
           update_member_work_status: { required: "Please select status" },
           update_mobile_number: { required: "Please enter mobile number", pattern: "Enter a valid 10-digit number" },
@@ -300,81 +300,101 @@ const UserManagement = function () {
     const s = this.selectors;
     // ensure form is valid
     if (!$(s.addForm).valid()) return;
+    Swal.fire({
+        title: "Add New Member?",
+        text: "Please confirm member details before add.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Add",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // format mobile (digits only)
+          const localNo = $(s.addForm + " [name='mobile_number']").val().replace(/\D/g, "");
 
-    // format mobile (digits only)
-    const localNo = $(s.addForm + " [name='mobile_number']").val().replace(/\D/g, "");
+          // prepare payload
+          const payload = {
+            memberName: $(s.addForm + " [name='member_name']").val().trim(),
+            memberShipEndDate: $(s.addForm + " [name='membership_end_date']").val().trim(),
+            memberaddress: $(s.addForm + " [name='member_address']").val().trim(),
+            memberMobileNumber: `+91 ${localNo}`,
+            memberWorkStatus: $(s.addForm + " [name='member_work_status']").val(),
+            memberEmail: $(s.addForm + " [name='member_email']").val().trim()
+          };
 
-    // prepare payload
-    const payload = {
-      memberName: $(s.addForm + " [name='member_name']").val().trim(),
-      memberShipEndDate: $(s.addForm + " [name='membership_end_date']").val().trim(),
-      memberaddress: $(s.addForm + " [name='member_address']").val().trim(),
-      memberMobileNumber: `+91 ${localNo}`,
-      memberWorkStatus: $(s.addForm + " [name='member_work_status']").val(),
-      memberEmail: $(s.addForm + " [name='member_email']").val().trim()
+          this.showLoader(true);
+          $.ajax({
+            url: "http://localhost:8080/LibraryManagementSystem/Members/registerMember",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: (res) => {
+              this.showLoader(false);
+              $(s.memberModal).modal("hide");
+              this.resetForm(s.addForm);
+              Swal.fire({ icon: "success", title: "Member Added", text: "✅ " + res.object, timer: 2000, showConfirmButton: false })
+                .then(() => $(s.applyFiltersBtn).click());
+            },
+            error: (xhr) => {
+              this.showLoader(false);
+              const msg = xhr.responseJSON?.message || "Something went wrong.";
+              Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });
+            }
+          });
+        }
+      });
     };
-
-    this.showLoader(true);
-    $.ajax({
-      url: "http://localhost:8080/LibraryManagementSystem/Members/registerMember",
-      type: "POST",
-      contentType: "application/json",
-      data: JSON.stringify(payload),
-      success: (res) => {
-        this.showLoader(false);
-        $(s.memberModal).modal("hide");
-        this.resetForm(s.addForm);
-        Swal.fire({ icon: "success", title: "Member Added", text: "✅ " + res.object, timer: 2000, showConfirmButton: false })
-          .then(() => $(s.applyFiltersBtn).click());
-      },
-      error: (xhr) => {
-        this.showLoader(false);
-        const msg = xhr.responseJSON?.message || "Something went wrong.";
-        Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });
-      }
-    });
-  };
 
   // ---------- Update Member ----------
   this.updateMember = function () {
     const s = this.selectors;
     if (!$(s.updateForm).valid()) return;
-
-    const mobileVal = $(s.updateMobileNumber).val() || "";
-    const localNo   = mobileVal.replace(/\D/g, "");
-    const payload = {
-      memberId: $(s.updateMemberId).val().trim(),
-      memberName: $(s.updateMemberName).val().trim(),
-      memberShipEndDate: $(s.updateMembershipEnd).val().trim(),
-      memberaddress: $(s.updateMemberAddress).val().trim(),
-      memberMobileNumber: `+91 ${localNo}`,
-      memberWorkStatus: $(s.updateMemberWorkStatus).val(),
-      memberEmail: $(s.updateMemberEmail).val().trim()
-    };
-    console.log(payload);
-    
-    this.showLoader(true);
-    $.ajax({
-      url: "http://localhost:8080/LibraryManagementSystem/Members/updateMemberDetails",
-      type: "PUT",
-      contentType: "application/json",
-      data: JSON.stringify(payload),
-      success: (res) => {
-        this.showLoader(false);
-        $(s.updateMemberModal).modal("hide");
-        this.resetForm(s.updateForm);
-        Swal.fire({ icon: "success", title: "Updated", text: "✅ " + res.object, timer: 2000, showConfirmButton: false })
-          .then(() => {
-            $(s.resetFiltersBtn).click();
-            $(s.applyFiltersBtn).click();
+    Swal.fire({
+        title: "Update Member Details?",
+        text: "Please confirm before Make Change.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Update",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const mobileVal = $(s.updateMobileNumber).val() || "";
+          const localNo   = mobileVal.replace(/\D/g, "");
+          const payload = {
+            memberId: $(s.updateMemberId).val().trim(),
+            memberName: $(s.updateMemberName).val().trim(),
+            memberShipEndDate: $(s.updateMembershipEnd).val().trim(),
+            memberaddress: $(s.updateMemberAddress).val().trim(),
+            memberMobileNumber: `+91 ${localNo}`,
+            memberWorkStatus: $(s.updateMemberWorkStatus).val(),
+            memberEmail: $(s.updateMemberEmail).val().trim()
+          };       
+          this.showLoader(true);
+          $.ajax({
+            url: "http://localhost:8080/LibraryManagementSystem/Members/updateMemberDetails",
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: (res) => {
+              this.showLoader(false);
+              $(s.updateMemberModal).modal("hide");
+              this.resetForm(s.updateForm);
+              Swal.fire({ icon: "success", title: "Updated", text: "✅ " + res.object, timer: 2000, showConfirmButton: false })
+                .then(() => {
+                  $(s.resetFiltersBtn).click();
+                  $(s.applyFiltersBtn).click();
+                });
+            },
+            error: (xhr) => {
+              this.showLoader(false);
+              const msg = xhr.responseJSON?.message || "Something went wrong.";
+              Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });
+            }
           });
-      },
-      error: (xhr) => {
-        this.showLoader(false);
-        const msg = xhr.responseJSON?.message || "Something went wrong.";
-        Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });
-      }
-    });
+        }
+      });
   };
 
   // ---------- DataTable render (unchanged logic from your original) ----------
@@ -449,7 +469,7 @@ const UserManagement = function () {
             },
             { title: "Work Status", data: "memberWorkStatus" },
             {
-              title: "Actions", data: null, orderable: false,
+              title: "Action", data: null, orderable: false,
               render: (d, t, row) => `
                 <button class="btn btn-md me-2 mb-2 update-member" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit">
                   <i class="fa-solid fa-pen-to-square text-grey" ></i>
@@ -507,31 +527,43 @@ const UserManagement = function () {
 
   // ---------- Save membership update ----------
   this.saveMembershipUpdate = function () {
-    const s = this.selectors;
-    const memberId = $(s.membershipModal).data("member-id");
-    const endDate = $(s.membershipEndDateStatus).val().trim();
-    const status = $(s.membershipStatus).val();
+    Swal.fire({
+        title: "Update MemberShip Status?",
+        text: "Please confirm before Make Change.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Update",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const s = this.selectors;
+          const memberId = $(s.membershipModal).data("member-id");
+          const endDate = $(s.membershipEndDateStatus).val().trim();
+          const status = $(s.membershipStatus).val();
 
-    if (!endDate) { $("#end_date_error").text("End date required."); return; } else $("#end_date_error").text("");
-    if (!status) { $("#status_error").text("Select status."); return; } else $("#status_error").text("");
+          if (!endDate) { $("#end_date_error").text("End date required."); return; } else $("#end_date_error").text("");
+          if (!status) { $("#status_error").text("Select status."); return; } else $("#status_error").text("");
 
-    this.showLoader(true);
-    $.ajax({
-      method: "PUT",
-      url: `http://localhost:8080/LibraryManagementSystem/Members/updateMemberStatus?id=${memberId}&membershipEndDate=${endDate}&status=${status}`,
-      dataType: "json",
-      success: () => {
-        this.showLoader(false);
-        $(s.membershipModal).modal("hide");
-        Swal.fire("Updated!", "Membership updated successfully.", "success");
-        $(this.selectors.applyFiltersBtn).click();
-      },
-      error: () => {
-        this.showLoader(false);
-        Swal.fire("Error", "Failed to update membership.", "error");
-      }
-    });
-  };
+          this.showLoader(true);
+          $.ajax({
+            method: "PUT",
+            url: `http://localhost:8080/LibraryManagementSystem/Members/updateMemberStatus?id=${memberId}&membershipEndDate=${endDate}&status=${status}`,
+            dataType: "json",
+            success: () => {
+              this.showLoader(false);
+              $(s.membershipModal).modal("hide");
+              Swal.fire("Updated!", "Membership updated successfully.", "success");
+              $(this.selectors.applyFiltersBtn).click();
+            },
+            error: () => {
+              this.showLoader(false);
+              Swal.fire("Error", "Failed to update membership.", "error");
+            }
+          });
+        }
+      });
+    };
 
   // ---------- Open update modal and populate ----------
   this.openUpdateModal = function (e) {

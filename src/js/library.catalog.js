@@ -176,7 +176,7 @@ const RentalTransaction = function () {
                         }
                     },
                     {
-                        title: "Actions",
+                        title: "Action",
                         data: null,
                         orderable: false,
                         render: (d,t,row) =>
@@ -267,11 +267,14 @@ const RentalTransaction = function () {
             $(s.addBookBtn).on("click", () => {
                 const entry = $(`
                     <div class="book-entry mb-3 border p-3 rounded position-relative">
-                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn">✖</button>
-                        <input type="text" class="form-control mb-2" placeholder="Book Id" name="book_id[]"/>
-                        <input type="number" class="form-control mb-2" placeholder="Quantity" name="quantity[]"/>
+                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn"><i class="fa-solid fa-trash"></i></button>
+                        
+                        <input type="text" class="form-control mb-2" id="book_id" placeholder="Book Id" name="book_id[]"/>
+                       
+                        <input type="number" class="form-control mb-2" id="book_quantity" placeholder="Quantity" name="quantity[]"/>
+                       
                         <div class="input-group mb-2">
-                            <input type="text" class="form-control due_date border-end-0" placeholder="YYYY-MM-DD" name="due_date[]"/>
+                            <input type="text" class="form-control due_date border-end-0" placeholder="YYYY-MM-DD" id="due_date" name="due_date[]"/>
                             <span class="input-group-text border border-black border-start-0">
                                 <i class="fa fa-calendar update_due_date_calendar_icon" style="color:#1e3a8a;cursor:pointer"></i>
                             </span>
