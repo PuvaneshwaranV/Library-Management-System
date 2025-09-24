@@ -60,7 +60,93 @@ const RentalTransaction = function () {
             this.bindUpdateHandlers();
             this.bindPDFHandler();
             this.bindDatePickers();
+
+            $("#member_name").autocomplete({
+                minLength: 3, 
+                source: RentalTransactionInstance.searchMemberName,
+                create: function () {
+                    $(this).data("ui-autocomplete").liveRegion = $();
+                },
+                select: (event, ui) => RentalTransactionInstance.setInputFieldValuesAfterSelection(event, ui),
+                appendTo: $("#member_name").parent('div')
+            });
+            $("#lm_catalog_book_title").autocomplete({
+                minLength: 3, 
+                source: RentalTransactionInstance.searchBookTitle,
+                create: function () {
+                    $(this).data("ui-autocomplete").liveRegion = $();
+                },
+                select: (event, ui) => RentalTransactionInstance.setBookTitleInputFieldValuesAfterSelection(event, ui),
+                appendTo: $("#lm_catalog_book_title").parent('div')
+            });
         };
+        this.searchBookTitle = function(autoCompleteReq,autoCompleteResponse){
+             $.ajax({
+            url: `http://localhost:8080/LibraryManagementSystem/Books/getAllBooks?start=0&length=10&searchColumn=title&searchValue=${autoCompleteReq.term}`,
+            method: "GET",
+            dataType: "json",
+            success: (res) => {
+                if(res.message === "SUCCESS"){
+                    if(res.object.data.length !== 0){
+                        autoCompleteResponse(res.object.data.map((eachBook) => {
+                            const {bookId, title} = eachBook;
+                                return {
+                                    id: bookId,
+                                    value: `${title} (${bookId})`,
+                                    label: `${title} (${bookId})`
+                                }
+                            }));
+                        } else {
+                            autoCompleteResponse([{id: null, value: `No Book found`, label: null}]);
+                        }
+                    }
+                },
+            error: () => {
+                this.showLoader(false);
+                Swal.fire({ icon: "error", title: "Error", text: "Failed to fetch Books" });
+            }
+            })  
+        }
+
+        this.setBookTitleInputFieldValuesAfterSelection = function(event, ui) {
+            console.log("Bb");
+            $("#book_id").val(ui.item.id);
+        }
+
+        this.searchMemberName = function (autoCompleteReq, autoCompleteResponse){
+            $.ajax({
+            url: `http://localhost:8080/LibraryManagementSystem/Members/getAllMembers?start=0&length=100&order=asc&searchColumn=memberName&search=${autoCompleteReq.term}`,
+            method: "GET",
+            dataType: "json",
+            success: (res) => {
+                if(res.message === "SUCCESS"){
+                    if(res.object.data.length !== 0){
+                        autoCompleteResponse(res.object.data.map((eachMember) => {
+                            const {memberId, memberName} = eachMember;
+                                return {
+                                    id: memberId,
+                                    value: `${memberName} (${memberId})`,
+                                    label: `${memberName} (${memberId})`
+                                }
+                            }));
+                        } else {
+                            autoCompleteResponse([{id: null, value: `No member found`, label: null}]);
+                        }
+                    }
+                },
+            error: () => {
+                this.showLoader(false);
+                Swal.fire({ icon: "error", title: "Error", text: "Failed to fetch members" });
+            }
+            })
+            
+        }
+
+        this.setInputFieldValuesAfterSelection = function(event, ui) {
+            console.log("Aa");
+            $("#member_id").val(ui.item.id);
+        }
+
 
         /* ---------- FILTER / TABLE ---------- */
         this.bindFilterHandlers = function () {
@@ -84,14 +170,17 @@ const RentalTransaction = function () {
                 $(s.table).DataTable().clear().destroy();
                 $(s.table).hide();
                 $(s.lmFilterChanged).css("display","block")
+                $(s.resetFiltersBtn).css("display","block");
             }
         };
         this.changeFilterInput = function () {
             if ($.fn.DataTable.isDataTable(s.table)) {
                 $(s.table).DataTable().clear().destroy();
                 $(s.table).hide();
-                $(s.lmFilterChanged).css("display","block")
+                $(s.lmFilterChanged).css("display","block");
+                $(s.resetFiltersBtn).css("display","block");
             }
+            
         };
         this.toggleFilters = function () {
             if ($.fn.DataTable.isDataTable(s.table)) {
@@ -99,12 +188,14 @@ const RentalTransaction = function () {
                 $(s.table).hide();
                 $(s.lmFilterChanged).css("display","block")
             }
+            $(s.resetFiltersBtn).css("display","block");
         };
 
         this.applyFilters = function () {
             $(s.loader).show();
             $(s.table).hide();
              $(s.lmFilterChanged).css("display","none")
+             $(s.resetFiltersBtn).css("display","none");
             const params = this.buildFilterParams(
                 $(s.filterLength).val(),
                 $(s.filterStatus).val(),
@@ -269,7 +360,8 @@ const RentalTransaction = function () {
                     <div class="book-entry mb-3 border p-3 rounded position-relative">
                         <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn"><i class="fa-solid fa-trash"></i></button>
                         
-                        <input type="text" class="form-control mb-2" id="book_id" placeholder="Book Id" name="book_id[]"/>
+                        <input type="text" class="form-control mb-2"  id="lm_catalog_book_title" placeholder="Book Title" />
+                  <input type="hidden"  id="book_id"  name="book_id[]" />
                        
                         <input type="number" class="form-control mb-2" id="book_quantity" placeholder="Quantity" name="quantity[]"/>
                        
@@ -286,7 +378,12 @@ const RentalTransaction = function () {
                 // --- THE KEY CHANGE ---
                 // Add the new elements to the form container.
                 $(container).append(entry);
-                    
+                    entry.find("#lm_catalog_book_title").autocomplete({
+    minLength: 3,
+    source: RentalTransactionInstance.searchBookTitle,
+    select: (event, ui) => RentalTransactionInstance.setBookTitleInputFieldValuesAfterSelection(event, ui),
+    appendTo: entry
+});
                 // Manually apply validation rules to the new inputs.
                 entry.find('input[name="book_id[]"]').rules("add", {
                     required: true,

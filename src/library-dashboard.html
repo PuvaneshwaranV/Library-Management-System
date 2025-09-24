@@ -1,6 +1,28 @@
 <div id="dashboardContainer" class="container-fluid py-4">
 
-  <div class="row g-4">
+
+ <div class="row g-4 ">
+    <div class="col-md-4">
+      <div class="dashboard-card">
+        <div class="stat-title">Active Members</div>
+        <div class="stat-value text-primary" id="totalMembers">1,250</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="dashboard-card">
+        <div class="stat-title">Active Penalties</div>
+        <div class="stat-value text-danger" id="activePenalties">35</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="dashboard-card">
+        <div class="stat-title">Collected Penalties</div>
+        <div class="stat-value text-success" id="collectedFees">$1,230.50</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-1">
     <div class="col-lg-4">
       <div class="dashboard-card">
         <div class="stat-title">Book Status</div>
@@ -21,26 +43,9 @@
     </div>
   </div>
 
-  <div class="row g-4 mt-1">
-    <div class="col-md-4">
-      <div class="dashboard-card">
-        <div class="stat-title">Active Members</div>
-        <div class="stat-value text-primary" id="totalMembers">1,250</div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="dashboard-card">
-        <div class="stat-title">Active Penalties</div>
-        <div class="stat-value text-danger" id="activePenalties">35</div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="dashboard-card">
-        <div class="stat-title">Collected Penalties</div>
-        <div class="stat-value text-success" id="collectedFees">$1,230.50</div>
-      </div>
-    </div>
-  </div>
+ 
+
+  
 
 </div>
 <div id="loader">

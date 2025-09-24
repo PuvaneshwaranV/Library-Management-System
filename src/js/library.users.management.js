@@ -83,7 +83,7 @@ const UserManagement = function () {
   this.init = function () {
     // init validation
     this.initValidation();
-
+    
     // init widgets, masks, pickers
     this.initUI();
 
@@ -113,6 +113,102 @@ const UserManagement = function () {
           display: { components: { calendar: true, date: true, month: true, year: true } }
         }
       );
+      const filterParam = localStorage.getItem("dashboardFilter");
+
+       if (filterParam) {
+        try {
+          this.showLoader(true);
+           $(s.userTable).hide();
+           localStorage.removeItem("dashboardFilter");
+            const filter = JSON.parse(decodeURIComponent(filterParam));
+            // 🔹 Make your AJAX call with these filter values
+            $(this.selectors.resetFiltersBtn).css("display","block");
+            $("#member_filter_status").val("active").trigger("change");
+            $("#member_length").val("50").trigger("change");
+            $.ajax({
+                url: `http://localhost:8080/LibraryManagementSystem/Members/getAllMembers?start=0&length=50&memberStatusFilter=active&order=asec`,
+                method: "GET",
+                dataType: "json",
+                success: (res)=> {
+                    if ($.fn.DataTable.isDataTable(s.userTable)) $(s.userTable).DataTable().destroy();
+                    $(s.userTable).DataTable({
+                      data: res.object?.data || [],
+                      sort: false,
+                      destroy: true,
+                      dom: '<"top"p>t<"bottom"ip>',
+                      lengthMenu: [10, 25, 50, 100],
+                      language: { emptyTable: "No data found" },
+                      columns: [
+                        { title: "S.No", data: null, orderable: false, searchable: false, render: (d, t, row, meta) => meta.row + 1 },
+                        { title: "Member Id", data: "memberId",
+                          render:(d,t,r) => `#${r.memberId}`
+                        },
+                        { title: "Name", data: "memberName" },
+                        { title: "Membership Start Date", data: "memberShipStartDate",
+                          render: (d,t,row) => {
+                            const backendDate = row.memberShipStartDate;
+                            const [year, month, day] = backendDate.split("-");
+                            const formatted = `${month}-${day}-${year}`;
+                            return `${formatted}`
+                          }
+                         },
+                        { title: "Membership End Date", data: "memberShipEndDate" },
+                        {
+                          title: "Membership Status", data: "memberShipStatus",
+                          render: (d, t, row) => {
+
+                            const bgColor = row.memberShipStatus === "ACTIVE" ? "#d4edda" : "#f8d7da"; // light green / light red
+                              const textColor = row.memberShipStatus === "ACTIVE" ? "#155724" : "#721c24"; // dark text for contrast
+
+                              return `<span style="
+                                  display:inline-block;
+                                  background-color: ${bgColor}; 
+                                  color: ${textColor}; 
+                                  border-radius: 12px; 
+                                  padding: 2px 0px; 
+                                
+                                  width: 100px;
+                                  font-weight: 500;
+                                  cursor:pointer;
+                              " class="status-click"
+                              data-id="${row.memberId}"
+                              data-bs-toggle="tooltip" data-bs-placement="top" title="Change Status" data-status="${row.memberShipStatus}"
+                              >${row.memberShipStatus}</span>`;
+                          },
+                          className:"text-center",
+                          width:"50px !important"
+                        },
+                        { title: "Work Status", data: "memberWorkStatus",
+                          className:"text-capitalize"
+                        },
+                        {
+                          title: "Action", data: null, orderable: false,
+                          render: (d, t, row) => `
+                            <button class="btn btn-md me-2 mb-2 update-member" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit">
+                              <i class="fa-solid fa-pen-to-square text-grey" ></i>
+                            </button>
+                            <button class="btn btn-md  me-2 mb-2 view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile">
+                              <i class="fa-solid fa-eye" btn-dark></i>
+                            </button>`
+                        }
+                      ],
+                      drawCallback: function () {
+                        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                          const old = bootstrap.Tooltip.getInstance(el);
+                          if (old) old.dispose();
+                          new bootstrap.Tooltip(el, { trigger: 'hover' });
+                        });
+                      }
+                    });
+                    this.showLoader(false);
+                    $(s.userTable).show();
+                }
+            });
+        }  catch (e) {
+            console.error("Invalid filter from dashboard", e);
+        }
+    }
+
 
       // add end date picker (for add form)
       if ($(this.selectors.membershipEndDate).length) {
@@ -277,6 +373,7 @@ const UserManagement = function () {
       $(this.selectors.userTable).DataTable().clear().destroy();
       $(this.selectors.userTable).hide();
       $(this.selectors.lmFilterChanged).css("display","block")
+      $(this.selectors.resetFiltersBtn).css("display","block")
     }
   };
 
@@ -403,6 +500,7 @@ const UserManagement = function () {
     this.showLoader(true);
     $(s.userTable).hide();
     $(this.selectors.lmFilterChanged).css("display","none")
+    $(this.selectors.resetFiltersBtn).css("display","none")
     let length = $("#member_length").val();
     let status = $("#member_filter_status").val();
     let searchColumn = $(s.filterType).val();
@@ -436,19 +534,41 @@ const UserManagement = function () {
           language: { emptyTable: "No data found" },
           columns: [
             { title: "S.No", data: null, orderable: false, searchable: false, render: (d, t, row, meta) => meta.row + 1 },
-            { title: "ID", data: "memberId",
+            { title: "Member Id", data: "memberId",
               render:(d,t,r) => `#${r.memberId}`
              },
             { title: "Name", data: "memberName" },
-            { title: "MemberShip Start Date", data: "memberShipStartDate" },
-            { title: "MemberShip End Date", data: "memberShipEndDate" },
+            { title: "Membership Start Date", data: "memberShipStartDate",
+              
+                          render: (d,t,row) => {
+                            const backendDate = row.memberShipStartDate;
+                            const [year, month, day] = backendDate.split("-");
+                            const formatted = `${month}-${day}-${year}`;
+                            return `${formatted}`
+                          }
+             },
+            { title: "Membership End Date", data: "memberShipEndDate",
+              render: (d,t,row) => {
+                            const backendDate = row.memberShipEndDate;
+                            const [year, month, day] = backendDate.split("-");
+                            const formatted = `${month}-${day}-${year}`;
+                            return `${formatted}`
+                          }
+             },
             {
-              title: "MemberShip Status", data: "memberShipStatus",
+              title: "Membership Status", data: "memberShipStatus",
               render: (d, t, row) => {
 
                 const bgColor = row.memberShipStatus === "ACTIVE" ? "#d4edda" : "#f8d7da"; // light green / light red
                   const textColor = row.memberShipStatus === "ACTIVE" ? "#155724" : "#721c24"; // dark text for contrast
-
+                let status ="";
+                if(row.memberShipStatus === "DEACTIVE")
+                {
+                  status="Inactive";
+                }
+                else{
+                  status="Active";
+                }
                   return `<span style="
                       display:inline-block;
                       background-color: ${bgColor}; 
@@ -462,17 +582,19 @@ const UserManagement = function () {
                   " class="status-click"
                   data-id="${row.memberId}"
                   data-bs-toggle="tooltip" data-bs-placement="top" title="Change Status" data-status="${row.memberShipStatus}"
-                  >${row.memberShipStatus}</span>`;
+                  >${status} <i class="fa-solid fa-pen-to-square text-dark" ></i></span>`;
               },
               className:"text-center",
               width:"50px !important"
             },
-            { title: "Work Status", data: "memberWorkStatus" },
+            { title: "Designation", data: "memberWorkStatus",
+              className:"text-capitalize"
+             },
             {
               title: "Action", data: null, orderable: false,
               render: (d, t, row) => `
-                <button class="btn btn-md me-2 mb-2 update-member" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit">
-                  <i class="fa-solid fa-pen-to-square text-grey" ></i>
+                <button class="btn btn-md me-2 mb-2 update-member" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit Member Details">
+                  <i class="fa-solid fa-pen-to-square text-dark" ></i>
                 </button>
                 <button class="btn btn-md  me-2 mb-2 view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile">
                   <i class="fa-solid fa-eye" btn-dark></i>
@@ -496,6 +618,26 @@ const UserManagement = function () {
       }
     });
   };
+
+  $(function () {
+  const $input = $("#member_filter_value");
+  const $clear = $("#clear_filter_value");
+
+  // Show/hide the × icon as user types
+  $input.on("input", function () {
+    if (this.value.trim().length) {
+      $clear.show();
+    } else {
+      $clear.hide();
+    }
+  });
+
+  // Click the × to clear and hide
+  $clear.on("click", function () {
+    $input.val("").trigger("input"); // trigger to hide icon
+    $input.focus();                  // optional: keep focus in field
+  });
+});
 
   // ---------- Change member status (modal) ----------
   this.changeMemberStatus = function (el) {

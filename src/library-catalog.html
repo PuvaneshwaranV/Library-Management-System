@@ -17,11 +17,12 @@
 
             <form id="borrow_form" class="mx-5 my-4" >
               <!-- Member ID -->
-              <div class="mb-3">
-                <label for="member_id" class="form-label ">
-              Member Id
+              <div class="mb-3 position-relatives">
+                <label for="member_name" class="form-label ">
+              Member Name
             </label>
-                <input type="text" class="form-control" id="member_id" name="member_id" placeholder="Member Id" />
+                <input type="text" class="form-control" id="member_name" name="member_name" placeholder="Member Name" />
+                <input type="hidden" id="member_id" name="member_id" />
                 <!-- <div id="member_id_error" class="text-danger small"></div> -->
               </div>
 
@@ -33,7 +34,11 @@
                     <i class="fa-solid fa-trash"></i>
                   </button>
                   
-                  <input type="text" class="form-control mb-2" id="book_id" placeholder="Book Id" name="book_id[]" />
+                   <label for="lm_catalog_book_title" class="form-label ">
+              Book Title
+            </label>
+                  <input type="text" class="form-control mb-2"  id="lm_catalog_book_title" placeholder="Book Title" />
+                  <input type="hidden"  id="book_id"  name="book_id[]" />
                   <!-- <div class="text-danger small error_book_id"></div> -->
                   
                   <input type="number" class="form-control mb-2" id="book_quantity" placeholder="Book Quantity" name="quantity[]" />
@@ -57,7 +62,7 @@
 
               <div class="row">
                 <div class="col-6">
-                  <button id="cancel" type="button" class="btn btn-secondary w-100">
+                  <button id="cancel" type="button" class="btn btn-secondary w-100  " >
                     Reset
                   </button>
                 </div>
@@ -192,7 +197,7 @@
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 p-4 rounded-2" style="background-color: #ffffff;">
 
       <!-- Filters (left) -->
       <div id="rental_filters" class="d-flex gap-2 flex-wrap">
@@ -247,11 +252,11 @@
     <!-- ✅ End single row -->
 
     <div class="d-flex justify-content-end gap-2">
-      <button id="reset_rental_filters" class="btn btn-secondary">Reset</button>
+      <button id="reset_rental_filters" class="btn btn-secondary" style="display:none;">Reset</button>
       <button id="apply_rental_filters" class="btn btn-dark">Submit</button>
     </div>
     <div class="d-flex justify-content-end mt-2">
-      <h6 class="text-warning"  style="display:none;font-weight:500;" id="lm_filter_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
+      <h6 class="text-warning"  style="display:none;font-weight:700;" id="lm_filter_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
     </div>
   </div>
 

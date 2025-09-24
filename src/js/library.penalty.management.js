@@ -82,7 +82,9 @@ const Penalty = function () {
     if ($.fn.DataTable.isDataTable(s.userTable)) {
       $(s.userTable).DataTable().clear().destroy();
       $(s.userTable).hide();
-       $(this.selectors.lmFilterChanged).css("display","block")
+       $(this.selectors.lmFilterChanged).css("display","block");
+       $(this.selectors.lmPenaltyResetFilters).css("display","block");
+
     }
    
   };
@@ -93,6 +95,7 @@ const Penalty = function () {
       $(s.userTable).DataTable().clear().destroy();
       $(s.userTable).hide();
       $(this.selectors.lmFilterChanged).css("display","block")
+      $(this.selectors.lmPenaltyResetFilters).css("display","block")
     }
     
   };
@@ -104,6 +107,7 @@ const Penalty = function () {
       $(s.userTable).DataTable().clear().destroy();
       $(s.userTable).hide();
       $(this.selectors.lmFilterChanged).css("display","block")
+      $(this.selectors.lmPenaltyResetFilters).css("display","block")
     }
     
     if (selected && selected.toLowerCase() !== "all") {
@@ -133,6 +137,7 @@ const Penalty = function () {
     $(s.loader).show();
     $(s.userTable).hide();
     $(this.selectors.lmFilterChanged).css("display","none")
+    $(this.selectors.lmPenaltyResetFilters).css("display","none")
     let length = $(s.lmPenaltyLength).val();
     let status = $(s.lmPenaltyStatus).val();
     let searchColumn = $(s.lmPenaltyFilterType).val();

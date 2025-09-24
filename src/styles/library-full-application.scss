@@ -9,9 +9,18 @@ $color-danger:       #ff0000;   // Red for warnings
 $color-muted:        #999999;   // Disabled text
 
 // ======================= Base ===========================
+html,
+body {
+  height: 100% !important;
+  margin: 0 !important;
+}
+
+body > .d-flex {        /* ✅ The Bootstrap flex wrapper */
+  min-height: 100vh !important;    /* or height:100% if you prefer */
+  display: flex !important;  
+  flex-direction: row !important;      /* ensure it's a flex container */
+}
 .tilt-neon-body {
-  margin: 0;
-  height: 100vh;
   background-color: $color-bg-light;
   color: #111827;
   font-family: "Tilt Neon", sans-serif;
@@ -158,15 +167,19 @@ textarea:disabled:hover {
 #logout { margin-top: 300px; }
 
 // ======================= Main Content ===========================
-#main_body {
-  margin-left:60px;
-  transition: all 0.3s;
-  &.collapsed { 
-    margin-left: 200px; 
-  }
+
+footer {
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  padding: 10px 0;
 }
 
 #content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;              /* let it grow inside .d-flex   */
+  min-height: 100%;
   background-color: $color-bg-table;
   transition: all 0.3s;
 
@@ -176,7 +189,14 @@ textarea:disabled:hover {
     border-radius: 20px;
   }
 }
-
+#main_body {
+  flex: 1;
+  margin-left:60px;
+  transition: all 0.3s;
+  &.collapsed { 
+    margin-left: 200px; 
+  }
+}
 .modal-title { color: $color-primary; }
 .border-dark { border-color: $color-primary !important; }
 .staus-click { cursor: pointer !important; }
@@ -199,7 +219,9 @@ textarea:disabled:hover {
     transition: 0.3s;
   }
 }
-
+#clear_filter_value:hover {
+  color: #000;
+}
 .btn-close-custom {
   border: none;
   background: transparent;
@@ -212,7 +234,7 @@ textarea:disabled:hover {
 
 // ======================= DataTables ===========================
 .dataTables_wrapper .dataTables_paginate {
-  margin-right: 30px !important;
+  margin-right: 10px !important;
 
   .paginate_button {
     margin-bottom: 3px !important;
@@ -312,4 +334,35 @@ table.dataTable td.dataTables_empty {
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
+}
+
+.ui-autocomplete {
+   max-height: 350px;
+   overflow-y: auto;
+   overflow-x: hidden;
+  list-style-type: none;
+  border: 1px solid black;
+    padding: 0px;
+    border-radius: 5px;
+    position: absolute;        /* make sure it is out of normal flow */
+    z-index: 9999; 
+    background-color:$color-secondary;
+}
+.ui-autocomplete li.ui-menu-item {
+   padding: 5px 1em 5px .4em!important;
+   text-transform: capitalize;
+   border-bottom: 1px solid #999999;
+   padding: 0px !important;
+}
+.ui-autocomplete li.ui-menu-item .ui-menu-item-wrapper {
+   padding: 5px 1em 5px .4em !important;
+}
+.ui-autocomplete li .ui-state-active {
+   border: none !important;
+   background-color: $color-accent;
+   color:$color-secondary;
+   cursor:pointer;
+}
+ui-helper-hidden-accessible{
+  display:none;
 }

@@ -14,10 +14,10 @@ const LibraryLogin = function () {
     this.seedUsers = function () {
         if (!localStorage.getItem("libraryUsers")) {
             const defaultUsers = [
-                { username: "Puvaneshwaran V",   password: "Puvi@123" },
-                { username: "Kamalesh S",     password: "Kamal@123" },
-                { username: "Dharshan G", password: "Dharsh@123" },
-                { username: "Vijiyakumar M",   password: "Vijay@123" }
+                { username: "Puvaneshwaran",   password: "Puvi@123" },
+                { username: "Kamalesh",     password: "Kamal@123" },
+                { username: "Dharshan", password: "Dharsh@123" },
+                { username: "Vijiyakumar",   password: "Vijay@123" }
             ];
             localStorage.setItem("libraryUsers", JSON.stringify(defaultUsers));
         }
@@ -61,7 +61,7 @@ const LibraryLogin = function () {
             rules: {
                 login_user_name: {
                     required: true,
-                    pattern: /^[a-zA-Z ]+$/,
+                    pattern: /^[a-zA-Z]+$/,
                     minlength: 5,
                 },
                 login_password: {
@@ -71,13 +71,13 @@ const LibraryLogin = function () {
             },
             messages: {
                 login_user_name: {
-                    required: "Please enter Username",
-                    pattern: "Letters only allowed",
-                    minlength: "At least 5 characters",
+                    required: "Username is required",
+                    pattern: "Alphabets only allowed",
+                    minlength: "At least 5 characters required",
                 },
                 login_password: {
-                    required: "Please enter Password",
-                    pattern: "Invalid Password Format",
+                    required: "Password is required",
+                    pattern: "Invalid Password",
                 }
             },
             errorPlacement: function (error, element) {

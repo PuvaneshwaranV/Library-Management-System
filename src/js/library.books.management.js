@@ -65,6 +65,7 @@ const selectors = {
       $(selectors.loader).show();
       $(selectors.dataTable).hide();
       $(selectors.lmFilterChanged).css("display","none");
+      $(selectors.filterResetBtn).css("display","none");
       const filterType  = $(selectors.filterType).val();
       const filterValue = $(selectors.filterValue).val().trim();
       const status      = $(selectors.filterStatus).val();
@@ -111,7 +112,7 @@ const selectors = {
             searchable: false,
             render: (data, type, row, meta) => meta.row + 1 // row index + 1
             },
-              { title: "ID", data: "bookId",
+              { title: "Book ID", data: "bookId",
                 render:(d,t,r) => `#${r.bookId}`
                },
               { title: "Title", data: "title" },
@@ -120,7 +121,7 @@ const selectors = {
               { title: "Registration Date", data: "bookRegistrationDate",
                 width: "200px"
                },
-              { title: "Total Count", data: "totalCount" },
+              { title: "Book Quantiy", data: "totalCount" },
               {
                 title: "Status",
                 data: "bookStatus",
@@ -316,6 +317,7 @@ const selectors = {
         $(selectors.dataTable).DataTable().clear().destroy();
         $(selectors.dataTable).hide();
         $(selectors.lmFilterChanged).css("display","block");
+        $(selectors.filterResetBtn).css("display","block");
       }
     })
   }
@@ -326,6 +328,7 @@ const selectors = {
         $(selectors.dataTable).DataTable().clear().destroy();
         $(selectors.dataTable).hide();
         $(selectors.lmFilterChanged).css("display","block");
+        $(selectors.filterResetBtn).css("display","block");
       }
     })
   }
