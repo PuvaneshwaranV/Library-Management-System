@@ -193,7 +193,7 @@ const selectors = {
               const dtLeft = $('.dt-left');
               if (dtLeft.children().length === 0) { // avoid duplicates
                   dtLeft.append(`
-                      <button id="book_pdf" class="btn btn-md btn-warning text-white  ms-3">
+                      <button id="book_pdf" class="btn btn-md btn-warning text-white pagination-button  ms-3">
                           <i class="fa-solid fa-file-lines fa-lg "></i>Generate Available Books PDF
                       </button>
                   `);

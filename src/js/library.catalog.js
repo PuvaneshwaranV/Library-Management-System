@@ -312,7 +312,7 @@ const RentalTransaction = function () {
                     const dtLeft = $('.dt-left');
                     if (dtLeft.children().length === 0) { // avoid duplicates
                         dtLeft.append(`
-                            <button id="transaction_pdf" class="btn btn-warning text-white ms-3">
+                            <button id="transaction_pdf" class="btn btn-warning pagination-button text-white ms-3">
                                 <i class="fa-solid fa-file-lines fa-lg me-1" style="color: #ffffff"></i>Generate All Transaction Pdf
                             </button>
                         `);

@@ -135,7 +135,7 @@ const UserManagement = function () {
                       data: res.object?.data || [],
                       sort: false,
                       destroy: true,
-                      dom: '<"top"p>t<"bottom"ip>',
+                      dom:'<"top d-flex justify-content-between align-items-end"<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
                       lengthMenu: [10, 25, 50, 100],
                       language: { emptyTable: "No data found" },
                       columns: [
@@ -192,12 +192,28 @@ const UserManagement = function () {
                             </button>`
                         }
                       ],
-                      drawCallback: function () {
+                       drawCallback: function () {
+                        const api = this.api();
                         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
                           const old = bootstrap.Tooltip.getInstance(el);
                           if (old) old.dispose();
                           new bootstrap.Tooltip(el, { trigger: 'hover' });
                         });
+                        const dtRight = $(api.table().container()).find('.dt-right');
+                        
+                          if (dtRight.find('#addMemberBtn').length === 0) { // avoid duplicates
+                              dtRight.prepend(`
+                                  <button
+                                    id="addMemberBtn"
+                                    class="btn btn-dark me-2 mb-0 pagination-button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#member_modal"
+                                  >
+                                    <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i
+                                    >Add Member
+                                  </button>
+                              `);
+                          }
                       }
                     });
                     this.showLoader(false);
@@ -520,7 +536,7 @@ const UserManagement = function () {
           data: res.object?.data || [],
           sort: false,
           destroy: true,
-          dom: '<"top d-flex justify-content-between"<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
+          dom: '<"top d-flex justify-content-between "<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
           lengthMenu: [10, 25, 50, 100],
           language: { emptyTable: "No data found" },
           columns: [
@@ -593,17 +609,19 @@ const UserManagement = function () {
             }
           ],
           drawCallback: function () {
+            const api = this.api();
             document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
               const old = bootstrap.Tooltip.getInstance(el);
               if (old) old.dispose();
               new bootstrap.Tooltip(el, { trigger: 'hover' });
             });
-            const dtLeft = $('.dt-left');
-              if (dtLeft.children().length === 0) { // avoid duplicates
-                  dtLeft.append(`
+            const dtRight = $(api.table().container()).find('.dt-right');
+            
+              if (dtRight.find('#addMemberBtn').length === 0) { // avoid duplicates
+                  dtRight.prepend(`
                       <button
-                        id=""
-                        class="btn btn-dark"
+                        id="addMemberBtn"
+                        class="btn btn-dark me-2 mb-0 pagination-button"
                         data-bs-toggle="modal"
                         data-bs-target="#member_modal"
                       >

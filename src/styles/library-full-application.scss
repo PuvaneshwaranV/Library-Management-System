@@ -231,8 +231,16 @@ footer {
     transform: scale(1.1);
   }
 }
+// ======================= Modal ===========================
 
+#member_form{
+  width:400px !important:
+}
 // ======================= DataTables ===========================
+
+.dataTables_wrapper .pagination-button{
+  margin-bottom:-20px !important;
+}
 .dataTables_wrapper .dataTables_paginate {
   margin-right: 10px !important;
 
