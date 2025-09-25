@@ -340,7 +340,7 @@
               name="membership_status"
             >
               <option value="ACTIVE">Active</option>
-              <option value="DEACTIVE">Deactive</option>
+              <option value="DEACTIVE">Inactive</option>
             </select>
             <div id="status_error" class="text-danger small"></div>
           </div>
@@ -455,7 +455,6 @@
         <div class="d-flex flex-column">
           <label for="member_filter_type" class="ms-2 text-secondary">Search By</label>
           <select id="member_filter_type" class="form-select filters text-secondary w-auto">
-            <option value="all">All</option>
             <option value="memberName">Member Name</option>
             <option value="memberEmail">Member Email</option>
             <option value="memberNumber">Mobile Number</option>
@@ -463,12 +462,12 @@
           </select>
         </div>
         <div class="d-flex flex-column position-relative">
-          <label for="member_filter_value" class="ms-2 text-secondary">Enter Value</label>
+          <label for="member_filter_value" class="ms-2 text-secondary">Search Value</label>
           <input
             type="text"
             id="member_filter_value"
             class="form-control filters text-secondary text-capitalize w-auto"
-            placeholder="🔍 Enter Value" disabled
+            placeholder="🔍 Enter Value" 
           />
           <span
     id="clear_filter_value"

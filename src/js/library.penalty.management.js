@@ -28,7 +28,7 @@ const Penalty = function () {
   this.init = function () {
     const s = this.selectors;
     this.validateForm();
-
+    this.penaltyFilter();
     $(document)
       .off("click", s.lmPenaltyApplyFilters)
       .on("click", s.lmPenaltyApplyFilters, this.applyFilters.bind(this));
@@ -98,6 +98,26 @@ const Penalty = function () {
       $(this.selectors.lmPenaltyResetFilters).css("display","block")
     }
     
+  };
+
+  this.penaltyFilter = function () {
+    const input = $("#lm_penalty_filter_value");
+    const clear = $("#clear_filter_value");
+
+    // Show/hide the × icon as user types
+    input.on("input", function () {
+      if (this.value.trim().length) {
+        clear.show();
+      } else {
+        clear.hide();
+      }
+    });
+
+    // Click the × to clear and hide
+    clear.on("click", function () {
+      input.val("").trigger("input"); // trigger to hide icon
+      input.focus();                  // optional: keep focus in field
+    });
   };
 
   this.toggleFilterInput = function () {
@@ -231,9 +251,9 @@ const Penalty = function () {
         lm_penalty_reason: { required: true, pattern: /^[a-zA-Z ]+$/, minlength: 5 },
       },
       messages: {
-        lm_penalty_transactionid: { required: "Please Fill Transaction ID", pattern: "Transaction ID must be +ve Number" },
-        lm_penalty_amount: { required: "Please Fill Penalty Amount", pattern: "Penalty Amount must be +ve Number" },
-        lm_penalty_reason: { required: "Please Fill Penalty Reason", pattern: "Penalty Reason Only Letters", minlength: "Minimum 5 characters" },
+        lm_penalty_transactionid: { required: "Transaction Id is required", pattern: "Transaction Id must be +ve Number" },
+        lm_penalty_amount: { required: "Penalty amount is required", pattern: "Penalty amount must be +ve Number" },
+        lm_penalty_reason: { required: "Penalty reason is required", pattern: "Penalty reason Only Letters", minlength: "Minimum 5 characters" },
       },
     });
   };

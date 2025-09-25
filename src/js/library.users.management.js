@@ -83,7 +83,7 @@ const UserManagement = function () {
   this.init = function () {
     // init validation
     this.initValidation();
-    
+    this.memberFilter();
     // init widgets, masks, pickers
     this.initUI();
 
@@ -91,7 +91,7 @@ const UserManagement = function () {
     this.bindEvents();
 
     // initial filter toggle
-    this.toggleFilterInput();
+    
   };
 
   // ---------- init UI helpers ----------
@@ -308,7 +308,7 @@ const UserManagement = function () {
     // Filters / table
     $(document).on("click", s.applyFiltersBtn, () => this.renderUserTable());
     $(document).on("click", s.resetFiltersBtn, () => this.resetFilters());
-    $(document).on("change", s.filterType, this.toggleFilterInput.bind(this));
+    
     $(document).on("input", s.filterValue, this.changeFilterInput.bind(this));
     $(document).on("change", s.filters, this.toggleFilters.bind(this));
 
@@ -381,16 +381,7 @@ const UserManagement = function () {
     this.changeFilterInput();
   };
 
-  this.toggleFilterInput = function () {
-    const s = this.selectors;
-    const selected = $(s.filterType).val();
-    if (selected && selected.toLowerCase() !== "all") {
-      $(s.filterValue).prop("disabled", false);
-    } else {
-      $(s.filterValue).prop("disabled", true).val("");
-    }
-    this.changeFilterInput();
-  };
+ 
 
   // ---------- Add Member (uses jQuery Validate .valid()) ----------
   this.addMember = function () {
@@ -529,7 +520,7 @@ const UserManagement = function () {
           data: res.object?.data || [],
           sort: false,
           destroy: true,
-          dom: '<"top"p>t<"bottom"ip>',
+          dom: '<"top d-flex justify-content-between"<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
           lengthMenu: [10, 25, 50, 100],
           language: { emptyTable: "No data found" },
           columns: [
@@ -607,6 +598,20 @@ const UserManagement = function () {
               if (old) old.dispose();
               new bootstrap.Tooltip(el, { trigger: 'hover' });
             });
+            const dtLeft = $('.dt-left');
+              if (dtLeft.children().length === 0) { // avoid duplicates
+                  dtLeft.append(`
+                      <button
+                        id=""
+                        class="btn btn-dark"
+                        data-bs-toggle="modal"
+                        data-bs-target="#member_modal"
+                      >
+                        <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i
+                        >Add Member
+                      </button>
+                  `);
+              }
           }
         });
         this.showLoader(false);
@@ -619,26 +624,28 @@ const UserManagement = function () {
     });
   };
 
-  $(function () {
-  const $input = $("#member_filter_value");
-  const $clear = $("#clear_filter_value");
+  this.memberFilter = function () {
+  const input = $("#member_filter_value");
+  const clear = $("#clear_filter_value");
 
   // Show/hide the × icon as user types
-  $input.on("input", function () {
+  input.on("input", function () {
     if (this.value.trim().length) {
-      $clear.show();
+      clear.show();
     } else {
-      $clear.hide();
+      clear.hide();
     }
   });
 
   // Click the × to clear and hide
-  $clear.on("click", function () {
-    $input.val("").trigger("input"); // trigger to hide icon
-    $input.focus();                  // optional: keep focus in field
+  clear.on("click", function () {
+    input.val("").trigger("input"); // trigger to hide icon
+    input.focus();                  // optional: keep focus in field
   });
-});
+};
 
+
+  
   // ---------- Change member status (modal) ----------
   this.changeMemberStatus = function (el) {
     const s = this.selectors;
@@ -824,15 +831,16 @@ const UserManagement = function () {
   // ---------- Reset filters ----------
   this.resetFilters = function () {
     $("#member_length").val("10");
-    $("#member_filter_type").val("all");
+    $("#member_filter_type").val("memberName");
     $("#member_filter_status").val("all");
     $("#member_filter_value").val("");
+    $("#clear_filter_value").hide();
 
     if ($.fn.DataTable.isDataTable(this.selectors.userTable)) {
       $(this.selectors.userTable).DataTable().clear().destroy();
       $(this.selectors.userTable).hide();
     }
-    this.toggleFilterInput();
+    
   };
 };
 

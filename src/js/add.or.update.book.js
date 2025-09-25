@@ -136,18 +136,18 @@ if (!customElements.get("book-add-edit-modal")) {
         },
         messages: {
           title: {
-            required: "Please enter the Book Title",
+            required: "Book title is required",
             pattern:  "Book title must start with alphabet",
             minlength: "Minimum 2 characters",
           },
           author: {
-            required: "Please enter the Author Name",
+            required: "Author name is required",
             minlength: "Minimum 2 characters",
           },
-          language: { required: "Please select a language" },
+          language: { required: "Language is required" },
           quantity: {
-            required: "Please enter Book Quantity",
-            pattern: "Quantity must be a positive number",
+            required: "Book quantity is required",
+            pattern: "Book Quantity must be a positive number",
           },
         },
       });

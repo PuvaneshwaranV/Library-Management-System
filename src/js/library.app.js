@@ -180,8 +180,8 @@ const App = function () {
             { selector: ".row:last .col-lg-4:nth-child(1)", page: "library-books-management.html", title: "Books", sidebarLink: '#sidebar .nav-link[href="library-books-management.html"]',filter: { BookAvailablity: "available" } },
             { selector: ".row:last .col-lg-4:nth-child(2)", page: "library-penalty-management.html", title: "Penalty", sidebarLink: '#sidebar .nav-link[href="library-penalty-management.html"]', filter: { paymentStatus: "pending" } },
             { selector: ".row:first .col-md-4:nth-child(2)", page: "library-penalty-management.html", title: "Penalty", sidebarLink: '#sidebar .nav-link[href="library-penalty-management.html"]', filter: { paymentStatus: "pending" } },
-            { selector: ".row:last .col-lg-4:nth-child(3)", page: "library-users-management.html", title: "Users", sidebarLink: '#sidebar .nav-link[href="library-users-management.html"]', filter: { memberStatusFilter: "active" } },
-            { selector: ".row:first .col-md-4:nth-child(1)", page: "library-users-management.html", title: "Users", sidebarLink: '#sidebar .nav-link[href="library-users-management.html"]', filter: { memberStatusFilter: "active" }  }
+            { selector: ".row:last .col-lg-4:nth-child(3)", page: "library-users-management.html", title: "Members", sidebarLink: '#sidebar .nav-link[href="library-users-management.html"]', filter: { memberStatusFilter: "active" } },
+            { selector: ".row:first .col-md-4:nth-child(1)", page: "library-users-management.html", title: "Members", sidebarLink: '#sidebar .nav-link[href="library-users-management.html"]', filter: { memberStatusFilter: "active" }  }
         ];
 
         cardMap.forEach(card => {

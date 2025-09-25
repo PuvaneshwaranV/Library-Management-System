@@ -167,14 +167,21 @@
             <option value="reason">Reason</option>
           </select>
         </div>
-        <div class="d-flex flex-column">
-          <label for="lm_penalty_filter_value" class="ms-2 text-secondary">Enter Value</label>
+        <div class="d-flex flex-column position-relative">
+          <label for="lm_penalty_filter_value" class="ms-2 text-secondary">Search Value</label>
           <input
             type="text"
             id="lm_penalty_filter_value"
             class="form-control lm_penalty_filters text-secondary w-auto"
             placeholder="🔍 Enter Value"
           />
+          <span
+            id="clear_filter_value"
+            class="position-absolute end-0 top-50 translate-middle-y me-2 text-secondary"
+            style="cursor:pointer; display:none; font-size: 30px; padding-top: 20px; "
+          >
+            &times;
+          </span>
         </div>
       </div>
       <div class="d-flex justify-content-end gap-2 mb-3">

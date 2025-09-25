@@ -60,6 +60,7 @@ const RentalTransaction = function () {
             this.bindUpdateHandlers();
             this.bindPDFHandler();
             this.bindDatePickers();
+            this.rentalFilter();
 
             $("#member_name").autocomplete({
                 minLength: 3, 
@@ -112,6 +113,26 @@ const RentalTransaction = function () {
             console.log("Bb");
             $("#book_id").val(ui.item.id);
         }
+
+        this.rentalFilter = function () {
+            const input = $("#rental_filter_value");
+            const clear = $("#clear_filter_value");
+
+            // Show/hide the × icon as user types
+            input.on("input", function () {
+            if (this.value.trim().length) {
+                clear.show();
+            } else {
+                clear.hide();
+            }
+            });
+
+            // Click the × to clear and hide
+            clear.on("click", function () {
+            input.val("").trigger("input"); // trigger to hide icon
+            input.focus();                  // optional: keep focus in field
+            });
+        };
 
         this.searchMemberName = function (autoCompleteReq, autoCompleteResponse){
             $.ajax({
@@ -326,14 +347,14 @@ const RentalTransaction = function () {
             if (!$form.data('validator')) {
                 $form.validate({
                     rules: {
-                        "member_id": { required: true, numbersOnly: true },
-                        "book_id[]": { required: true, numbersOnly: true },
+                        "member_name": { required: true,  },
+                        "lm_catalog_book_title": { required: true, numbersOnly: true },
                         "quantity[]": { required: true, numbersOnly: true, min: 1 },
                         "due_date[]": { required: true, dateISO: true, futureDate: true }
                     },
                     messages: {
-                        "member_id": { required: "Member ID is required", numbersOnly: "Digits only" },
-                        "book_id[]": { required: "Book ID is required", numbersOnly: "Digits only" },
+                        "member_name": { required: "Member name is required",  },
+                        "lm_catalog_book_title": { required: "Book name is required", numbersOnly: "Digits only" },
                         "quantity[]": { required: "Quantity is required", numbersOnly: "Digits only", min: "Quantity must be at least 1" },
                         "due_date[]": { required: "Due date is required", dateISO: "Use YYYY-MM-DD", futureDate: "Due date must be after today" }
                     },

@@ -60,6 +60,26 @@ const selectors = {
   };
 
  
+  this.bookFilter = function () {
+    const input = $("#filter_value");
+    const clear = $("#clear_filter_value");
+
+    // Show/hide the × icon as user types
+    input.on("input", function () {
+      if (this.value.trim().length) {
+        clear.show();
+      } else {
+        clear.hide();
+      }
+    });
+
+    // Click the × to clear and hide
+    clear.on("click", function () {
+      input.val("").trigger("input"); // trigger to hide icon
+      input.focus();                  // optional: keep focus in field
+    });
+  };
+
   this.displayBooksTable = function () {
     $(document).on("click", selectors.filterApplyBtn, function () {
       $(selectors.loader).show();
@@ -362,4 +382,5 @@ const selectors = {
     books.toggleFilters();
     books.changeFilterValue();
     books.toggleFilterInput();
+    books.bookFilter(); 
 

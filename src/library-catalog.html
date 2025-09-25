@@ -226,10 +226,17 @@
             <option value="memberId">Member Id</option>
           </select>
         </div>
-        <div class="d-flex flex-column">
-          <label for="rental_filter_value" class="ms-2 text-secondary">Enter Value</label>
+        <div class="d-flex flex-column position-relative">
+          <label for="rental_filter_value" class="ms-2 text-secondary">Search Value</label>
           <input type="text" id="rental_filter_value" class="form-control text-secondary filters w-auto"
                  placeholder="🔍 Enter Value" disabled />
+          <span
+            id="clear_filter_value"
+            class="position-absolute end-0 top-50 translate-middle-y me-2 text-secondary"
+            style="cursor:pointer; display:none; font-size: 30px; padding-top: 20px; "
+          >
+            &times;
+          </span>
         </div>
       </div>
 
