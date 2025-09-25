@@ -129,20 +129,21 @@ if (!customElements.get("book-add-edit-modal")) {
         ignore: [],
         onkeyup: false,
         rules: {
-          title: { required: true, pattern: /^[a-zA-Z][a-zA-Z0-9 ]+$/, minlength: 2 },
-          author: { required: true, pattern: /^[a-zA-Z ]+$/, minlength: 2 },
+          title: { required: true, pattern: /^[a-zA-Z][a-zA-Z0-9 ]{1,30}$/  },
+          author: { required: true, pattern: /^[a-zA-Z ]{2,30}$/ },
           language: { required: true },
           quantity: { required: true, pattern: /^[1-9][0-9]*$/ },
         },
         messages: {
           title: {
             required: "Book title is required",
-            pattern:  "Book title must start with alphabet",
-            minlength: "Minimum 2 characters",
+            pattern:  "Book title must start with alphabet and atleast two letters",
+            
           },
           author: {
             required: "Author name is required",
-            minlength: "Minimum 2 characters",
+            pattern: "Author name must start with alphabet and atleast two letters",
+            
           },
           language: { required: "Language is required" },
           quantity: {

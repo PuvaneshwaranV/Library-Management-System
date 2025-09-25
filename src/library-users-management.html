@@ -23,85 +23,88 @@
             </button>
             <hr class="border border-1 border-dark opacity-100" />
             <form class="mx-5 my-4 " id="member_form">
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control text-capitalize"
-                  id="member_name"
-                  name="member_name"
-                  placeholder="Member Name"
-                />
-                
-              </div>
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="member_email"
-                  name="member_email"
-                  placeholder="Member Email"
-                />
-               
-              </div>
-              <div class="mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="mobile_number"
-                    name="mobile_number"
-                    placeholder="Mobile Number"
-                  />
-                  
+              <div class="row mb-3">
+                <div class="col-4">
+                  <label for="first_name">First Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control text-capitalize" id="first_name" name="first_name" placeholder="First Name" />
                 </div>
-              
-                <div class="mb-3 ">
-                  <select
-                    id="member_work_status"
-                    name="member_work_status"
-                    class="form-select "
-                    required
-                  >
+                <div class="col-4">
+                  <label for="middle_name">Middle Name</label>
+                  <input type="text" class="form-control text-capitalize" id="middle_name" name="middle_name" placeholder="Middle Name" />
+                </div>
+                <div class="col-4">
+                  <label for="last_name">Last Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control text-capitalize" id="last_name" name="last_name" placeholder="Last Name" />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-4">
+                  <label for="member_email">Email <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="member_email" name="member_email" placeholder="Email" />
+                  <input type="hidden" id="hidden_member_email" value="1" min="1" name="hidden_member_email">
+                </div>
+                <div class="col-4">
+                  <label for="confirm_email">Confirm Email <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="confirm_email" name="confirm_email" placeholder="Confirm Email" />
+                </div>
+                <div class="col-4">
+                  <label for="mobile_number">Mobile Phone <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="mobile_number" name="mobile_number" placeholder="Mobile Phone" />
+                  <input type="hidden" id="hidden_mobile_number" value="1" min="1" name="hidden_mobile_number">
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-4">
+                  <label for="member_work_status">Designation <span class="text-danger">*</span></label>
+                  <select id="member_work_status" name="member_work_status" class="form-select">
                     <option value="" disabled selected>Select Designation</option>
                     <option value="Student">Student</option>
                     <option value="Employed">Employed</option>
-                    <option value="Unemployed">UnEmployed</option>
+                    <option value="Unemployed">Unemployed</option>
                   </select>
-                 
                 </div>
-
-                <div class="mb-3 " id="membership_end_date_picker">
-                <div class="input-group ">
-                  <input
-                    type="text"
-                    class="form-control border-1 border-black border-end-0"
-                    id="membership_end_date"
-                    name="membership_end_date"
-                    placeholder="Membership End Date"
-                  /><span
-                    class="input-group-text border-1 border-black border-start-0"
-                    
-                    ><i
-                      class="fa fa-calendar"
-                      id="calendar_icon"
-                      style="color: #1e3a8a; cursor: pointer"
-                    ></i
-                  ></span>
+                <div class="col-4">
+                  <label for="membership_start_date">Membership Start Date <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="membership_start_date" name="membership_start_date" disabled />
                 </div>
-             
+                <div class="col-4" id="membership_end_date_picker">
+                  <label for="membership_end_date">Membership End Date <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <input type="text" class="form-control border-1 border-black border-end-0" id="membership_end_date" name="membership_end_date" placeholder="Membership End Date" />
+                    <span class="input-group-text border-1 border-black border-start-0">
+                      <i class="fa fa-calendar" id="calendar_icon" style="color: #1e3a8a; cursor: pointer"></i>
+                    </span>
+                  </div>
+                </div>
               </div>
               
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control text-capitalize"
-                  id="member_address"
-                  name="member_address"
-                  placeholder="Member Address"
-                />
-                
-              </div>
-              <div class="row">
-                <div class="col-6">
+                <div class="row mb-3">
+                  <div class="col-4">
+                    <label for="address_line1">Address Line 1 <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="address_line1" name="address_line1" placeholder="Address Line 1" />
+                  </div>
+                  <div class="col-4">
+                    <label for="address_line2">Address Line 2</label>
+                    <input type="text" class="form-control" id="address_line2" name="address_line2" placeholder="Address Line 2" />
+                  </div>
+                  <div class="col-4">
+                    <label for="state">State <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="state" name="state" placeholder="State" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-4">
+                    <label for="country">Country <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="country" name="country" placeholder="Country" />
+                  </div>
+                  <div class="col-4">
+                    <label for="pincode">Zipcode <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Zipcode" />
+                  </div>
+                </div>
+              <div class="row justify-content-end">
+                <div class="col-3">
                   <button
                     id="member_cancel_btn"
                     type="button"
@@ -110,7 +113,7 @@
                     Reset
                   </button>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                   <button
                     id="member_add_btn"
                     type="button"
@@ -132,7 +135,7 @@
       aria-labelledby="update_member_modal_label"
       aria-hidden="true" data-bs-backdrop="static"
     >
-      <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-dialog modal-dialog-scrollable modal-xl">
         <div class="modal-content">
           <div class="modal-body position-relative mx-3">
             <h3 class="modal-title" id="update_member_modal_label">
@@ -148,116 +151,98 @@
             </button>
             <hr class="border border-1 border-dark opacity-100" />
             <form class="mx-5 my-4  " id="update_member_form">
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="update_member_id"
-                  name="update_member_id"
-                  placeholder="Member Id" disabled
-                />
+              <input type="hidden" id="update_member_id" name="update_member_id" />
+
+              <!-- Full Name (read-only or editable as you need) -->
+              <div class="row mb-3">
+                <div class="col-4">
+                  <label for="update_first_name">First Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_first_name" name="update_first_name" />
+                </div>
+                <div class="col-4">
+                  <label for="update_middle_name">Middle Name</label>
+                  <input type="text" class="form-control" id="update_middle_name" name="update_middle_name" />
+                </div>
+                <div class="col-4">
+                  <label for="update_last_name">Last Name <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_last_name" name="update_last_name" />
+                </div>
               </div>
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control text-capitalize"
-                  id="update_member_name"
-                  name="update_member_name"
-                  placeholder="Member Name"
-                />
-              </div>
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="update_member_email"
-                  name="update_member_email"
-                  placeholder="Member Email"
-                />
-              </div>
-              <div class="row">
-                <div class="mb-3 col-6">
-                  <select
-                    id="update_member_work_status"
-                    name="update_member_work_status"
-                    class="form-select w-auto"
-                  >
-                    <option value="" disabled selected>Select Status</option>
+
+              <!-- Email & Work Status -->
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label for="update_member_email">Email <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_member_email" name="update_member_email" placeholder="Email" />
+                </div>
+                <div class="col-6">
+                  <label for="update_member_work_status">Designation <span class="text-danger">*</span></label>
+                  <select id="update_member_work_status" name="update_member_work_status" class="form-select">
+                    <option value="" disabled selected>Select</option>
                     <option value="Student">Student</option>
                     <option value="Employed">Employed</option>
                     <option value="Unemployed">Unemployed</option>
                   </select>
-                  
                 </div>
-                <div class="mb-3 col-6">
-                  <select id="update_member_status" name="update_member_status" class="form-select w-auto" disabled>
-                    <option value="" disabled selected>Select Status</option>
-                    <option value="ACTIVE">Active</option>
-                    <option value="DEACTIVE">Deactive</option>
-                  </select>
-                  
-                </div>
-              </div>
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="update_mobile_number"
-                  name="update_mobile_number"
-                  placeholder="Mobile Number"
-                />
-                
               </div>
 
-              <div class="mb-3 input-group">
-                <input
-                  type="text"
-                  class="form-control border-1 border-black border-end-0"
-                  id="update_membership_start_date"
-                  name="update_membership_start_date"
-                  placeholder="Membership Start Date" disabled
-                /><span
-                    class="input-group-text border-1 border-black border-start-0 "
-                    
-                    ><i
-                      class="fa fa-calendar"
-                      id=""
-                      style="color: #1e3a8a; cursor: pointer"
-                    ></i
-                  ></span>
-                
-              </div>
-              <div class="mb-3" id="update_end_date_picker">  <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control border border-black border-end-0"
-                  id="update_membership_end_date"
-                  name="update_membership_end_date"
-                  placeholder="Membership End Date"
-                /><span
-                    class="input-group-text border-1 border-black border-start-0"
-                    
-                    ><i
-                      class="fa fa-calendar"
-                      id="update_calendar_icon"
-                      style="color: #1e3a8a; cursor: pointer"
-                    ></i
-                  ></span>
-              </div>
-                
-              </div>
-              <div class="mb-3">
-                <input
-                  type="text"
-                  class="form-control text-capitalize"
-                  id="update_member_address"
-                  name="update_member_address"
-                  placeholder="Member Address"
-                />
-                
-              </div>
-              <div class="row">
+              <!-- Mobile & Status -->
+              <div class="row mb-3">
                 <div class="col-6">
+                  <label for="update_mobile_number">Mobile Phone <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_mobile_number" name="update_mobile_number" placeholder="10-digit number" />
+                </div>
+                <div class="col-6">
+                  <label for="update_member_status">Membership Status</label>
+                  <input type="text" class="form-control" id="update_member_status" name="update_member_status" placeholder="Active/Inactive" disabled />
+                </div>
+              </div>
+
+              <!-- Start & End Dates -->
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label for="update_membership_start_date">Membership Start Date</label>
+                  <input type="text" class="form-control" id="update_membership_start_date" name="update_membership_start_date" placeholder="MM-DD-YYYY" disabled />
+                </div>
+                <div class="col-6" id="membership_end_date_picker">
+                  <label for="update_membership_end_date">Membership End Date <span class="text-danger">*</span></label>
+                  <div class="input-group" >
+                    <input type="text" class="form-control border-end-0" id="update_membership_end_date" name="update_membership_end_date" placeholder="MM-DD-YYYY" />
+                    <span class="input-group-text border-start-0" id="calendar_icon">
+                      <i class="fa fa-calendar "  style="color: #1e3a8a; cursor: pointer"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Address -->
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label for="update_address_line1">Address Line 1 <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_address_line1" name="update_address_line1" placeholder="Address Line 1" />
+                </div>
+                <div class="col-6">
+                  <label for="update_address_line2">Address Line 2</label>
+                  <input type="text" class="form-control" id="update_address_line2" name="update_address_line2" placeholder="Address Line 2" />
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-4">
+                  <label for="update_state">State <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_state" name="update_state" placeholder="State" />
+                </div>
+                <div class="col-4">
+                  <label for="update_country">Country <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_country" name="update_country" placeholder="Country" />
+                </div>
+                <div class="col-4">
+                  <label for="update_pincode">Zipcode <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_pincode" name="update_pincode" placeholder="Zipcode" />
+                </div>
+              </div>
+              <div class="row justify-content-end">
+                <div class="col-3">
                   <button
                     id="update_cancel_btn"
                     type="button" data-bs-dismiss="modal"
@@ -266,7 +251,7 @@
                     cancel  
                   </button>
                 </div>
-                <div class="col-6">
+                <div class="col-3">
                   <button
                     id="update_member_btn"
                     type="button"
@@ -429,7 +414,7 @@
 </div>
 
     
-    <div id="member_filters" class="d-flex p-4  justify-content-between align-items-end mb-3 rounded-2" style="background-color: #ffffff;">
+    <div id="member_filters" class="d-flex p-4  justify-content-between align-items-center mb-3 rounded-2" style="background-color: #ffffff;">
       <!-- Show Dropdown (aligned left) -->
       
 
@@ -478,7 +463,17 @@
   </span>
         </div>
       </div>
-      
+      <div class="d-flex justify-content-center align-items-center gap-2">
+          <button
+              id="addMemberBtn"
+              class="btn btn-dark me-2 mb-0 pagination-button"
+              data-bs-toggle="modal" 
+              data-bs-target="#member_modal"
+            >
+              <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i
+              >Add Member
+            </button>
+      </div>
     </div>
     <div class="d-flex justify-content-end gap-2">
       <button id="reset_member_filters" class="btn btn-secondary" style="display:none;">Reset</button>

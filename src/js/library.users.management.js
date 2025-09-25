@@ -23,9 +23,11 @@ const UserManagement = function () {
     addForm: "#member_form",
     memberName: "#member_name",
     memberEmail: "#member_email",
+    hiddenMemberEmail:  "#hidden_member_email",
     memberWorkStatus: "#member_work_status",
     memberAddress: "#member_address",
     mobileNumber: "#mobile_number",
+    hiddenmobileNumber: "#hidden_mobile_number",
     membershipEndDate: "#membership_end_date",
     memberAddBtn: "#member_add_btn",
     memberCancelBtn: "#member_cancel_btn",
@@ -43,6 +45,11 @@ const UserManagement = function () {
     updateMembershipEnd: "#update_membership_end_date",
     updateMemberBtn: "#update_member_btn",
     updateCancelBtn: "#update_cancel_btn",
+    updateAddressLine1:"#update_address_line1",
+    updateAddressLine2:"#update_address_line2",
+    updateState:"#update_state",
+    updateCountry:"#update_country",
+    updatePincode:"#update_pincode",
 
     // membership status modal
     membershipModal: "#membership_modal",
@@ -71,11 +78,11 @@ const UserManagement = function () {
   // ---------- Regex patterns (used indirectly via pattern validator) ----------
   // keep as JS strings in rules below
   this.patterns = {
-    name: "^[A-Za-z \\s]{3,50}$",
-    address: "^[A-Za-z0-9 ,\\.\\-]{3,100}$",
-    mobile: "^[6-9][0-9]{4}[-][0-9]{5}$",
+    name: "^[A-Za-z\\s]{3,50}$",
+    address: "^[A-Za-z0-9 ,\\.\\-]+$",
+    mobile: "^[(][6-9][0-9]{2}[)][-][0-9]{3}[-][0-9]{4}$",
     // email will use built-in email rule
-    email:"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}$",
+    email:"^[A-Za-z0-9]+@[A-Za-z0-9]+[.](com|in)$",
     dateISO: true
   };
 
@@ -90,17 +97,26 @@ const UserManagement = function () {
     // bind events
     this.bindEvents();
 
-    // initial filter toggle
-    
-  };
+     $('#member_modal').on('show.bs.modal', function () {
+    const today   = new Date();
+    const month   = String(today.getMonth() + 1).padStart(2, '0');
+    const day     = String(today.getDate()).padStart(2, '0');
+    const year    = today.getFullYear();
+    const display = `${month}-${day}-${year}`;   // MM-DD-YYYY for the user
+
+    $('#membership_start_date').val(display);
+});
+        // initial filter toggle
+        
+      };
 
   // ---------- init UI helpers ----------
   this.initUI = function () {
     const s = this.selectors;
     // input masks
     if ($.fn.inputmask) {
-      $(s.mobileNumber + ", " + s.updateMobileNumber).inputmask("99999-99999");
-      $(s.membershipEndDate + ", " + s.updateMembershipEnd + ", " + s.membershipEndDateStatus).inputmask("9999-99-99");
+      $(s.mobileNumber + ", " + s.updateMobileNumber).inputmask("(999)-999-9999");
+      $(s.membershipEndDate + ", " + s.updateMembershipEnd + ", " + s.membershipEndDateStatus).inputmask("99-99-9999");
     }
 
     // TempusDominus datepickers (guarded in case library not loaded)
@@ -108,12 +124,33 @@ const UserManagement = function () {
       this.statusEndDp = new tempusDominus.TempusDominus(
         document.getElementById("membership_end_date_status"),
         {
-          localization: { format: "yyyy-MM-dd" },
+          localization: { format: "MM-dd-yyyy" },
           restrictions: { minDate: new tempusDominus.DateTime(new Date()) },
-          display: { components: { calendar: true, date: true, month: true, year: true } }
+          display: { components: { calendar: true, date: true, month: true, year: true },maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31)) }
         }
       );
-      const filterParam = localStorage.getItem("dashboardFilter");
+           // add end date picker (for add form)
+      if ($(this.selectors.membershipEndDate).length) {
+        this.addEndDp = new tempusDominus.TempusDominus($(this.selectors.membershipEndDate)[0], {
+          localization: { format: "MM-dd-yyyy" },
+          restrictions: { minDate: new tempusDominus.DateTime(new Date()),maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31)) },
+          display: { components: { calendar: true, date: true, month: true, year: true } }
+        });
+      }
+      if ($(this.selectors.updateMembershipEnd).length) {
+        this.addEndDp = new tempusDominus.TempusDominus($(this.selectors.updateMembershipEnd)[0], {
+          localization: { format: "MM-dd-yyyy" },
+          restrictions: { minDate: new tempusDominus.DateTime(new Date()) },
+          display: { components: { calendar: true, date: true, month: true, year: true } }
+        });
+      }
+    } catch (err) {
+      // tempusDominus might not be available in some contexts — ignore safely.
+      // console.warn("TempusDominus not initialized:", err);
+    }
+
+
+     const filterParam = localStorage.getItem("dashboardFilter");
 
        if (filterParam) {
         try {
@@ -193,27 +230,12 @@ const UserManagement = function () {
                         }
                       ],
                        drawCallback: function () {
-                        const api = this.api();
+                        
                         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
                           const old = bootstrap.Tooltip.getInstance(el);
                           if (old) old.dispose();
                           new bootstrap.Tooltip(el, { trigger: 'hover' });
                         });
-                        const dtRight = $(api.table().container()).find('.dt-right');
-                        
-                          if (dtRight.find('#addMemberBtn').length === 0) { // avoid duplicates
-                              dtRight.prepend(`
-                                  <button
-                                    id="addMemberBtn"
-                                    class="btn btn-dark me-2 mb-0 pagination-button"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#member_modal"
-                                  >
-                                    <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i
-                                    >Add Member
-                                  </button>
-                              `);
-                          }
                       }
                     });
                     this.showLoader(false);
@@ -225,19 +247,6 @@ const UserManagement = function () {
         }
     }
 
-
-      // add end date picker (for add form)
-      if ($(this.selectors.membershipEndDate).length) {
-        this.addEndDp = new tempusDominus.TempusDominus($(this.selectors.membershipEndDate)[0], {
-          localization: { format: "yyyy-MM-dd" },
-          restrictions: { minDate: new tempusDominus.DateTime(new Date()) },
-          display: { components: { calendar: true, date: true, month: true, year: true } }
-        });
-      }
-    } catch (err) {
-      // tempusDominus might not be available in some contexts — ignore safely.
-      // console.warn("TempusDominus not initialized:", err);
-    }
   };
 
   // ---------- Validation (single global pattern method + form configs) ----------
@@ -249,6 +258,29 @@ const UserManagement = function () {
       console.warn("jQuery Validate plugin not loaded.");
       return;
     }
+
+    jQuery.validator.addMethod("notPastDate", function (value, element) {
+        if (!value) return true; // let required rule handle empties
+
+        // Match MM-DD-YYYY and extract parts
+        const m = /^(\d{2})-(\d{2})-(\d{4})$/.exec(value);
+        if (!m) return false; // invalid format
+
+        const month = parseInt(m[1], 10);
+        const day   = parseInt(m[2], 10);
+        const year  = parseInt(m[3], 10);
+
+        // Create a date at local midnight
+        const typedDate = new Date(year, month - 1, day);
+        if (isNaN(typedDate)) return false;
+
+        // Today at local midnight
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        // ✅ return true if today or future, false if past
+        return typedDate >= today;
+    }, "Date cannot be in the past");
 
     jQuery.validator.addMethod(
       "pattern",
@@ -263,21 +295,34 @@ const UserManagement = function () {
     // Add form validation — keys MUST match the form field `name` attributes
     if ($(s.addForm).length) {
       $(s.addForm).validate({
+        ignore: [],
         rules: {
-          member_name: { required: true, pattern: this.patterns.name },
+          first_name: { required: true, pattern: this.patterns.name },
+          middle_name: { required: false, pattern: /^[A-Za-z\s]{0,50}$/ },
+          last_name: { required: true, pattern: /^[A-Za-z\s]{1,50}$/ },
           member_email: { required: true, pattern: this.patterns.email },
+          confirm_email: { required: true, equalTo: "#member_email" },
+
           member_work_status: { required: true },
           mobile_number: { required: true, pattern: this.patterns.mobile },
-          membership_end_date: { required: true, dateISO: true },
-          member_address: { required: true, pattern: this.patterns.address }
+          membership_end_date: { required: true, pattern: /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\d{4}$/, notPastDate: true },
+          address_line1: { required: true },
+          state:        { required: true, pattern: /^[a-zA-z]{3,}$/ },
+          country:      { required: true , pattern: /^[a-zA-z]{3,}$/ },
+          pincode: { required: true, pattern: /^\d{5}$/ }
         },
         messages: {
-          member_name: { required: "Please enter name", pattern: "Only letters/numbers (3-50 chars)" },
-          member_email: { required: "Please enter email", pattern: "Enter a valid email" },
-          member_work_status: { required: "Please select status" },
-          mobile_number: { required: "Please enter mobile number", pattern: "Enter a valid 10-digit number" },
-          membership_end_date: { required: "Please select end date", dateISO: "Use YYYY-MM-DD" },
-          member_address: { required: "Please enter address", pattern: "Only letters, numbers and ,.- allowed" }
+          first_name: { required: "First name is required", pattern: "Invalid first name" },
+          last_name: { required: "Last name is required", pattern: "Invalid last name" },
+          member_email: { required: "Email is required", pattern: "Invalid email" },
+          confirm_email: { required: "Confirm email", equalTo: "Emails not match" },
+          member_work_status: { required: "Select designation" },
+          mobile_number: { required: "Mobile number is required", pattern: "Enter a valid 10-digit number",  },
+          membership_end_date: { required: "End date is required", pattern: "Use MM-DD-YYYY", notPastDate: "Date cannot be earlier than today." },
+          address_line1: { required: "Address is required" },
+          state:         { required: "State is required", pattern: "Letters only allowed"  },
+          country:       { required: "Country is required", pattern: "Letters only allowed"  },
+          pincode: { required: "Zipcode is required", pattern: "Must be 5 Digits" }
         },
         errorPlacement: function (error, element) {
             if (element.closest(".input-group").length) {
@@ -294,23 +339,56 @@ const UserManagement = function () {
     // Update form validation (names assumed to be update_* as in earlier code)
     if ($(s.updateForm).length) {
       $(s.updateForm).validate({
+        ignore:[],
         rules: {
-          update_member_name: { required: true, pattern: this.patterns.name },
-          update_member_email: { required: true, email: true },
-          update_member_work_status: { required: true },
-          update_mobile_number: { required: true, pattern: this.patterns.mobile },
-          update_membership_end_date: { required: true, dateISO: true },
-          update_member_address: { required: true, pattern: this.patterns.address }
+          update_first_name:  { required: true, pattern: /^[A-Za-z\s]+$/ },
+          update_middle_name: { pattern: /^[A-Za-z\s]+$/ }, // optional
+          update_last_name:   { required: true, pattern: /^[A-Za-z\s]+$/ },
+          update_member_email: {
+              required: true,
+              pattern: this.patterns.email
+          },
+          update_mobile_number: {
+              required: true,
+              pattern: this.patterns.mobile 
+          },
+          update_address_line1: { required: true },
+          update_state:        { required: true, pattern: /^[A-Za-z\s]+$/},
+          update_country:      { required: true, pattern: /^[A-Za-z\s]+$/ },
+          update_pincode: {
+              required: true,
+              pattern: /^\d{5}(-\d{4})?$/   // US ZIP or ZIP+4
+          },
+          update_membership_end_date: { required: true,pattern: /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\d{4}$/,notPastDate: true }
+      },
+      messages: {
+          update_first_name:  { required: "First name is required", pattern: "Letters only" },
+          update_middle_name: { pattern: "Letters only" },
+          update_last_name:   { required: "Last name is required",  pattern: "Letters only" },
+          update_member_email: {
+              required: "Email is required",
+              pattern: "Invalid email"
+          },
+          update_mobile_number: {
+              required:  "Mobile number is required",
+              pattern: "Enter a valid 10-digit number"
+          },
+          update_address_line1: { required: "Address Line 1 is required" },
+          update_state:        { required: "State is required", pattern: "Letters only" },
+          update_country:      { required: "Country is required", pattern: "Letters only" },
+          update_pincode: {
+              required: "Zipcode is required",
+              pattern:  "Use 5 digits or 5-4 format (e.g. 12345 or 12345-6789)"
+          },
+          update_membership_end_date: { required: "End date is required",pattern: "Use MM-DD-YYYY", notPastDate: "Date cannot be earlier than today." }
+      },
+         errorPlacement: function (error, element) {
+            if (element.closest(".input-group").length) {
+                error.insertAfter(element.closest(".input-group"));
+            } else {
+                error.insertAfter(element);
+            }
         },
-        messages: {
-          update_member_name: { required: "Please enter name", pattern: "Only alphabet (3–50 chars)" },
-          update_member_email: { required: "Please enter email", email: "Enter a valid email" },
-          update_member_work_status: { required: "Please select status" },
-          update_mobile_number: { required: "Please enter mobile number", pattern: "Enter a valid 10-digit number" },
-          update_membership_end_date: { required: "Please select end date", dateISO: "Use YYYY-MM-DD" },
-          update_member_address: { required: "Please enter address", pattern: "Only letters, numbers and ,.- allowed" }
-        },
-        errorPlacement: (error, element) => error.insertAfter(element),
         // highlight: el => $(el).addClass("is-invalid"),
         // unhighlight: el => $(el).removeClass("is-invalid")
       });
@@ -404,6 +482,7 @@ const UserManagement = function () {
     const s = this.selectors;
     // ensure form is valid
     if (!$(s.addForm).valid()) return;
+
     Swal.fire({
         title: "Add New Member?",
         text: "Please confirm member details before add.",
@@ -416,12 +495,29 @@ const UserManagement = function () {
         if (result.isConfirmed) {
           // format mobile (digits only)
           const localNo = $(s.addForm + " [name='mobile_number']").val().replace(/\D/g, "");
+           const memberName = [
+              $("#first_name").val().trim(),
+              $("#middle_name").val().trim(),
+              $("#last_name").val().trim()
+            ].filter(Boolean).join(" ");
 
+            const memberAddress = [
+              $("#address_line1").val().trim(),
+              $("#address_line2").val().trim(),
+              $("#state").val().trim(),
+              $("#country").val().trim(),
+              $("#pincode").val().trim()
+            ].filter(Boolean).join("-");
+
+            const [month, day, year] = $(s.addForm + " [name='membership_end_date']").val().trim().split("-");
+            const membershipEndDateFormat =`${year}-${month}-${day}`;
           // prepare payload
+          console.log(localNo);
+          
           const payload = {
-            memberName: $(s.addForm + " [name='member_name']").val().trim(),
-            memberShipEndDate: $(s.addForm + " [name='membership_end_date']").val().trim(),
-            memberaddress: $(s.addForm + " [name='member_address']").val().trim(),
+            memberName: memberName,
+            memberShipEndDate: membershipEndDateFormat,
+            memberaddress: memberAddress,
             memberMobileNumber: `+91 ${localNo}`,
             memberWorkStatus: $(s.addForm + " [name='member_work_status']").val(),
             memberEmail: $(s.addForm + " [name='member_email']").val().trim()
@@ -440,10 +536,42 @@ const UserManagement = function () {
               Swal.fire({ icon: "success", title: "Member Added", text: "✅ " + res.object, timer: 2000, showConfirmButton: false })
                 .then(() => $(s.applyFiltersBtn).click());
             },
-            error: (xhr) => {
+            error: (xhr, textStatus, errorThrown) => {
               this.showLoader(false);
-              const msg = xhr.responseJSON?.message || "Something went wrong.";
-              Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });
+              console.log(xhr.responseJSON?.message);
+              if( xhr.responseJSON?.message === "FAILURE"){
+              //  hiddenmobileNumber
+              if (xhr.responseJSON?.object.startsWith("Email")) {
+                  // Handle email-related error
+                  $(s.hiddenMemberEmail).val(0);
+                $(s.hiddenMemberEmail).rules('add',
+                  {
+                    messages:{
+                      min:xhr.responseJSON?.object
+                    }
+                  }
+                );
+                 console.log(xhr.responseJSON?.object);
+                $(s.addForm).validate().element(s.hiddenMemberEmail)
+                $(s.hiddenMemberEmail).val(1);
+              }
+                else if (xhr.responseJSON?.object.startsWith("Mobile")) {
+                $(s.hiddenmobileNumber).val(0);
+                  $(s.hiddenmobileNumber).rules('add',
+                    {
+                      messages:{
+                        min:xhr.responseJSON?.object
+                      }
+                    }
+                  );  
+                  console.log(xhr.responseJSON?.object);
+                  $(s.addForm).validate().element(s.hiddenmobileNumber)
+                  $(s.hiddenmobileNumber).val(1);
+             }
+              }
+              else{
+              const msg = xhr.responseJSON?.object || "Something went wrong.";
+              Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });}
             }
           });
         }
@@ -466,15 +594,36 @@ const UserManagement = function () {
         if (result.isConfirmed) {
           const mobileVal = $(s.updateMobileNumber).val() || "";
           const localNo   = mobileVal.replace(/\D/g, "");
+           console.log(localNo);
+          const memberAddress = [
+            $(s.updateAddressLine1).val().trim(),
+            $(s.updateAddressLine2).val().trim(),
+            $(s.updateState).val().trim(),
+            $(s.updateCountry).val().trim(),
+            $(s.updatePincode).val().trim()
+        ].filter(Boolean).join('-');
+        const endDateRaw = $(s.updateMembershipEnd).val().trim();
+        const memberShipEndDate = endDateRaw
+            ? endDateRaw.replace(/(\d{2})-(\d{2})-(\d{4})/, "$3-$1-$2")
+            : "";
+
+          const first  = $("#update_first_name").val().trim();
+          const middle = $("#update_middle_name").val().trim();
+          const last   = $("#update_last_name").val().trim();
+
+          // Join with space, skip empty middle
+          const memberName = [first, middle, last].filter(Boolean).join(" ");
           const payload = {
-            memberId: $(s.updateMemberId).val().trim(),
-            memberName: $(s.updateMemberName).val().trim(),
-            memberShipEndDate: $(s.updateMembershipEnd).val().trim(),
-            memberaddress: $(s.updateMemberAddress).val().trim(),
-            memberMobileNumber: `+91 ${localNo}`,
-            memberWorkStatus: $(s.updateMemberWorkStatus).val(),
-            memberEmail: $(s.updateMemberEmail).val().trim()
-          };       
+            memberId:          $(s.updateMemberId).val().trim(),
+            memberName:        memberName,
+            memberShipEndDate: memberShipEndDate,
+            memberaddress:     memberAddress,
+            memberMobileNumber:`+91 ${localNo}`,
+            memberWorkStatus:  $(s.updateMemberWorkStatus).val(),
+            memberEmail:       $(s.updateMemberEmail).val().trim()
+        };     
+        console.log(payload);
+        
           this.showLoader(true);
           $.ajax({
             url: "http://localhost:8080/LibraryManagementSystem/Members/updateMemberDetails",
@@ -609,27 +758,13 @@ const UserManagement = function () {
             }
           ],
           drawCallback: function () {
-            const api = this.api();
+          
             document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
               const old = bootstrap.Tooltip.getInstance(el);
               if (old) old.dispose();
               new bootstrap.Tooltip(el, { trigger: 'hover' });
             });
-            const dtRight = $(api.table().container()).find('.dt-right');
-            
-              if (dtRight.find('#addMemberBtn').length === 0) { // avoid duplicates
-                  dtRight.prepend(`
-                      <button
-                        id="addMemberBtn"
-                        class="btn btn-dark me-2 mb-0 pagination-button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#member_modal"
-                      >
-                        <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i
-                        >Add Member
-                      </button>
-                  `);
-              }
+           
           }
         });
         this.showLoader(false);
@@ -744,27 +879,57 @@ const UserManagement = function () {
       dataType: "json",
       success: (res) => {
         const m = res.object || {};
-        $(s.updateMemberId).val(m.memberId || "");
+        const nameParts = (m.memberName || "").trim().split(/\s+/);
+        const first = nameParts[0] || "";
+        const middle = nameParts.length === 3 ? nameParts[1] : (nameParts.length > 3 ? nameParts.slice(1, -1).join(" ") : "");
+        const last = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+        $("#update_member_id").val(m.memberId);
+        $("#update_first_name").val(first);
+        $("#update_middle_name").val(middle);
+        $("#update_last_name").val(last);
         $(s.updateMemberName).val(m.memberName || "");
         $(s.updateMemberEmail).val(m.memberEmail || "");
-        $(s.updateMemberWorkStatus).val(m.memberWorkStatus || "");
+        $("#update_member_work_status").val(m.memberWorkStatus || "");
         $(s.updateMemberStatus).val(m.memberShipStatus || "");
-        $(s.updateMembershipStart).val(m.memberShipStartDate || "");
-        $(s.updateMemberAddress).val(m.memberaddress || "");
-        if (m.memberMobileNumber) $(s.updateMobileNumber).val(m.memberMobileNumber.replace(/^\+91\s?/, ""));
-        const minDt = m.memberShipEndDate ? new tempusDominus.DateTime(m.memberShipEndDate) : new Date();
-        // init update datepicker guard
-        try {
-          this.updateEndDp = new tempusDominus.TempusDominus($(s.updateMembershipEnd)[0], {
-            localization: { format: "yyyy-MM-dd" },
-            useCurrent: false,
-            restrictions: { minDate: minDt },
-            display: { components: { calendar: true, date: true, month: true, year: true } }
-          });
-          if (m.memberShipEndDate) this.updateEndDp.dates.setValue(new tempusDominus.DateTime(m.memberShipEndDate));
-        } catch (err) {
-          // ignore if tempus not available
-        }
+        const startDate = m.memberShipStartDate
+                ? m.memberShipStartDate.replace(/(\d{4})-(\d{2})-(\d{2})/, "$2-$3-$1")
+                : "";
+            $(s.updateMembershipStart).val(startDate);
+
+        let a1 = "", a2 = "", state = "", country = "", zip = "";
+            if (m.memberaddress) {
+                const parts = m.memberaddress.split("-");
+                [a1, a2, state, country, zip] = parts;
+            }
+            $(s.updateAddressLine1).val(a1 || "");
+            $(s.updateAddressLine2).val(a2 || "");
+            $(s.updateState).val(state || "");
+            $(s.updateCountry).val(country || "");
+            $(s.updatePincode).val(zip || "");
+        if (m.memberMobileNumber) {
+                $(s.updateMobileNumber).val(m.memberMobileNumber.replace(/^\+91\s?/, "").replace(/\D/g, ""));
+            }
+        const minDt = m.memberShipEndDate
+                ? new tempusDominus.DateTime(m.memberShipEndDate)
+                : new Date();
+            try {
+                this.updateEndDp = new tempusDominus.TempusDominus($(s.updateMembershipEnd)[0], {
+                    localization: { format: "MM-dd-yyyy" },  // display in MM-DD-YYYY
+                    useCurrent: false,
+                    restrictions: { minDate: minDt,maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31)) },
+                    display: { components: { calendar: true, date: true, month: true, year: true } }
+                });
+                if (m.memberShipEndDate) {
+                    // Convert for picker display
+                    const endDateForPicker = new tempusDominus.DateTime(m.memberShipEndDate);
+                    this.updateEndDp.dates.setValue(endDateForPicker);
+                }
+                $("#calendar_icon").off("click").on("click", () => {
+          this.updateEndDp.show();   // 👈 opens the calendar popup
+        });
+            } catch (err) {
+                // Ignore if tempus not available
+            }
         this.showLoader(false);
         $(s.updateMemberModal).modal("show");
       },
