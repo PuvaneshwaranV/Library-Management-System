@@ -1,5 +1,5 @@
 <div class="container-fluid ">
-  <div class="d-flex flex-column mb-3">
+  <div class="d-flex flex-column mb-3 p-4 rounded-2" style="background-color: #ffffff;">
     <div class="modal fade" id="borrow_modal" tabindex="-1" aria-labelledby="borrow_modal_label" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
@@ -197,7 +197,7 @@
         </div>
       </div>
     </div>
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 p-4 rounded-2" style="background-color: #ffffff;">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 ">
 
       <!-- Filters (left) -->
       <div id="rental_filters" class="d-flex gap-2 flex-wrap">
@@ -242,29 +242,16 @@
 
       <!-- Borrow / Return Buttons (right) -->
       <div class="d-flex gap-2">
-        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#borrow_modal">
-          <!-- <i class="fa-solid fa-circle-plus fa-lg me-1"></i> -->
-           <img src="../assets/borrow.png" alt="borrow book" height="25" width="25">
-          Borrow
-        </button>
-        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#return_modal">
-          <!-- <i class="fa-solid fa-circle-minus fa-lg me-1"></i> -->
-           <img src="../assets/return.png" alt="return book" height="22" width="22" >
-          Return
-        </button>
-        
+        <button id="reset_rental_filters" class="btn btn-secondary" style="display:none;">Reset</button>
+        <button id="apply_rental_filters" class="btn btn-dark">Submit</button>
+      </div>  
+      </div>
+      <div class="d-flex justify-content-end ">
+        <h6 class="text-warning"  style="display:none;font-weight:700;" id="lm_filter_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
       </div>
 
     </div>
     <!-- ✅ End single row -->
-
-    <div class="d-flex justify-content-end gap-2">
-      <button id="reset_rental_filters" class="btn btn-secondary" style="display:none;">Reset</button>
-      <button id="apply_rental_filters" class="btn btn-dark">Submit</button>
-    </div>
-    <div class="d-flex justify-content-end mt-2">
-      <h6 class="text-warning"  style="display:none;font-weight:700;" id="lm_filter_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
-    </div>
   </div>
 
   <div id="loader">

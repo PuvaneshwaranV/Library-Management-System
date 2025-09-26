@@ -185,7 +185,7 @@ const Penalty = function () {
           data: rows,
           sort: false,
           destroy: true,
-          dom:'<"top d-flex justify-content-end "<"dt-left"> <"dt-right d-flex align-items-center"p>>t<"bottom"ip>',
+          dom:'<"top d-flex justify-content-end gap-2"<"dt-left"> <"dt-right gap-2 d-flex align-items-center"p>>t<"bottom"ip>',
           lengthMenu: [10, 25, 50, 100],
           language: { emptyTable: "No data found" },
           columns: this.columnsConfig(true),
@@ -194,7 +194,7 @@ const Penalty = function () {
                 if (dtRight.children('#lm_add_penalty_modal_btn').length === 0) {
                     dtRight.prepend(`
                         <button id="lm_add_penalty_modal_btn"
-                          class="btn btn-warning text-white me-2"
+                          class="btn btn-warning text-white "
                           data-bs-toggle="modal"
                           data-bs-target="#lm_penalty_modal"
                         >

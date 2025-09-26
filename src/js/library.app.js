@@ -10,7 +10,7 @@ const App = function () {
         header: "#header",
         sidebar: "#sidebar",
         mainBody: "#main_body",
-        sidebarToggle: "#sidebarToggle",
+        sidebarToggle: "#lm_sidebar_toggle",
         logoutLink: "#logout a",
         navLink: "#sidebar .nav-link",
         headerTitle: "#header h3",

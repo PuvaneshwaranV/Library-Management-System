@@ -215,22 +215,21 @@ const UserManagement = function () {
                               data-id="${row.memberId}"
                               data-bs-toggle="tooltip" data-bs-placement="top" title="Change Status" data-status="${row.memberShipStatus}"
                               >${row.memberShipStatus}</span>`;
+                            },
+                            className:"text-center",
+                            width:"50px !important"
                           },
-                          className:"text-center",
-                          width:"50px !important"
-                        },
-                        { title: "Work Status", data: "memberWorkStatus",
-                          className:"text-capitalize"
-                        },
-                        {
-                          title: "Action", data: null, orderable: false,
-                          render: (d, t, row) => `
-                            <button class="btn btn-md me-2 mb-2 update-member" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit">
-                              <i class="fa-solid fa-pen-to-square text-grey" ></i>
-                            </button>
-                            <button class="btn btn-md  me-2 mb-2 view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile">
-                              <i class="fa-solid fa-eye" btn-dark></i>
-                            </button>`
+                          { title: "Work Status", data: "memberWorkStatus",
+                            className:"text-capitalize"
+                          },
+                          {
+                            title: "Action", data: null, orderable: false,
+                            render: (d, t, row) => `
+                            
+                              <i class="fa-solid fa-pen-to-square text-grey  update-member i-btn-dark me-3 cursor-pointer" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit" ></i>
+                            
+                              <i class="fa-solid fa-eye  cursor-pointer  view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile"></i>
+                            `
                         }
                       ],
                         initComplete: function() {
@@ -773,12 +772,9 @@ const UserManagement = function () {
             {
               title: "Action", data: null, orderable: false,
               render: (d, t, row) => `
-                <button class="btn btn-md me-2 mb-2 update-member" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit Member Details">
-                  <i class="fa-solid fa-pen-to-square text-dark" ></i>
-                </button>
-                <button class="btn btn-md  me-2 mb-2 view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile">
-                  <i class="fa-solid fa-eye" btn-dark></i>
-                </button>`
+                <i class="fa-solid fa-pen-to-square text-grey  update-member i-btn-dark me-3 cursor-pointer" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit" ></i>
+                            
+                              <i class="fa-solid fa-eye  cursor-pointer  view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile"></i>`
             }
           ],
           initComplete: function() {

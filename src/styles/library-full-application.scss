@@ -68,6 +68,12 @@ textarea:disabled:hover {
 // ======================= Sidebar ===========================
 /* ----- Collapsed sidebar: icons only ----- */
 /* ===== Collapsible Sidebar ===== */
+
+#sidebar,
+#main_body {
+  transition: width 0.36s ease, margin-left 0.3s ease;
+}
+
 #sidebar{
   margin-top: 30px; 
   width: 180px; 
@@ -216,6 +222,18 @@ footer {
   &:hover {
     background-color: $color-accent;
     color: $color-secondary;
+    transition: 0.3s;
+  }
+}
+.cursor-pointer{
+  cursor:pointer;
+}
+.i-btn-dark{
+  color: $color-primary;
+  border: none;
+  &:hover {
+    color: $color-accent;
+    
     transition: 0.3s;
   }
 }

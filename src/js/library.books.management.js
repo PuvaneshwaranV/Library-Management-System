@@ -121,7 +121,7 @@ const selectors = {
             autoWidth: false,
             sort: false,
             destroy: true,
-            dom: '<"top d-flex justify-content-end "<"dt-left d-flex align-items-center"> <"dt-right d-flex align-items-center">p>t<"bottom"ip>',
+            dom: '<"top d-flex justify-content-end gap-2 "<"dt-left gap-2 d-flex align-items-center"> <"dt-right gap-2 d-flex align-items-center">p>t<"bottom"ip>',
             lengthMenu: [10, 25, 50, 100],
             language: { emptyTable: "No data found" },
             columns: [
@@ -141,7 +141,7 @@ const selectors = {
               { title: "Registration Date", data: "bookRegistrationDate",
                 width: "200px"
                },
-              { title: "Book Quantiy", data: "totalCount" },
+              { title: "Book Quantity", data: "totalCount" },
               {
                 title: "Status",
                 data: "bookStatus",
@@ -168,17 +168,17 @@ const selectors = {
                 data: null,
                 orderable: false,
                 render: (d, t, row) => `
-                  <button class="btn btn-md me-1 update-book" data-bs-toggle="tooltip"
+                  
+                    <i class="fa-solid fa-pen-to-square text-grey cursor-pointer i-btn-dark me-3 update-book" data-bs-toggle="tooltip"
                     data-bs-placement="top"
-                    title="Edit"
-                          data-id="${row.bookId}">
-                    <i class="fa-solid fa-pen-to-square text-grey"></i>
-                  </button>
-                  <button class="btn btn-md  delete-book" data-bs-toggle="tooltip"
+                    title="Edit" data-id="${row.bookId}" ></i>
+                  
+                 
+                    <i class="fa-solid fa-trash text-danger delete-book cursor-pointer" data-bs-toggle="tooltip"
                     data-bs-placement="top"
-                    title="Delete" data-id="${row.bookId}">
-                    <i class="fa-solid fa-trash text-danger" ></i>
-                  </button>`,
+                    title="Delete" data-id="${row.bookId}" ></i>
+                  `,
+                   className: "text-center"
               },
             ],
             drawCallback: function () {
@@ -193,7 +193,7 @@ const selectors = {
               const dtLeft = $('.dt-left');
               if (dtLeft.children('#book_pdf').length === 0) {
                   dtLeft.append(`
-                      <button id="book_pdf" class="btn btn-md btn-warning text-white pagination-button me-2">
+                      <button id="book_pdf" class="btn btn-md btn-warning text-white pagination-button">
                           <i class="fa-solid fa-file-lines fa-lg"></i> Generate Available Books PDF
                       </button>
                   `);
@@ -202,7 +202,7 @@ const selectors = {
               const dtRight = $('.dt-right');
               if (dtRight.children('#add_new_book').length === 0) {
                   dtRight.prepend(`
-                      <button id="add_new_book" class="btn btn-warning text-white me-2">
+                      <button id="add_new_book" class="btn btn-warning text-white">
                           <i class="fa-solid fa-circle-plus fa-lg me-1" style="color:#ffffff"></i>
                           Add Book
                       </button>

@@ -249,7 +249,7 @@ const RentalTransaction = function () {
                 autoWidth: false,
                 sort: false,
                 destroy: true,
-                dom: '<"top d-flex justify-content-between"<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
+                dom: '<"top d-flex justify-content-end gap-2 "<"dt-left gap-2 d-flex align-items-center"> <"dt-right gap-2 d-flex align-items-center"p>>t<"bottom"ip>',
                 lengthMenu: [10, 25, 50, 100],
                 language: { emptyTable: "No data found"},
                 columns: [
@@ -305,13 +305,36 @@ const RentalTransaction = function () {
                                    </button></span>`
                     }
                 ],
+                initComplete: function() {
+                const dtLeft = $('.dt-left');
+              if (dtLeft.children('#lm_borrow_modal_btn').length === 0) {
+                  dtLeft.append(`
+                      <button class="btn btn-warning text-white" data-bs-toggle="modal" data-bs-target="#borrow_modal" id="lm_borrow_modal_btn">
+                        <!-- <i class="fa-solid fa-circle-plus fa-lg me-1"></i> -->
+                        <img src="../../assets/borrow.png" alt="borrow book" height="25" width="25">
+                        Borrow
+                    </button>
+                  `);
+              }
+
+              const dtRight = $('.dt-right');
+              if (dtRight.children('#lm_return_modal_btn').length === 0) {
+                  dtRight.prepend(`
+                      <button class="btn btn-warning text-white" data-bs-toggle="modal" data-bs-target="#return_modal" id="lm_return_modal_btn">
+                    <!-- <i class="fa-solid fa-circle-minus fa-lg me-1"></i> -->
+                    <img src="../../assets/return.png" alt="return book" height="22" width="22" >
+                    Return
+                    </button>
+                  `);
+              }
+              },
                 drawCallback: () => {
                     document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
                         if (!bootstrap.Tooltip.getInstance(el)) new bootstrap.Tooltip(el);
                     });
                     const dtLeft = $('.dt-left');
                     if (dtLeft.children().length === 0) { // avoid duplicates
-                        dtLeft.append(`
+                        dtLeft.prepend(`
                             <button id="transaction_pdf" class="btn btn-warning pagination-button text-white ms-3">
                                 <i class="fa-solid fa-file-lines fa-lg me-1" style="color: #ffffff"></i>Generate All Transaction Pdf
                             </button>
