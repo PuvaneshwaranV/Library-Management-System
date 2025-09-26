@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div class="d-flex flex-column mb-3">
+  <div class="d-flex flex-column mb-3 p-4 rounded-2" style="background-color: #ffffff;">
     <div
       class="modal fade"
       id="lm_penalty_modal"
@@ -139,7 +139,7 @@
 
     
 
-    <div id="lm_penalty_filters" class="d-flex justify-content-between align-items-end mb-3 p-4 rounded-2" style="background-color: #ffffff;" >
+    <div id="lm_penalty_filters" class="d-flex justify-content-between align-items-center  " >
       <div class="d-flex gap-2">
         <div class="d-flex flex-column">
           <label for="lm_penalty_length" class="ms-2 text-secondary">Show </label>
@@ -184,23 +184,13 @@
           </span>
         </div>
       </div>
-      <div class="d-flex justify-content-end gap-2 mb-3">
-      <button
-        class="btn btn-dark"
-        data-bs-toggle="modal"
-        data-bs-target="#lm_penalty_modal"
-      >
-        <i class="fa-solid fa-dollar-sign fa-lg me-1" style="color: #ffffff"></i>
-        Add Penalty
-      </button>
+      <div class="d-flex justify-content-end gap-2">
+        <button id="lm_penalty_reset_filters" class="btn btn-secondary" style="display:none;">Reset</button>
+        <button id="lm_penalty_apply_filters" class="btn btn-dark">Submit</button>
+      </div>
     </div>
-    </div>
-
-    <div class="d-flex justify-content-end gap-2">
-      <button id="lm_penalty_reset_filters" class="btn btn-secondary" style="display:none;">Reset</button>
-      <button id="lm_penalty_apply_filters" class="btn btn-dark">Submit</button>
-    </div>
-    <div class="d-flex justify-content-end mt-2">
+    
+    <div class="d-flex justify-content-end ">
       <h6 class="text-warning"  style="display:none;font-weight:700;" id="lm_filter_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
     </div>
   </div>

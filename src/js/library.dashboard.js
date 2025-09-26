@@ -146,8 +146,8 @@
       if (!ctx) return;
       this._destroyIfExists(this.rentalsInstance);
 
-      const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-      const activeRentals = [160, 180, 190, 200, 210, 220];
+      const labels = ["Apr", "May", "Jun", "Jul", "Aug", "Sept"];
+      const activeRentals = [30, 25, 40, 37, 20, 41];
       const overdue = [20, 15, 10, 15, 12, 18];
 
       this.rentalsInstance = new Chart(ctx, {
@@ -172,8 +172,8 @@
       if (!ctx) return;
       this._destroyIfExists(this.membersInstance);
 
-      const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-      const newMembers = [20, 25, 30, 28, 35, 40];
+      const labels = ["Apr", "May", "Jun", "Jul", "Aug", "Sept"];
+      const newMembers = [6, 7, 11, 6, 12, 13];
 
       this.membersInstance = new Chart(ctx, {
         type: "line",

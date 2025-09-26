@@ -185,10 +185,25 @@ const Penalty = function () {
           data: rows,
           sort: false,
           destroy: true,
-          dom: '<"top"p>t<"bottom"ip>',
+          dom:'<"top d-flex justify-content-end "<"dt-left"> <"dt-right d-flex align-items-center"p>>t<"bottom"ip>',
           lengthMenu: [10, 25, 50, 100],
           language: { emptyTable: "No data found" },
           columns: this.columnsConfig(true),
+          initComplete: function() {
+                const dtRight = $('.dt-right');
+                if (dtRight.children('#lm_add_penalty_modal_btn').length === 0) {
+                    dtRight.prepend(`
+                        <button id="lm_add_penalty_modal_btn"
+                          class="btn btn-warning text-white me-2"
+                          data-bs-toggle="modal"
+                          data-bs-target="#lm_penalty_modal"
+                        >
+                          <i class="fa-solid fa-dollar-sign fa-lg me-1" style="color: #ffffff"></i>
+                          Add Penalty
+                        </button>
+                    `);
+                }
+              },
           drawCallback: function () {
             const tipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             tipEls.forEach((el) => {

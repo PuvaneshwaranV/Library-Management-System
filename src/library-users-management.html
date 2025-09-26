@@ -1,5 +1,5 @@
 <div class="container-fluid">
-  <div class="d-flex flex-column mb-3">
+  <div class="d-flex flex-column mb-3 p-4 rounded-2" style="background-color: #ffffff;">
     <div
       class="modal fade"
       id="member_modal"
@@ -71,8 +71,8 @@
                   <label for="membership_end_date">Membership End Date <span class="text-danger">*</span></label>
                   <div class="input-group">
                     <input type="text" class="form-control border-1 border-black border-end-0" id="membership_end_date" name="membership_end_date" placeholder="Membership End Date" />
-                    <span class="input-group-text border-1 border-black border-start-0">
-                      <i class="fa fa-calendar" id="calendar_icon" style="color: #1e3a8a; cursor: pointer"></i>
+                    <span class="input-group-text border-1 border-black border-start-0" id="calendar_icon_add">
+                      <i class="fa fa-calendar"   style="color:  #1e3a8a; cursor: pointer"></i>
                     </span>
                   </div>
                 </div>
@@ -171,11 +171,11 @@
 
               <!-- Email & Work Status -->
               <div class="row mb-3">
-                <div class="col-6">
+                <div class="col-4">
                   <label for="update_member_email">Email <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="update_member_email" name="update_member_email" placeholder="Email" />
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                   <label for="update_member_work_status">Designation <span class="text-danger">*</span></label>
                   <select id="update_member_work_status" name="update_member_work_status" class="form-select">
                     <option value="" disabled selected>Select</option>
@@ -184,31 +184,27 @@
                     <option value="Unemployed">Unemployed</option>
                   </select>
                 </div>
-              </div>
-
-              <!-- Mobile & Status -->
-              <div class="row mb-3">
-                <div class="col-6">
+                <div class="col-4">
                   <label for="update_mobile_number">Mobile Phone <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="update_mobile_number" name="update_mobile_number" placeholder="10-digit number" />
-                </div>
-                <div class="col-6">
-                  <label for="update_member_status">Membership Status</label>
-                  <input type="text" class="form-control" id="update_member_status" name="update_member_status" placeholder="Active/Inactive" disabled />
                 </div>
               </div>
 
               <!-- Start & End Dates -->
               <div class="row mb-3">
-                <div class="col-6">
+                <div class="col-4">
+                  <label for="update_member_status">Membership Status</label>
+                  <input type="text" class="form-control" id="update_member_status" name="update_member_status" placeholder="Active/Inactive" disabled />
+                </div>
+                <div class="col-4">
                   <label for="update_membership_start_date">Membership Start Date</label>
                   <input type="text" class="form-control" id="update_membership_start_date" name="update_membership_start_date" placeholder="MM-DD-YYYY" disabled />
                 </div>
-                <div class="col-6" id="membership_end_date_picker">
+                <div class="col-4" id="membership_end_date_picker">
                   <label for="update_membership_end_date">Membership End Date <span class="text-danger">*</span></label>
                   <div class="input-group" >
                     <input type="text" class="form-control border-end-0" id="update_membership_end_date" name="update_membership_end_date" placeholder="MM-DD-YYYY" />
-                    <span class="input-group-text border-start-0" id="calendar_icon">
+                    <span class="input-group-text border-start-0" id="calendar_icon_update">
                       <i class="fa fa-calendar "  style="color: #1e3a8a; cursor: pointer"></i>
                     </span>
                   </div>
@@ -217,21 +213,21 @@
 
               <!-- Address -->
               <div class="row mb-3">
-                <div class="col-6">
+                <div class="col-4">
                   <label for="update_address_line1">Address Line 1 <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="update_address_line1" name="update_address_line1" placeholder="Address Line 1" />
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                   <label for="update_address_line2">Address Line 2</label>
                   <input type="text" class="form-control" id="update_address_line2" name="update_address_line2" placeholder="Address Line 2" />
                 </div>
-              </div>
-
-              <div class="row mb-3">
                 <div class="col-4">
                   <label for="update_state">State <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="update_state" name="update_state" placeholder="State" />
                 </div>
+              </div>
+
+              <div class="row mb-3">
                 <div class="col-4">
                   <label for="update_country">Country <span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="update_country" name="update_country" placeholder="Country" />
@@ -242,7 +238,7 @@
                 </div>
               </div>
               <div class="row justify-content-end">
-                <div class="col-3">
+                <div class="col-2">
                   <button
                     id="update_cancel_btn"
                     type="button" data-bs-dismiss="modal"
@@ -251,7 +247,7 @@
                     cancel  
                   </button>
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                   <button
                     id="update_member_btn"
                     type="button"
@@ -414,7 +410,7 @@
 </div>
 
     
-    <div id="member_filters" class="d-flex p-4  justify-content-between align-items-center mb-3 rounded-2" style="background-color: #ffffff;">
+    <div id="member_filters" class="d-flex justify-content-between align-items-center ">
       <!-- Show Dropdown (aligned left) -->
       
 
@@ -455,33 +451,24 @@
             placeholder="🔍 Enter Value" 
           />
           <span
-    id="clear_filter_value"
-    class="position-absolute end-0 top-50 translate-middle-y me-2 text-secondary"
-    style="cursor:pointer; display:none; font-size: 30px; padding-top: 20px; "
-  >
-    &times;
-  </span>
+            id="clear_filter_value"
+            class="position-absolute end-0 top-50 translate-middle-y me-2 text-secondary"
+            style="cursor:pointer; display:none; font-size: 30px; padding-top: 20px; "
+          >
+            &times;
+          </span>
         </div>
       </div>
-      <div class="d-flex justify-content-center align-items-center gap-2">
-          <button
-              id="addMemberBtn"
-              class="btn btn-dark me-2 mb-0 pagination-button"
-              data-bs-toggle="modal" 
-              data-bs-target="#member_modal"
-            >
-              <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i
-              >Add Member
-            </button>
+      <div class="d-flex justify-content-end gap-2">
+        <button id="reset_member_filters" class="btn btn-secondary" style="display:none;">Reset</button>
+        <button id="apply_member_filters" class="btn btn-dark">Submit</button>
       </div>
+    
     </div>
-    <div class="d-flex justify-content-end gap-2">
-      <button id="reset_member_filters" class="btn btn-secondary" style="display:none;">Reset</button>
-      <button id="apply_member_filters" class="btn btn-dark">Submit</button>
-    </div>
-    <div class="d-flex justify-content-end mt-2">
+    <div class="d-flex justify-content-end ">
       <h6 class="text-warning"  style="display:none;font-weight:700;" id="lm_filter_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
     </div>
+    
   </div>
 
  <div id="loader">

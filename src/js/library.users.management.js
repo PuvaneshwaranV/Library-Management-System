@@ -82,7 +82,7 @@ const UserManagement = function () {
     address: "^[A-Za-z0-9 ,\\.\\-]+$",
     mobile: "^[(][6-9][0-9]{2}[)][-][0-9]{3}[-][0-9]{4}$",
     // email will use built-in email rule
-    email:"^[A-Za-z0-9]+@[A-Za-z0-9]+[.](com|in)$",
+    email:"^[A-Za-z0-9]+@[A-Za-z]+[.](com|in)$",
     dateISO: true
   };
 
@@ -98,14 +98,14 @@ const UserManagement = function () {
     this.bindEvents();
 
      $('#member_modal').on('show.bs.modal', function () {
-    const today   = new Date();
-    const month   = String(today.getMonth() + 1).padStart(2, '0');
-    const day     = String(today.getDate()).padStart(2, '0');
-    const year    = today.getFullYear();
-    const display = `${month}-${day}-${year}`;   // MM-DD-YYYY for the user
+        const today   = new Date();
+        const month   = String(today.getMonth() + 1).padStart(2, '0');
+        const day     = String(today.getDate()).padStart(2, '0');
+        const year    = today.getFullYear();
+        const display = `${month}-${day}-${year}`;   // MM-DD-YYYY for the user
 
-    $('#membership_start_date').val(display);
-});
+        $('#membership_start_date').val(display);
+    });
         // initial filter toggle
         
       };
@@ -125,28 +125,32 @@ const UserManagement = function () {
         document.getElementById("membership_end_date_status"),
         {
           localization: { format: "MM-dd-yyyy" },
-          restrictions: { minDate: new tempusDominus.DateTime(new Date()) },
-          display: { components: { calendar: true, date: true, month: true, year: true },maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31)) }
+          restrictions: { minDate: new tempusDominus.DateTime(new Date()),maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31)) },
+          display: { components: { calendar: true, date: true, month: true, year: true } }
         }
       );
            // add end date picker (for add form)
-      if ($(this.selectors.membershipEndDate).length) {
-        this.addEndDp = new tempusDominus.TempusDominus($(this.selectors.membershipEndDate)[0], {
-          localization: { format: "MM-dd-yyyy" },
-          restrictions: { minDate: new tempusDominus.DateTime(new Date()),maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31)) },
-          display: { components: { calendar: true, date: true, month: true, year: true } }
-        });
-      }
-      if ($(this.selectors.updateMembershipEnd).length) {
-        this.addEndDp = new tempusDominus.TempusDominus($(this.selectors.updateMembershipEnd)[0], {
-          localization: { format: "MM-dd-yyyy" },
-          restrictions: { minDate: new tempusDominus.DateTime(new Date()) },
-          display: { components: { calendar: true, date: true, month: true, year: true } }
-        });
-      }
+      $('#member_modal').on('shown.bs.modal', () => {
+        if (!this.addEndDp) {
+          this.addEndDp = new tempusDominus.TempusDominus(
+            document.getElementById('membership_end_date'),
+            {
+              localization: { format: 'MM-dd-yyyy' },
+              restrictions: { minDate: new tempusDominus.DateTime(new Date()),maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31)) },
+              display: { components: { calendar: true, date: true, month: true, year: true } },
+            }
+          );
+          $('#calendar_icon_add').off('click').on('click', e => {
+            e.stopPropagation(); 
+                           // prevent bootstrap modal click bubbling
+            this.addEndDp.show();
+          });
+        }})
     } catch (err) {
       // tempusDominus might not be available in some contexts — ignore safely.
       // console.warn("TempusDominus not initialized:", err);
+      console.log("tempusDominus");
+      
     }
 
 
@@ -172,7 +176,7 @@ const UserManagement = function () {
                       data: res.object?.data || [],
                       sort: false,
                       destroy: true,
-                      dom:'<"top d-flex justify-content-between align-items-end"<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
+                      dom:'<"top d-flex justify-content-end "<"dt-left"> <"dt-right d-flex align-items-center"p>>t<"bottom"ip>',
                       lengthMenu: [10, 25, 50, 100],
                       language: { emptyTable: "No data found" },
                       columns: [
@@ -229,6 +233,22 @@ const UserManagement = function () {
                             </button>`
                         }
                       ],
+                        initComplete: function() {
+                          const dtRight = $('.dt-right');
+                          if (dtRight.children('#addMemberBtn').length === 0) {
+                              dtRight.prepend(`
+                                  <button
+                                      id="addMemberBtn"
+                                      class="btn btn-warning text-white me-2 mb-0 pagination-button"
+                                      data-bs-toggle="modal" 
+                                      data-bs-target="#member_modal" 
+                                  >
+                                      <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i>
+                                      Add Member
+                                  </button>
+                              `);
+                          }
+                        },
                        drawCallback: function () {
                         
                         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
@@ -306,9 +326,10 @@ const UserManagement = function () {
           member_work_status: { required: true },
           mobile_number: { required: true, pattern: this.patterns.mobile },
           membership_end_date: { required: true, pattern: /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\d{4}$/, notPastDate: true },
-          address_line1: { required: true },
-          state:        { required: true, pattern: /^[a-zA-z]{3,}$/ },
-          country:      { required: true , pattern: /^[a-zA-z]{3,}$/ },
+          address_line1: { required: true, pattern: /^[a-zA-z0-9 ,\\]{3,}$/ },
+          address_line2: {  pattern: /^[a-zA-z0-9 ,\\]{3,}$/ },
+          state:        { required: true, pattern: /^[a-zA-z ]{3,}$/ },
+          country:      { required: true , pattern: /^[a-zA-z ]{3,}$/ },
           pincode: { required: true, pattern: /^\d{5}$/ }
         },
         messages: {
@@ -319,9 +340,10 @@ const UserManagement = function () {
           member_work_status: { required: "Select designation" },
           mobile_number: { required: "Mobile number is required", pattern: "Enter a valid 10-digit number",  },
           membership_end_date: { required: "End date is required", pattern: "Use MM-DD-YYYY", notPastDate: "Date cannot be earlier than today." },
-          address_line1: { required: "Address is required" },
-          state:         { required: "State is required", pattern: "Letters only allowed"  },
-          country:       { required: "Country is required", pattern: "Letters only allowed"  },
+          address_line1: { required: "Address is required", pattern:"Invalid adress format" },
+          address_line2: {  pattern:"Invalid adress format" },
+          state:         { required: "State is required", pattern: "Letters ans spaces only allowed"  },
+          country:       { required: "Country is required", pattern: "Letters ans spaces only allowed"  },
           pincode: { required: "Zipcode is required", pattern: "Must be 5 Digits" }
         },
         errorPlacement: function (error, element) {
@@ -352,9 +374,10 @@ const UserManagement = function () {
               required: true,
               pattern: this.patterns.mobile 
           },
-          update_address_line1: { required: true },
-          update_state:        { required: true, pattern: /^[A-Za-z\s]+$/},
-          update_country:      { required: true, pattern: /^[A-Za-z\s]+$/ },
+          update_address_line1: { required: true, pattern: /^[a-zA-z0-9 ,\\]{3,}$/ },
+          update_address_line2: {  pattern: /^[a-zA-z0-9 ,\\]{3,}$/ },
+          update_state:        { required: true, pattern: /^[A-Za-z \s]+$/},
+          update_country:      { required: true, pattern: /^[A-Za-z \s]+$/ },
           update_pincode: {
               required: true,
               pattern: /^\d{5}(-\d{4})?$/   // US ZIP or ZIP+4
@@ -373,9 +396,10 @@ const UserManagement = function () {
               required:  "Mobile number is required",
               pattern: "Enter a valid 10-digit number"
           },
-          update_address_line1: { required: "Address Line 1 is required" },
-          update_state:        { required: "State is required", pattern: "Letters only" },
-          update_country:      { required: "Country is required", pattern: "Letters only" },
+          update_address_line1: { required: "Address Line 1 is required",  pattern:"Invalid adress format" },
+          update_address_line2: { pattern:"Invalid adress format" },
+          update_state:        { required: "State is required", pattern: "Letters ans spaces only allowed"  },
+          update_country:      { required: "Country is required", pattern: "Letters ans spaces only allowed"  },
           update_pincode: {
               required: "Zipcode is required",
               pattern:  "Use 5 digits or 5-4 format (e.g. 12345 or 12345-6789)"
@@ -685,7 +709,7 @@ const UserManagement = function () {
           data: res.object?.data || [],
           sort: false,
           destroy: true,
-          dom: '<"top d-flex justify-content-between "<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
+          dom: '<"top d-flex justify-content-between align-items-center"<"dt-left"> <"dt-right d-flex align-items-center"p>>t<"bottom"ip>',
           lengthMenu: [10, 25, 50, 100],
           language: { emptyTable: "No data found" },
           columns: [
@@ -757,6 +781,22 @@ const UserManagement = function () {
                 </button>`
             }
           ],
+          initComplete: function() {
+            const dtRight = $('.dt-right');
+            if (dtRight.children('#addMemberBtn').length === 0) {
+                dtRight.prepend(`
+                    <button
+                        id="addMemberBtn"
+                        class="btn btn-warning text-white me-2 mb-0 pagination-button"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#member_modal"
+                    >
+                        <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i>
+                        Add Member
+                    </button>
+                `);
+            }
+        },
           drawCallback: function () {
           
             document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
@@ -818,6 +858,29 @@ const UserManagement = function () {
         $(s.membershipEndDateStatus).val(endDate);
         if (this.statusEndDp && endDate) this.statusEndDp.dates.setValue(new tempusDominus.DateTime(endDate));
         $(s.membershipStatus).val(m.membershipStatus || m.memberShipStatus || "");
+
+        
+          if (!this.statusEndDp) {
+            this.statusEndDp = new tempusDominus.TempusDominus(
+              document.getElementById('membership_end_date_status'),
+              {
+                localization: { format: 'MM-dd-yyyy' },
+                restrictions: { minDate: new tempusDominus.DateTime(new Date()),maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31)) },
+                display: { components: { calendar: true, date: true, month: true, year: true } }
+              }
+            );
+            // bind AFTER init and AFTER modal is visible
+            $('#calendar_icon_change').off('click').on('click', e => {
+              e.stopPropagation();     
+              const isOpen = this.statusEndDp.display?.isVisible();   // v6/v7 API
+                if (isOpen) {
+                  this.statusEndDp.hide();      // close it
+                } else {
+                  this.statusEndDp.show();      // open it
+                }           
+            });
+          }
+        
         $(s.membershipModal).data("member-id", memberId).modal("show");
       },
       error: () => {
@@ -909,26 +972,35 @@ const UserManagement = function () {
         if (m.memberMobileNumber) {
                 $(s.updateMobileNumber).val(m.memberMobileNumber.replace(/^\+91\s?/, "").replace(/\D/g, ""));
             }
-        const minDt = m.memberShipEndDate
-                ? new tempusDominus.DateTime(m.memberShipEndDate)
-                : new Date();
+        
+           
             try {
-                this.updateEndDp = new tempusDominus.TempusDominus($(s.updateMembershipEnd)[0], {
-                    localization: { format: "MM-dd-yyyy" },  // display in MM-DD-YYYY
-                    useCurrent: false,
-                    restrictions: { minDate: minDt,maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31)) },
-                    display: { components: { calendar: true, date: true, month: true, year: true } }
-                });
-                if (m.memberShipEndDate) {
-                    // Convert for picker display
-                    const endDateForPicker = new tempusDominus.DateTime(m.memberShipEndDate);
-                    this.updateEndDp.dates.setValue(endDateForPicker);
+              
+                  $('#update_member_modal').on('shown.bs.modal', () => {
+                    if (!this.updateEndDp) {
+                      this.updateEndDp = new tempusDominus.TempusDominus(
+                        document.getElementById('update_membership_end_date'),
+                        {
+                          localization: { format: 'MM-dd-yyyy' },
+                          restrictions: {
+                            minDate: new tempusDominus.DateTime(new Date()),
+                            maxDate: new tempusDominus.DateTime(new Date(2030, 11, 31))
+                          },
+                          display: { components: { calendar: true, date: true, month: true, year: true } }
+                        }
+                      );
+                      $('#calendar_icon_update').off('click').on('click', (e) => {e.stopPropagation(); this.updateEndDp.show()});
+                    }
+                    if (m.memberShipEndDate) {
+                  const endDt = new tempusDominus.DateTime(m.memberShipEndDate);
+                  this.updateEndDp.dates.setValue(endDt);           // Tempus Dominus API
+                  // or, if you prefer raw input text:
+                  // $('#update_membership_end_date').val(endDt.format('MM-dd-yyyy'));
                 }
-                $("#calendar_icon").off("click").on("click", () => {
-          this.updateEndDp.show();   // 👈 opens the calendar popup
-        });
+                  })
+                                
             } catch (err) {
-                // Ignore if tempus not available
+              console.error('TempusDominus init error', err);
             }
         this.showLoader(false);
         $(s.updateMemberModal).modal("show");

@@ -171,7 +171,7 @@ const RentalTransaction = function () {
 
         /* ---------- FILTER / TABLE ---------- */
         this.bindFilterHandlers = function () {
-            $(s.applyFiltersBtn).off("click").on("click", () => this.applyFilters());
+            $(s.applyFiltersBtn).off("click").on("click",()=> this.applyFilters());
             $(s.resetFiltersBtn).off("click").on("click", () => this.resetFilters());
             $(s.filters).off("change").on("change", () => this.toggleFilters());
             $(s.filterType).off("change").on("change", () => this.toggleFilterInput());

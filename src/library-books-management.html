@@ -1,10 +1,10 @@
 <div class="container-fluid">
-  <div class="d-flex flex-column mb-3">
+  <div class="d-flex flex-column mb-3 p-4 rounded-2" style="background-color: #ffffff;">
     
     <div id="book_add"></div>
 
     <!-- Filters + Buttons Row -->
-    <div class="d-flex justify-content-between align-items-center mb-3 p-4 rounded-2" style="background-color: #ffffff;">
+    <div class="d-flex justify-content-between align-items-center ">
       
       <!-- Filters (aligned left/start) -->
       <div id="custom_filters" class="d-flex gap-2">
@@ -55,28 +55,20 @@
       </div>
 
       <!-- Buttons (aligned right/end) -->
-      <div class="d-flex gap-2">
-        <button id="add_new_book" class="btn btn-dark">
-          <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i>
-          Add Book
-        </button>
-        <!-- <button id="book_pdf" class="btn btn-warning text-white">
-          <i class="fa-solid fa-file-lines fa-lg me-1" style="color: #fff"></i>
-          Generate Available Books Pdf
-        </button> -->
+      <div class="d-flex justify-content-end gap-2">
+        <button id="reset_filters" class="btn btn-secondary" style="display:none;">Reset</button>
+        <button id="apply_filters" class="btn btn-dark">Submit</button>
       </div>
-
-    </div> <!-- end of filters+buttons row -->
-
-    <!-- Submit/Reset Row -->
-    <div class="d-flex justify-content-end gap-2">
-      <button id="reset_filters" class="btn btn-secondary" style="display:none;">Reset</button>
-      <button id="apply_filters" class="btn btn-dark">Submit</button>
+    
     </div>
-    <div class="d-flex justify-content-end mt-2">
-      <h6 class="text-warning"  style="display:none;font-weight:700;" id="lm_filter_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
-    </div>
-  </div>
+      <div class="d-flex justify-content-end ">
+          <h6 class="text-warning"  style="display:none;font-weight:700;" id="lm_filter_changed">⚠️ Filter Condition changed. Please Click Submit.</h6>
+        </div>
+    </div> 
+    <!-- end of filters+buttons row -->
+
+    
+    
 
   <div id="loader">
     <div class="circle-loader"></div>

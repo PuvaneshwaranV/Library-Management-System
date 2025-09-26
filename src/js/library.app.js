@@ -65,7 +65,7 @@ const App = function () {
             Swal.fire({
                 icon: "danger",
                 title: '<i class="fa-solid fa-right-from-bracket fa-rotate-180 me-2 text-danger" style="font-size:40px;"></i> <br> Logout',
-                text: "Are you sure about log out?",
+                text: "Are you sure about logout?",
                 showCancelButton: true,
                 cancelButtonText: "No",
                 confirmButtonText: "Yes",

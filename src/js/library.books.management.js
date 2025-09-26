@@ -121,7 +121,7 @@ const selectors = {
             autoWidth: false,
             sort: false,
             destroy: true,
-            dom: '<"top d-flex justify-content-between"<"dt-left"> <"dt-right"p>>t<"bottom"ip>',
+            dom: '<"top d-flex justify-content-end "<"dt-left d-flex align-items-center"> <"dt-right d-flex align-items-center">p>t<"bottom"ip>',
             lengthMenu: [10, 25, 50, 100],
             language: { emptyTable: "No data found" },
             columns: [
@@ -191,10 +191,20 @@ const selectors = {
               });
               
               const dtLeft = $('.dt-left');
-              if (dtLeft.children().length === 0) { // avoid duplicates
+              if (dtLeft.children('#book_pdf').length === 0) {
                   dtLeft.append(`
-                      <button id="book_pdf" class="btn btn-md btn-warning text-white pagination-button  ms-3">
-                          <i class="fa-solid fa-file-lines fa-lg "></i>Generate Available Books PDF
+                      <button id="book_pdf" class="btn btn-md btn-warning text-white pagination-button me-2">
+                          <i class="fa-solid fa-file-lines fa-lg"></i> Generate Available Books PDF
+                      </button>
+                  `);
+              }
+
+              const dtRight = $('.dt-right');
+              if (dtRight.children('#add_new_book').length === 0) {
+                  dtRight.prepend(`
+                      <button id="add_new_book" class="btn btn-warning text-white me-2">
+                          <i class="fa-solid fa-circle-plus fa-lg me-1" style="color:#ffffff"></i>
+                          Add Book
                       </button>
                   `);
               }
