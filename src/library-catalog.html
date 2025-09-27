@@ -13,66 +13,66 @@
               aria-label="Close">
               <i class="fa-regular fa-circle-xmark"></i>
             </button>
-            <hr class="border border-1 border-dark opacity-100" />
+            <hr class="border border-1 border-dark opacity-100" />  
 
-            <form id="borrow_form" class="mx-5 my-4" >
-              <!-- Member ID -->
-              <div class="mb-3 position-relatives">
-                <label for="member_name" class="form-label ">
-              Member Name
-            </label>
-                <input type="text" class="form-control" id="member_name" name="member_name" placeholder="Member Name" />
-                <input type="hidden" id="member_id" name="member_id" />
-                <!-- <div id="member_id_error" class="text-danger small"></div> -->
-              </div>
+              <form id="borrow_form" class="mx-5 my-4" >
+                <!-- Member ID -->
+                <div class="mb-3 position-relatives">
+                  <label for="member_name" class="form-label ">
+                Member Name
+              </label>
+                  <input type="text" class="form-control" id="member_name" name="member_name" placeholder="Member Name" />
+                  <input type="hidden" id="member_id" name="member_id" />
+                  <!-- <div id="member_id_error" class="text-danger small"></div> -->
+                </div>
 
-              <!-- Book fields container -->
-              <div id="books_container">
-                <div class="book-entry mb-3 border p-3 rounded position-relative">
-                  <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn"
-                    style="display:none;">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                  
-                   <label for="lm_catalog_book_title" class="form-label ">
-              Book Title
-            </label>
-                  <input type="text" class="form-control mb-2"  id="lm_catalog_book_title" placeholder="Book Title" />
-                  <input type="hidden"  id="book_id"  name="book_id[]" />
-                  <!-- <div class="text-danger small error_book_id"></div> -->
-                  
-                  <input type="number" class="form-control mb-2" id="book_quantity" placeholder="Book Quantity" name="quantity[]" />
-                  <!-- <div class="text-danger small error_quantity"></div> -->
-                   
-                  <div class="input-group  mb-2">
-                    <input type="text" class="form-control due_date border-1 border-black border-end-0"
-                      placeholder="YYYY-MM-DD" id="due_date" name="due_date[]" />
-                    <span class="input-group-text border-1 border-black border-start-0"><i
-                        class="fa fa-calendar due_date_calendar_icon"
-                        style="color: #1e3a8a; cursor: pointer"></i></span>
+                <!-- Book fields container -->
+                <div id="books_container">
+                  <div class="book-entry mb-3 border p-3 rounded position-relative">
+                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn"
+                      style="display:none;">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                    
+                    <label for="lm_catalog_book_title" class="form-label ">
+                Book Title
+              </label>
+                    <input type="text" class="form-control mb-2 book_title"   name="lm_catalog_book_title[]" placeholder="Book Title" />
+                    <input type="hidden"  class="book_id"  name="book_id[]" />
+                    <!-- <div class="text-danger small error_book_id"></div> -->
+                    
+                    <input type="number" class="form-control mb-2" id="book_quantity" placeholder="Book Quantity" name="quantity[]" />
+                    <!-- <div class="text-danger small error_quantity"></div> -->
+                    
+                    <div class="input-group  mb-2">
+                      <input type="text" class="form-control due_date border-1 border-black border-end-0"
+                        placeholder="YYYY-MM-DD" id="due_date" name="due_date[]" />
+                      <span class="input-group-text border-1 border-black border-start-0"><i
+                          class="fa fa-calendar due_date_calendar_icon"
+                          style="color: #1e3a8a; cursor: pointer"></i></span>
+                    </div>
+                    <!-- <div class="text-danger small error_due_date"></div> -->
                   </div>
-                  <!-- <div class="text-danger small error_due_date"></div> -->
                 </div>
-              </div>
 
-              <!-- Add another book button -->
-              <button id="add_book_btn" type="button" class="btn btn-warning text-white w-100 mb-3">
-                + Add Another Book
-              </button>
+                <!-- Add another book button -->
+                <button id="add_book_btn" type="button" class="btn btn-warning text-white w-100 mb-3">
+                  + Add Another Book
+                </button>
 
-              <div class="row">
-                <div class="col-6">
-                  <button id="cancel" type="button" class="btn btn-secondary w-100  " >
-                    Reset
-                  </button>
+                <div class="row">
+                  <div class="col-6">
+                    <button id="cancel" type="button" class="btn btn-secondary w-100  " >
+                      Reset
+                    </button>
+                  </div>
+                  <div class="col-6">
+                    <button id="add_btn" type="button" class="btn btn-dark w-100">
+                      Save
+                    </button>
+                  </div>
                 </div>
-                <div class="col-6">
-                  <button id="add_btn" type="button" class="btn btn-dark w-100">
-                    Save
-                  </button>
-                </div>
-              </div>
-            </form>
+              </form>
           </div>
         </div>
       </div>

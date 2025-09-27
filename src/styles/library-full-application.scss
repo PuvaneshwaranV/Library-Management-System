@@ -66,15 +66,15 @@ textarea:disabled:hover {
 }
 
 // ======================= Sidebar ===========================
-/* ----- Collapsed sidebar: icons only ----- */
+/* ----- sidebar_Collapsed sidebar: icons only ----- */
 /* ===== Collapsible Sidebar ===== */
 
-#sidebar,
-#main_body {
+#lm_common_sidebar,
+#lm_main_body {
   transition: width 0.36s ease, margin-left 0.3s ease;
 }
 
-#sidebar{
+#lm_common_sidebar{
   margin-top: 30px; 
   width: 180px; 
   color: $color-secondary; 
@@ -113,14 +113,14 @@ textarea:disabled:hover {
       }
     }
   }
-  &.no-transition { transition: none !important; }
+  &.no-initial-transition { transition: none !important; }
 }
-#sidebar.collapsed {
+#lm_common_sidebar.sidebar_collapsed {
   width: 60px;               
   overflow-x: hidden;
 }
 
-#sidebar .nav-link {
+#lm_common_sidebar .nav-link {
   display: flex;
   align-items: center;
   
@@ -129,15 +129,15 @@ textarea:disabled:hover {
   }
 }
 
-/* Hide labels when collapsed */
-#sidebar.collapsed .nav-link span {
+/* Hide labels when sidebar_collapsed */
+#lm_common_sidebar.sidebar_collapsed .nav-link span {
   opacity: 0;
   pointer-events: none;
   width: 0;
   overflow: hidden;
 }
 
-#sidebar.collapsed:not(:hover) {
+#lm_common_sidebar.sidebar_collapsed:not(:hover) {
   .nav-link.active {
     background: $color-primary !important;   
    i {
@@ -151,11 +151,11 @@ textarea:disabled:hover {
 }
 
 /* Optional hover-expand effect */
-#sidebar.collapsed:hover {
+#lm_common_sidebar.sidebar_collapsed:hover {
   width: 180px;
 }
 
-#sidebar.collapsed:hover .nav-link span {
+#lm_common_sidebar.sidebar_collapsed:hover .nav-link span {
   opacity: 1;
   width: auto;
   pointer-events: auto;
@@ -170,7 +170,7 @@ textarea:disabled:hover {
 
 
 
-#logout { margin-top: 300px; }
+#lm_logout { margin-top: 300px; }
 
 // ======================= Main Content ===========================
 
@@ -195,11 +195,11 @@ footer {
     border-radius: 20px;
   }
 }
-#main_body {
+#lm_main_body {
   flex: 1;
   margin-left:60px;
   transition: all 0.3s;
-  &.collapsed { 
+  &.sidebar_collapsed { 
     margin-left: 200px; 
   }
 }
@@ -208,7 +208,7 @@ footer {
 .staus-click { cursor: pointer !important; }
 
 // ======================= Header ===========================
-#header {
+#lm_common_header {
   background: $color-primary;
   color: $color-secondary;
   margin-bottom: 80px;

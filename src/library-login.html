@@ -26,9 +26,10 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
     />
     <script src="https://kit.fontawesome.com/2dcf1a73c1.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Tilt+Neon&display=swap" rel="stylesheet">
@@ -79,13 +80,13 @@
         border-radius: 0% 20%;
       }
 
-      #library_login_form_submit_button {
+      #lm_login_form_submit_button {
         background-color: #fbbf24;
         color: #000;
         box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.9);
       }
 
-      #library_login_form_submit_button:hover {
+      #lm_login_form_submit_button:hover {
         background-color: #10b981;
         color: #ffffff;
         box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.9);
@@ -112,36 +113,36 @@
     <div
       class="container d-flex justify-content-center "
     >
-      <form  method="get" id="library_login_form" autocomplete="off">
+      <form  method="get" id="lm_login_form" autocomplete="off">
         <div class="d-flex flex-column align-items-center mt-4">
           <img src="/assets/logo.png" class="ms-2 mb-1" widht="50px" height="50px" />
           <h4 class="text-white">BookWorm</h4>
           <h5 class="text-white">Library</h5>
         </div>
         <div class="form-group mb-3">
-          <label class="from-label mb-1" for="login_user_name">Username</label>
-          <input type="text" class="form-control" id="login_user_name"  autocomplete="off" name="login_user_name" />
+          <label class="from-label mb-1" for="lm_login_username">Username</label>
+          <input type="text" class="form-control" id="lm_login_username"  autocomplete="off" name="lm_login_username" />
         </div>
         <div class="mb-4">
-          <label for="login_password" class="form-label">Password</label>
+          <label for="lm_login_password" class="form-label">Password</label>
           <div class="input-group">
-          <input type="text" class="form-control pe-5 border-end-0" autocomplete="new-password" id="login_password" name="login_password" />
+          <input type="text" class="form-control pe-5 border-end-0" autocomplete="new-password" id="lm_login_password" name="lm_login_password" />
           <span 
-            id="login_toggle_password"class="input-group-text bg-white border-start-0"
+            id="lm_login_toggle_password"class="input-group-text bg-white border-start-0"
           >
             <i class="bi bi-eye"></i>
           </span></div>
         </div>
         <button
           class="btn btn-group mb-5 w-100  justify-content-center align-items-center"
-          type="button" id="library_login_form_submit_button"
+          type="button" id="lm_login_form_submit_button"
         ><i class="fa-solid fa-right-from-bracket me-1"></i>
           Sign In
         </button>
       </form>
       <!-- Top-center toast -->
-      <div class="toast-container  position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060">
-        <div id="loginSuccessToast"
+      <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060">
+        <div id="lm_login_success_toast"
             class="toast align-items-center text-white rounded-3  border-0"
             role="alert" aria-live="assertive" aria-atomic="true">
           <div class="d-flex">

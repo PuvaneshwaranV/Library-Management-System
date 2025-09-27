@@ -901,6 +901,13 @@ const UserManagement = function () {
           const s = this.selectors;
           const memberId = $(s.membershipModal).data("member-id");
           const endDate = $(s.membershipEndDateStatus).val().trim();
+          let formattedDate = "";
+          if (endDate) {
+              const parts = endDate.split("-"); // ["MM", "DD", "YYYY"]
+              if (parts.length === 3) {
+                  formattedDate = `${parts[2]}-${parts[0]}-${parts[1]}`; // "YYYY-MM-DD"
+              }
+          }
           const status = $(s.membershipStatus).val();
 
           if (!endDate) { $("#end_date_error").text("End date required."); return; } else $("#end_date_error").text("");
@@ -909,7 +916,7 @@ const UserManagement = function () {
           this.showLoader(true);
           $.ajax({
             method: "PUT",
-            url: `http://localhost:8080/LibraryManagementSystem/Members/updateMemberStatus?id=${memberId}&membershipEndDate=${endDate}&status=${status}`,
+            url: `http://localhost:8080/LibraryManagementSystem/Members/updateMemberStatus?id=${memberId}&membershipEndDate=${formattedDate}&status=${status}`,
             dataType: "json",
             success: () => {
               this.showLoader(false);
@@ -1036,14 +1043,23 @@ const UserManagement = function () {
 
         $(s.profileAvatar).text(firstLetter).css("background-color", bgColor);
         $(s.profileName).text(m.memberName || "N/A");
-        $(s.profileStatus).text(`Status: ${m.memberShipStatus || "N/A"}`);
+
+        // Status with color
+        const statusText = m.memberShipStatus || "N/A";
+        const statusColor = statusText.toLowerCase() === "active" ? "green" : "red";
+        $(s.profileStatus).text(`Status: ${statusText}`).css("color", statusColor);
+
         $(s.profileEmail).text(m.memberEmail || "N/A");
         $(s.profileMobile).text(m.memberMobileNumber || "N/A");
         $(s.profileWork).text(m.memberWorkStatus || "N/A");
+
         const start = m.memberShipStartDate ? `Start: ${m.memberShipStartDate}` : "";
         const end = m.memberShipEndDate ? ` | End: ${m.memberShipEndDate}` : "";
         $(s.profileMembership).text(`${start}${end}`);
-        $(s.profileAddress).text(m.memberaddress || "N/A");
+
+        // Address formatting: replace hyphens with commas
+        const formattedAddress = (m.memberaddress || "N/A").replace(/-/g, ", ");
+        $(s.profileAddress).text(formattedAddress);
 
         this.showLoader(false);
         $(s.viewMemberModal).modal("show");
@@ -1059,7 +1075,9 @@ const UserManagement = function () {
           success: (books) => {
             const list = Array.isArray(books.object) ? books.object : [];
             if (list.length) {
-              $(s.profileBooks).html(list.map(b => `<span class="text-dark me-1">${b.title}</span>`).join(""));
+              // Join titles with " | "
+              const booksLine = list.map(b => b.title).join(" | ");
+              $(s.profileBooks).html(`<span class="text-dark">${booksLine}</span>`);
               $(s.favBooksSection).show();
             } else {
               $(s.profileBooks).html('<span class="text-muted">No books borrowed yet</span>');
@@ -1077,7 +1095,8 @@ const UserManagement = function () {
         Swal.fire({ icon: "error", title: "Error", text: "Failed to fetch Member details.", timer: 2000, showConfirmButton: false });
       }
     });
-  };
+};
+
 
   // ---------- Reset filters ----------
   this.resetFilters = function () {

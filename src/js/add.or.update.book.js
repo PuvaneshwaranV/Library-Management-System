@@ -21,7 +21,7 @@
         addNewBookBtn: "#add_new_book",
       };
 
-      this.apiUrl = "http://localhost:8080/LibraryManagementSystem/Books";
+      this.APIURL = "http://localhost:8080/LibraryManagementSystem/Books";
 
       this.bookId = null;
       this.prevQty = 0;
@@ -45,7 +45,7 @@
 
     connectedCallback() {
       try {
-        this.customValdiationMethods(); // register rule first
+        this.customValidationMethods(); // register rule first
         this.initValidation();
         this.binEventHandlers();
       } catch(error){
@@ -87,8 +87,8 @@
   
           $.ajax({
             url: isUpdate
-              ? `${this.apiUrl}/updateBookDetails`
-              : `${this.apiUrl}/addNewBook`,
+              ? `${this.APIURL}/updateBookDetails`
+              : `${this.APIURL}/addNewBook`,
             type: isUpdate ? "PUT" : "POST",
             data: JSON.stringify(
               isUpdate ? { ...payload, bookId: this.bookId } : payload
@@ -123,7 +123,7 @@
         $(this.Selectors.resetButton).on("click", () => this.reset());
     }
 
-    customValdiationMethods() {  
+    customValidationMethods() {  
       jQuery.validator.addMethod(
         "pattern",
         function (value, element, param) {
@@ -137,7 +137,7 @@
     /** Setup jQuery Validate rules + custom methods */
     initValidation() {
       const form = $(this.Selectors.form);
-      this.customValdiationMethods();
+      this.customValidationMethods();
       // if (form.data("validator")) {
       //   form.removeData("validator").removeData("unobtrusiveValidation");
       // }

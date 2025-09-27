@@ -1,4 +1,4 @@
-/* ===================== Main App ===================== */
+
 const App = function () {
 
     /**
@@ -6,61 +6,81 @@ const App = function () {
      * Defining Selectors
      * 
      */
-    this.selectors = {
-        header: "#header",
-        sidebar: "#sidebar",
-        mainBody: "#main_body",
-        sidebarToggle: "#lm_sidebar_toggle",
-        logoutLink: "#logout a",
-        navLink: "#sidebar .nav-link",
-        headerTitle: "#header h3",
-        noTransitionClass: "no-transition",
-        collapsedClass: "collapsed"
-    };
+    this.Selectors = {
+        lmCommonHeader: "#lm_common_header",
+        lmCommonSidebar: "#lm_common_sidebar",
+        mainBody: "#lm_main_body",
+        lmCommonSidebarToggle: "#lm_sidebar_toggle",
+        logoutLink: "#lm_logout a",
+        navLink: "#lm_common_sidebar .nav-link",
+        lmCommonHeaderTitle: "#lm_common_header h3",
+        noTransitionClass: "no-initial-transition",
+        collapsedClass: "sidebar_collapsed"
+    };  
 
-    /* ---------- INIT ---------- */
+    /**
+     * 
+     * Initialize functions
+     * 
+     */
     this.init = function () {
         this.checkLogin();
         this.loadHeaderAndSidebar();
+        this.bindLogout();
         this.restoreLastPage();
         this.bindSidebarToggle();
         this.bindSidebarLinks();
+        this.attachDashboardCardClicks();
+        this.setActiveLink();
+        this.updateHeader();
     };
 
-    /* ---------- CHECK LOGIN ---------- */
+    /**
+     * 
+     * check valid login or not
+     * 
+     */
     this.checkLogin = function () {
-        const loggedUser = localStorage.getItem("libraryUsername");
+        const loggedUser = localStorage.getItem("lmValidUsername");
         if (!loggedUser) {
             window.location.href = "library-login.html";
         }
     };
 
-    /* ---------- LOAD HEADER & SIDEBAR ---------- */
-    this.loadHeaderAndSidebar = () => {
-        const s = this.selectors;
+    /**
+     * 
+     * Load header and sidebar
+     * 
+     */
+    this.loadHeaderAndSidebar = function () {
+        const s = this.Selectors;
 
         // Load header
-        $(s.header).load("library-common-header.html", () => {
+        $(this.Selectors.lmCommonHeader).load("library-common-header.html", () => {
             const lastTitle = localStorage.getItem("lastTitle") || "Dashboard";
             this.updateHeader(lastTitle);
 
-            const savedUser = localStorage.getItem("libraryUsername");
+            const savedUser = localStorage.getItem("lmValidUsername");
             if (savedUser) {
-                $(s.header).find("h5.mb-0").text(savedUser);
+                $(this.Selectors.lmCommonHeader).find("h5.mb-0").text(savedUser);
             }
         });
 
         // Load sidebar
-        $(s.sidebar).load("library-common-sidebar.html", () => {
+        $(this.Selectors.lmCommonSidebar).load("library-common-sidebar.html", () => {
             this.setActiveLink();
             this.bindLogout();
         });
     };
 
-    /* ---------- LOGOUT ---------- */
+    /**
+     * 
+     * Logout function
+     * 
+     */
     this.bindLogout = function () {
-        const s = this.selectors;
-        $(s.logoutLink).on("click",  (e) => {
+        const s = this.Selectors;
+        $(this.Selectors.logoutLink).on("click",  (e) => {
             e.preventDefault();
             Swal.fire({
                 icon: "danger",
@@ -75,7 +95,7 @@ const App = function () {
                 },
             }).then((result) => {
                 if (result.isConfirmed) {
-                    localStorage.removeItem("libraryUsername");
+                    localStorage.removeItem("lmValidUsername");
                     Swal.fire({
                         icon: "success",
                         title: "Logged out",
@@ -99,46 +119,39 @@ const App = function () {
         this.loadPage(lastPage);
 
         // Collapse sidebar initially without transition
-        const s = this.selectors;
-        $(s.sidebar)
-            .addClass(`${s.noTransitionClass} ${s.collapsedClass}`);
+        const s = this.Selectors;
+        $(this.Selectors.lmCommonSidebar)
+            .addClass(`${this.Selectors.noTransitionClass} ${this.Selectors.collapsedClass}`);
         setTimeout(() => {
-            $(s.sidebar).removeClass(s.noTransitionClass);
+            $(this.Selectors.lmCommonSidebar).removeClass(this.Selectors.noTransitionClass);
         }, 100);
     };
 
-    /* ---------- SIDEBAR TOGGLE ---------- */
+    /**
+     * 
+     * Toggle sidebar 
+     * 
+     */
     this.bindSidebarToggle = function () {
-        const s = this.selectors;
-        $(document).on("click", s.sidebarToggle, () => {
-            $(s.sidebar).toggleClass(s.collapsedClass);
-            $(s.mainBody).toggleClass(s.collapsedClass);
+        const s = this.Selectors;
+        $(document).on("click", this.Selectors.lmCommonSidebarToggle, () => {
+            $(this.Selectors.lmCommonSidebar).toggleClass(this.Selectors.collapsedClass);
+            $(this.Selectors.mainBody).toggleClass(this.Selectors.collapsedClass);
         });
     };
 
-//     const sidebar = document.getElementById("sidebar");
-// const mainBody = document.getElementById("main_body");
-
-// sidebar.addEventListener("mouseenter", () => {
-  
-//     mainBody.style.marginLeft = "200px";
-  
-// });
-
-// sidebar.addEventListener("mouseleave", () => {
- 
-//     mainBody.style.marginLeft = "60px";
-  
-// });
-
-    /* ---------- NAVIGATION LINKS ---------- */
+    /**
+     * 
+     * Navigate page
+     * 
+     */
     this.bindSidebarLinks = function () {
-        const s = this.selectors;
-        $(document).on("click", s.navLink, (e) => {
+        const s = this.Selectors;
+        $(document).on("click", this.Selectors.navLink, (e) => {
             const $link = $(e.currentTarget);
 
         
-            if ($link.closest("#logout").length) {
+            if ($link.closest("#lm_logout").length) {
                 return;
             }
             e.preventDefault();
@@ -156,10 +169,14 @@ const App = function () {
         });
     };
 
-    /* ---------- PAGE LOADER ---------- */
+    /**
+     * 
+     * Load page on the main body
+     * 
+     */
     this.loadPage = function (page) {
-        const s = this.selectors;
-        $(s.mainBody).load(page, () => {
+        const s = this.Selectors;
+        $(this.Selectors.mainBody).load(page, () => {
             // Load page-specific JS
             if (page === "library-users-management.html") $.getScript("js/library.users.management.js");
             else if (page === "library-penalty-management.html") $.getScript("js/library.penalty.management.js");
@@ -172,16 +189,20 @@ const App = function () {
         });
     };
 
-    /* ---------- DASHBOARD CARDS CLICK HANDLER ---------- */
+    /**
+     * 
+     * Navigate from dashboard charts
+     * 
+     */
     this.attachDashboardCardClicks = function () {
-        const s = this.selectors;
+        const s = this.Selectors;
 
         const cardMap = [
-            { selector: ".row:last .col-lg-4:nth-child(1)", page: "library-books-management.html", title: "Books", sidebarLink: '#sidebar .nav-link[href="library-books-management.html"]',filter: { BookAvailablity: "available" } },
-            { selector: ".row:last .col-lg-4:nth-child(2)", page: "library-penalty-management.html", title: "Penalty", sidebarLink: '#sidebar .nav-link[href="library-penalty-management.html"]', filter: { paymentStatus: "pending" } },
-            { selector: ".row:first .col-md-4:nth-child(2)", page: "library-penalty-management.html", title: "Penalty", sidebarLink: '#sidebar .nav-link[href="library-penalty-management.html"]', filter: { paymentStatus: "pending" } },
-            { selector: ".row:last .col-lg-4:nth-child(3)", page: "library-users-management.html", title: "Members", sidebarLink: '#sidebar .nav-link[href="library-users-management.html"]', filter: { memberStatusFilter: "active" } },
-            { selector: ".row:first .col-md-4:nth-child(1)", page: "library-users-management.html", title: "Members", sidebarLink: '#sidebar .nav-link[href="library-users-management.html"]', filter: { memberStatusFilter: "active" }  }
+            { selector: ".row:last .col-lg-4:nth-child(1)", page: "library-books-management.html", title: "Books", sidebarLink: '#lm_common_sidebar .nav-link[href="library-books-management.html"]',filter: { BookAvailablity: "available" } },
+            { selector: ".row:last .col-lg-4:nth-child(2)", page: "library-penalty-management.html", title: "Penalty", sidebarLink: '#lm_common_sidebar .nav-link[href="library-penalty-management.html"]', filter: { paymentStatus: "pending" } },
+            { selector: ".row:first .col-md-4:nth-child(2)", page: "library-penalty-management.html", title: "Penalty", sidebarLink: '#lm_common_sidebar .nav-link[href="library-penalty-management.html"]', filter: { paymentStatus: "pending" } },
+            { selector: ".row:last .col-lg-4:nth-child(3)", page: "library-users-management.html", title: "Members", sidebarLink: '#lm_common_sidebar .nav-link[href="library-users-management.html"]', filter: { memberStatusFilter: "active" } },
+            { selector: ".row:first .col-md-4:nth-child(1)", page: "library-users-management.html", title: "Members", sidebarLink: '#lm_common_sidebar .nav-link[href="library-users-management.html"]', filter: { memberStatusFilter: "active" }  }
         ];
 
         cardMap.forEach(card => {
@@ -192,7 +213,7 @@ const App = function () {
                 localStorage.setItem("dashboardFilter", filterString);
                 this.loadPage(card.page);
                 this.updateHeader(card.title);
-                $(s.navLink).removeClass("active");
+                $(this.Selectors.navLink).removeClass("active");
                 $(card.sidebarLink).addClass("active");
                 localStorage.setItem("lastPage", card.page);
                 localStorage.setItem("lastTitle", card.title);
@@ -200,10 +221,14 @@ const App = function () {
         });
     };
 
-    /* ---------- ACTIVE LINK (visual only) ---------- */
+    /**
+     * 
+     * Sidebar active link
+     * 
+     */
     this.setActiveLink = function ($link) {
-        const s = this.selectors;
-        $(s.navLink).removeClass("active");
+        const s = this.Selectors;
+        $(this.Selectors.navLink).removeClass("active");
         if ($link) $link.addClass("active");
         else {
             const lastPage = localStorage.getItem("lastPage") || "library-dashboard.html";
@@ -211,20 +236,24 @@ const App = function () {
         }
     };
 
-    /* ---------- HEADER TITLE ---------- */
+    /**
+     * 
+     * Update header title
+     * 
+     */
     this.updateHeader = function (title) {
-        const s = this.selectors;
-        $(s.headerTitle).text(title);
+        const s = this.Selectors;
+        $(this.Selectors.lmCommonHeaderTitle).text(title);
     };
 };
 
-/* ===== Kick-off ===== */
+
 $(document).ready(function () {
-    window.appInstance = new App();
-    window.appInstance.init();
+    const app = new App();
+    app.init();
 
     // Attach dashboard card clicks when library.dashboard.js finishes loading
     $(document).on("dashboardLoaded", () => {
-        window.appInstance.attachDashboardCardClicks();
+        app.attachDashboardCardClicks();
     });
 });

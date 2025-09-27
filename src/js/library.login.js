@@ -1,81 +1,85 @@
-
 const LibraryLogin = function () {
-    // ---------- Central selectors ----------
-    this.selectors = {
-        passwordField: "#login_password",
-        toggleButton: "#login_toggle_password",
-        toggleIcon:   "#login_toggle_password i",
-        libraryLoginForm: "#library_login_form",
-        libraryLoginFormSubmitBtn: "#library_login_form_submit_button",
-        loginSuccessToast: "#loginSuccessToast"   
+
+    /**
+     * 
+     * Defining Selectors
+     * 
+     */
+
+    this.Selectors = {
+        lmLoginPasswordField: "#lm_login_password",
+        lmLoginPasswordFieldToggleButton: "#lm_login_toggle_password",
+        lmLoginPasswordFieldToggleIcon:   "#lm_login_toggle_password i",
+        lmLibraryLoginForm: "#lm_login_form",
+        libraryLoginFormSubmitBtn: "#lm_login_form_submit_button",
+        loginSuccessToast: "#lm_login_success_toast"   
     };
 
-    // ---------- 1. Seed 4 users into localStorage (only once) ----------
-    this.seedUsers = function () {
-        if (!localStorage.getItem("libraryUsers")) {
-            const defaultUsers = [
+    /**
+     * 
+     * Set temporary login Credentials for login
+     * 
+     */
+
+    this.setTemporaryLoginCredentials = function () {
+        if (localStorage.getItem("lmTemporaryLoginCredentials")) {
+            const temporaryLoginCredentials = [
                 { username: "Puvaneshwaran",   password: "Puvi@123" },
                 { username: "Kamalesh",     password: "Kamal@123" },
                 { username: "Dharshan", password: "Dharsh@123" },
                 { username: "Vijiyakumar",   password: "Vijay@123" }
             ];
-            localStorage.setItem("libraryUsers", JSON.stringify(defaultUsers));
+            localStorage.setItem("lmTemporaryLoginCredentials", JSON.stringify(temporaryLoginCredentials));
         }
     };
 
-    
+    /**
+     * 
+     * Password field manaul toggle eye function
+     * 
+     */
 
-
-    // ---------- Password toggle ----------
     this.passwordToggler = function () {
-        const s = this.selectors;
-        $(s.passwordField).attr("type", "password").val("");
-        $(s.toggleButton).on("click", () => {
-            if ($(s.passwordField).attr("type") === "password") {
-                $(s.passwordField).attr("type", "text");
-                $(s.toggleIcon).removeClass("bi-eye").addClass("bi-eye-slash");
+        $(this.Selectors.lmLoginPasswordField).attr("type", "password").val("");
+        $(this.Selectors.lmLoginPasswordFieldToggleButton).on("click", () => {
+            if ($(this.Selectors.lmLoginPasswordField).attr("type") === "password") {
+                $(this.Selectors.lmLoginPasswordField).attr("type", "text");
+                $(this.Selectors.lmLoginPasswordFieldToggleIcon).removeClass("bi-eye").addClass("bi-eye-slash");
             } else {
-                $(s.passwordField).attr("type", "password");
-                $(s.toggleIcon).removeClass("bi-eye-slash").addClass("bi-eye");
+                $(this.Selectors.lmLoginPasswordField).attr("type", "password");
+                $(this.Selectors.lmLoginPasswordFieldToggleIcon).removeClass("bi-eye-slash").addClass("bi-eye");
             }
         });
     };
 
-    // ---------- jQuery validation ----------
+    /**
+     * 
+     * Validate login form function
+     * 
+     */
+
     this.validateLibraryForm = function () {
-        const s = this.selectors;
-        if ($(s.libraryLoginForm).data("validator")) {
-            $(s.libraryLoginForm).removeData("validator").removeData("unobtrusiveValidation");
-        }
-        jQuery.validator.addMethod(
-            "pattern",
-            function (value, element, param) {
-                const re = new RegExp(param);
-                return this.optional(element) || re.test(value);
-            },
-            "Invalid format."
-        );
-        $(s.libraryLoginForm).validate({
+        $(this.Selectors.lmLibraryLoginForm).validate({
             ignore: [],
             onkeyup: false,
             rules: {
-                login_user_name: {
+                lm_login_username: {
                     required: true,
-                    pattern: /^[a-zA-Z]+$/,
+                    pattern: "^[a-zA-Z]+$",
                     minlength: 5,
                 },
-                login_password: {
+                lm_login_password: {
                     required: true,
-                    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/
+                    pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$"
                 }
             },
             messages: {
-                login_user_name: {
+                lm_login_username: {
                     required: "Username is required",
                     pattern: "Alphabets only allowed",
                     minlength: "At least 5 characters required",
                 },
-                login_password: {
+                lm_login_password: {
                     required: "Password is required",
                     pattern: "Invalid Password",
                 }
@@ -90,58 +94,58 @@ const LibraryLogin = function () {
         });
     };
 
-    // ---------- Login submit ----------
+    /**
+     * 
+     * Check the logging in user is existing
+     * 
+     */
+
     this.submitLoginForm = function () {
-        const s = this.selectors;
-        $(s.libraryLoginFormSubmitBtn).on("click", (e) => {
+        $(this.Selectors.libraryLoginFormSubmitBtn).on("click", (e) => {
             e.preventDefault();
-            if (!$(s.libraryLoginForm).valid()) return;
+            if ($(this.Selectors.lmLibraryLoginForm).valid()){
+                const username = $(this.Selectors.lmLibraryLoginForm).find('[name="lm_login_username"]').val().trim();
+                const password = $(this.Selectors.lmLibraryLoginForm).find('[name="lm_login_password"]').val();
+                const users    = JSON.parse(localStorage.getItem("lmTemporaryLoginCredentials")) || [];
+    
+                const match = users.find(u =>
+                    u.username.toLowerCase() === username.toLowerCase() &&
+                    u.password === password
+                );
+    
+                const toastEl = document.getElementById("lm_login_success_toast");
+                const toast   = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 1500 });
+    
+                if (match) {
+                    // ✅ Store the logged-in user
+                    localStorage.setItem("lmValidUsername", match.username);
 
-            const username = $(s.libraryLoginForm).find('[name="login_user_name"]').val().trim();
-            const password = $(s.libraryLoginForm).find('[name="login_password"]').val();
-            const users    = JSON.parse(localStorage.getItem("libraryUsers")) || [];
+                    toastEl.classList.remove("bg-danger");
+                    toastEl.style.backgroundColor = "#1EA73C";
+                    toastEl.querySelector(".toast-body").textContent =`✅ Successfully Logged in as: ${match.username}`;
+                    toast.show();
+    
+                    // Redirect after toast hides
+                    toastEl.addEventListener("hidden.bs.toast", () => {
+                        window.location.href = "library-main-page.html";
+                    }, { once: true });
+    
+                } else {
+                    // ❌ Invalid credentials
+                    toastEl.classList.add("bg-danger");
+                    toastEl.style.backgroundColor = "";
+                    toastEl.querySelector(".toast-body").textContent ="Invalid username or password!";
+                    toast.show();
+                }
+            } 
 
-            const match = users.find(u =>
-                u.username.toLowerCase() === username.toLowerCase() &&
-                u.password === password
-            );
-
-            const toastEl = document.getElementById("loginSuccessToast");
-            const toast   = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 1500 });
-
-            if (match) {
-                // ✅ Store the logged-in user
-                localStorage.setItem("libraryUsername", match.username);
-
-                
-                toastEl.classList.remove("bg-danger");
-                toastEl.style.backgroundColor = "#1EA73C";
-                toastEl.querySelector(".toast-body").textContent =
-                    `✅ Successfully Logged in as: ${match.username}`;
-
-                toast.show();
-
-                // Redirect after toast hides
-                toastEl.addEventListener("hidden.bs.toast", () => {
-                    window.location.href = "library-main-page.html";
-                }, { once: true });
-
-            } else {
-                // ❌ Invalid credentials
-                
-                toastEl.classList.add("bg-danger");
-                toastEl.style.backgroundColor = "";
-                toastEl.querySelector(".toast-body").textContent =
-                    "Invalid username or password!";
-                toast.show();
-            }
         });
     };
 };
 
-// ---------- Create object & run ----------
+
 const libraryLogin = new LibraryLogin();
-libraryLogin.seedUsers();
+libraryLogin.setTemporaryLoginCredentials();
 libraryLogin.passwordToggler();
 libraryLogin.validateLibraryForm();
 libraryLogin.submitLoginForm();

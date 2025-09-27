@@ -71,14 +71,14 @@ const RentalTransaction = function () {
                 select: (event, ui) => RentalTransactionInstance.setInputFieldValuesAfterSelection(event, ui),
                 appendTo: $("#member_name").parent('div')
             });
-            $("#lm_catalog_book_title").autocomplete({
+            $(".book_title").autocomplete({
                 minLength: 3, 
                 source: RentalTransactionInstance.searchBookTitle,
                 create: function () {
                     $(this).data("ui-autocomplete").liveRegion = $();
                 },
                 select: (event, ui) => RentalTransactionInstance.setBookTitleInputFieldValuesAfterSelection(event, ui),
-                appendTo: $("#lm_catalog_book_title").parent('div')
+                appendTo: $(".book_title").parent('div')
             });
         };
         this.searchBookTitle = function(autoCompleteReq,autoCompleteResponse){
@@ -111,8 +111,11 @@ const RentalTransaction = function () {
 
         this.setBookTitleInputFieldValuesAfterSelection = function(event, ui) {
             console.log("Bb");
-            $("#book_id").val(ui.item.id);
-        }
+            const $textInput = $(event.target);                       // the autocomplete text box
+            $textInput.closest('.book-entry')                          // find its parent .book-entry
+                    .find('.book_id')                                // find the hidden field inside
+                    .val(ui.item.id);
+                }
 
         this.rentalFilter = function () {
             const input = $("#rental_filter_value");
@@ -371,13 +374,13 @@ const RentalTransaction = function () {
                 $form.validate({
                     rules: {
                         "member_name": { required: true,  },
-                        "lm_catalog_book_title": { required: true, numbersOnly: true },
+                        "lm_catalog_book_title[]": { required: true, pattern: "^[a-zA-Z ()0-9]+$" },
                         "quantity[]": { required: true, numbersOnly: true, min: 1 },
                         "due_date[]": { required: true, dateISO: true, futureDate: true }
                     },
                     messages: {
                         "member_name": { required: "Member name is required",  },
-                        "lm_catalog_book_title": { required: "Book name is required", numbersOnly: "Digits only" },
+                        "lm_catalog_book_title[]": { required: "Book name is required", pattern: "Invalid Format" },
                         "quantity[]": { required: "Quantity is required", numbersOnly: "Digits only", min: "Quantity must be at least 1" },
                         "due_date[]": { required: "Due date is required", dateISO: "Use YYYY-MM-DD", futureDate: "Due date must be after today" }
                     },
@@ -400,12 +403,13 @@ const RentalTransaction = function () {
             };
 
             $(s.addBookBtn).on("click", () => {
+                
                 const entry = $(`
                     <div class="book-entry mb-3 border p-3 rounded position-relative">
                         <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn"><i class="fa-solid fa-trash"></i></button>
                         
-                        <input type="text" class="form-control mb-2"  id="lm_catalog_book_title" placeholder="Book Title" />
-                  <input type="hidden"  id="book_id"  name="book_id[]" />
+                        <input type="text" class="form-control mb-2 book_title"   name="lm_catalog_book_title[]" placeholder="Book Title" />
+                    <input type="hidden"  class="book_id"  name="book_id[]" />
                        
                         <input type="number" class="form-control mb-2" id="book_quantity" placeholder="Quantity" name="quantity[]"/>
                        
@@ -422,18 +426,23 @@ const RentalTransaction = function () {
                 // --- THE KEY CHANGE ---
                 // Add the new elements to the form container.
                 $(container).append(entry);
-                    entry.find("#lm_catalog_book_title").autocomplete({
-    minLength: 3,
-    source: RentalTransactionInstance.searchBookTitle,
-    select: (event, ui) => RentalTransactionInstance.setBookTitleInputFieldValuesAfterSelection(event, ui),
-    appendTo: entry
-});
+                    entry.find(".book_title").autocomplete({
+                    minLength: 3,
+                    source: RentalTransactionInstance.searchBookTitle,
+                    select: (event, ui) => RentalTransactionInstance.setBookTitleInputFieldValuesAfterSelection(event, ui),
+                    appendTo: entry
+                });
                 // Manually apply validation rules to the new inputs.
+                entry.find('input[name="lm_catalog_book_title[]"]').rules("add", {
+                    required: true,
+                    pattern: "^[a-zA-Z ()0-9]+$",
+                    messages: { required: "Book name is required", pattern: "Invalid format" }
+                    });
                 entry.find('input[name="book_id[]"]').rules("add", {
                     required: true,
-                    numbersOnly: true,
+                    pattern: "^[a-zA-Z ()0-9]+$",
                     messages: {
-                        required: "Book ID is required",
+                        required: "Invalid Format",
                         numbersOnly: "Digits only"
                     }
                 });
@@ -478,6 +487,7 @@ const RentalTransaction = function () {
                 // The form.valid() call will now check all elements, including the dynamically added ones.
                 if (!$(s.borrowForm).valid()) return;
                 const payload = this.collectBorrowData(container);
+                if (!$(s.borrowForm).valid()) return;
                 this.ajaxBorrow(payload, container, updateRemoveButtons);
             });
 
