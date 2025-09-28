@@ -185,6 +185,8 @@ const Penalty = function () {
           data: rows,
           sort: false,
           destroy: true,
+           processing: true,
+          serverSide: false,
           dom:'<"top d-flex justify-content-end gap-2"<"dt-left"> <"dt-right gap-2 d-flex align-items-center"p>>t<"bottom"ip>',
           lengthMenu: [10, 25, 50, 100],
           language: { emptyTable: "No data found" },

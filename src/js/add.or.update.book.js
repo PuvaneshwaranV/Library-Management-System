@@ -159,7 +159,7 @@
       $(this.Selectors.saveButton).text("Save");
       $(this.Selectors.modalHeading).text("Add Book");
       $(this.Selectors.resetColumn).show();
-      $(this.Selectors.saveColumn).removeClass("col-12").addClass("col-6");
+      $(this.Selectors.saveColumn).removeClass("col-3").addClass("col-3");
     }
 
     /** Opens modal. Accepts data for update or null for add */
@@ -174,7 +174,7 @@
         $(this.Selectors.saveButton).text("Update");
         $(this.Selectors.modalHeading).text("Update Book");
         $(this.Selectors.resetColumn).hide();
-        $(this.Selectors.saveColumn).removeClass("col-6").addClass("col-12");
+        $(this.Selectors.saveColumn).removeClass("col-3").addClass("col-3");
       } else {
         this.reset();
       }

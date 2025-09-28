@@ -594,7 +594,7 @@ const UserManagement = function () {
               }
               else{
               const msg = xhr.responseJSON?.object || "Something went wrong.";
-              Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });}
+              Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 4000, showConfirmButton: false });}
             }
           });
         }

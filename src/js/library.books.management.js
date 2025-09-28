@@ -142,6 +142,8 @@ const selectors = {
                 width: "200px"
                },
               { title: "Book Quantity", data: "totalCount" },
+              { title: "Borrowed Quantity", data: "borrowedCount" },
+              { title: "Available Quantity", data: "availableStockCount" },
               {
                 title: "Status",
                 data: "bookStatus",
