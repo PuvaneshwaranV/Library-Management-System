@@ -305,7 +305,8 @@ const RentalTransaction = function () {
                                    </button>`
                                 : `<span data-bs-toggle="tooltip" title="Already Returned"><button class="btn btn-md border-0" disabled>
                                        <img src="../../assets/already return.png" alt="already returned" height="25" width="25">
-                                   </button></span>`
+                                   </button></span>`,
+                        
                     }
                 ],
                 initComplete: function() {

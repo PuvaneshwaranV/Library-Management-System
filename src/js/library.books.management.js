@@ -163,15 +163,29 @@ const selectors = {
                   ">${row.bookStatus}</p>`;
                 },
                 className: "text-center", // center the column itself
-                width: "100px !important"
+                
               },
               {
                 title: "Action",
                 data: null,
                 orderable: false,
+                 className: "text-center action-cell", 
+                 createdCell: function (td, cellData, rowData, row, col) {
+                    // add your own custom class and width here
+                    $(td)
+                      .addClass("action-cell")          // custom class
+                      .css({
+                          "min-width": "100px",
+                          "white-space": "nowrap",
+                          "display": "flex",
+                          "justify-content": "center",
+                          "align-items": "center",
+                          "gap": "16px"
+                      });
+                },
                 render: (d, t, row) => `
                   
-                    <i class="fa-solid fa-pen-to-square text-grey cursor-pointer i-btn-dark me-3 update-book" data-bs-toggle="tooltip"
+                    <i class="fa-solid fa-pen-to-square text-grey cursor-pointer i-btn-dark  update-book" data-bs-toggle="tooltip"
                     data-bs-placement="top"
                     title="Edit" data-id="${row.bookId}" ></i>
                   
@@ -180,7 +194,8 @@ const selectors = {
                     data-bs-placement="top"
                     title="Delete" data-id="${row.bookId}" ></i>
                   `,
-                   className: "text-center"
+                   className: "text-center",
+                   
               },
             ],
             drawCallback: function () {

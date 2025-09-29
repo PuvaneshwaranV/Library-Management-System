@@ -241,6 +241,12 @@ footer {
   transform: scale(1.1);
 }
 
+.dataTable_wrapper td.action-cell,
+.dataTable_wrapper th.action-cell {
+  min-width: 150px !important;
+  white-space: nowrap;
+}
+
 .dataTables_wrapper .dataTables_paginate {
   margin-right: 10px !important;
 }
