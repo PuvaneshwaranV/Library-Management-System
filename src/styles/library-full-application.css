@@ -241,10 +241,33 @@ footer {
   transform: scale(1.1);
 }
 
-.dataTable_wrapper td.action-cell,
-.dataTable_wrapper th.action-cell {
-  min-width: 150px !important;
-  white-space: nowrap;
+.input-with-error {
+  display: flex;
+  flex-direction: column; /* stack input + error vertically */
+}
+
+.input-with-error .text-danger {
+  margin-top: 2px; /* spacing between input and error */
+}
+
+#add_book_div {
+  max-height: 38px; /* or match input height */
+  top: 31px;
+  left: 75%;
+}
+
+#added_books_table tbody {
+  display: block; /* make tbody scrollable */
+  max-height: 250px; /* set your desired height */
+  overflow-y: auto; /* vertical scrollbar */
+  overflow-x: hidden;
+}
+
+#added_books_table thead,
+#added_books_table tbody tr {
+  display: table; /* retain table layout */
+  width: 100%;
+  table-layout: fixed; /* ensures columns align */
 }
 
 .dataTables_wrapper .dataTables_paginate {

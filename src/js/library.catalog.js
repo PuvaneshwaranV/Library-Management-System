@@ -111,11 +111,10 @@ const RentalTransaction = function () {
 
         this.setBookTitleInputFieldValuesAfterSelection = function(event, ui) {
             console.log("Bb");
-            const $textInput = $(event.target);                       // the autocomplete text box
-            $textInput.closest('.book-entry')                          // find its parent .book-entry
-                    .find('.book_id')                                // find the hidden field inside
-                    .val(ui.item.id);
-                }
+            $('[name="book_id[]"]').val(ui.item.id)          // optional: set input text
+            console.log("Book ID set:", ui.item.id);
+            false;
+        }
 
         this.rentalFilter = function () {
             const input = $("#rental_filter_value");
@@ -187,14 +186,16 @@ const RentalTransaction = function () {
             const selected = $(s.filterType).val();
             if (selected && selected.toLowerCase() !== "all") {
                 $(s.filterValue).prop("disabled", false);
+                $(s.resetFiltersBtn).css("display","block");
             } else {
                 $(s.filterValue).prop("disabled", true).val("");
+                $("#clear_filter_value").hide();
             }
             if ($.fn.DataTable.isDataTable(s.table)) {
                 $(s.table).DataTable().clear().destroy();
                 $(s.table).hide();
                 $(s.lmFilterChanged).css("display","block")
-                $(s.resetFiltersBtn).css("display","block");
+                
             }
         };
         this.changeFilterInput = function () {
@@ -359,191 +360,263 @@ const RentalTransaction = function () {
                 $(s.table).DataTable().clear().destroy();
                 $(s.table).hide();
             }
+            $(s.filterValue).prop("disabled", true).val("");
              $(s.lmFilterChanged).css("display","none")
+             $("#clear_filter_value").hide();
         };
         function clearValidationErrors(modalSelector) {
     $(`${modalSelector} .text-danger.small`).text("");
 }
         /* ---------- BORROW ---------- */
         this.bindBorrowHandlers = function () {
-            const container = document.querySelector(s.booksContainer);
+    const $form   = $(s.borrowForm);
+    const container = $(s.booksContainer);
+    const $tableBody = $('#added_books_table tbody');
 
-            // Initial validation setup for the main form.
-            // This part is already correct in your code.
-            const $form = $(s.borrowForm);
-            if (!$form.data('validator')) {
-                $form.validate({
-                    rules: {
-                        "member_name": { required: true,  },
-                        "lm_catalog_book_title[]": { required: true, pattern: "^[a-zA-Z ()0-9]+$" },
-                        "quantity[]": { required: true, numbersOnly: true, min: 1 },
-                        "due_date[]": { required: true, dateISO: true, futureDate: true }
-                    },
-                    messages: {
-                        "member_name": { required: "Member name is required",  },
-                        "lm_catalog_book_title[]": { required: "Book name is required", pattern: "Invalid Format" },
-                        "quantity[]": { required: "Quantity is required", numbersOnly: "Digits only", min: "Quantity must be at least 1" },
-                        "due_date[]": { required: "Due date is required", dateISO: "Use YYYY-MM-DD", futureDate: "Due date must be after today" }
-                    },
-                    errorElement: "span",
-                    errorClass: "text-danger small",
-                    errorPlacement: function (error, element) {
-                        if (element.closest(".input-group").length) {
-                            error.insertAfter(element.closest(".input-group"));
-                        } else {
-                            error.insertAfter(element);
-                        }
-                    },
-                });
+    jQuery.validator.addMethod("futureDate", function (value, element) { 
+        if (this.optional(element)) return true; // must be YYYY-MM-DD and after today 
+         const m = /^(\d{2})-(\d{2})-(\d{4})$/.exec(value);
+        if (!m) return false;
+
+        const inputDate = new Date(`${m[3]}-${m[1]}-${m[2]}T00:00:00`);
+        const today     = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return inputDate > today && inputDate <= maxDate;
+    }, "Enter a valid date (MM-DD-YYYY) within one month from today.");
+
+    const now = new Date();
+    const maxDate = new Date();
+    maxDate.setMonth(now.getMonth() + 1);
+
+    $(".due_date").each(function () {
+    const picker = new tempusDominus.TempusDominus(this, {
+        localization: { format: "MM-dd-yyyy" },    // what the user sees
+        restrictions: {
+            minDate: new tempusDominus.DateTime(now),
+            maxDate: new tempusDominus.DateTime(maxDate)
+        },
+        display: {
+            components: { calendar: true, date: true, month: true, year: true }
+        },
+        
+    });
+    $(this).data("tdPicker", picker);
+    $(this).inputmask("99-99-9999");
+});
+$(document).on("click", ".input-group-text", function () {
+    const input = $(this).siblings("input.due_date");
+    const picker = input.data("tdPicker");
+    if (picker) picker.show();
+});
+    // base validation for member + single input row
+    if (!$form.data('validator')) {
+        $form.validate({
+            rules: {
+                member_name: { required: true },
+                "lm_catalog_book_title[]": { required: true, pattern: "^[a-zA-Z ()0-9]+$" },
+                "quantity[]": { required: true, digits: true, minlength: 1, maxlength: 10 },
+                "due_date[]": { required: true, futureDate: true }
+            },
+            messages: { 
+                member_name: { required: "Member name is required" },
+                "lm_catalog_book_title[]": { required: "Book title is required", pattern: "Invalid format" },
+                "quantity[]": { required: "Book quantity is required", digits: "Digits only allowed", min: "Must be greater than 0", maxlength: "must be lesser than 11" },
+                "due_date[]": { required: "Due date is required", futureDate: "Must be future date within 1 month" }
+            },
+            errorElement: "span",
+            errorClass: "text-danger small",
+            errorPlacement: function (error, element) {
+                const $wrapper = element.closest(".input-with-error");
+                $wrapper.length ? error.appendTo($wrapper) : error.insertAfter(element);
             }
+        });
+    }
 
-            const updateRemoveButtons = () => {
-                container.querySelectorAll(".book-entry").forEach((e, i) =>
-                    e.querySelector(".remove-book-btn").style.display = i === 0 ? "none" : "block"
-                );
-            };
-
-            $(s.addBookBtn).on("click", () => {
-                
-                const entry = $(`
-                    <div class="book-entry mb-3 border p-3 rounded position-relative">
-                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn"><i class="fa-solid fa-trash"></i></button>
-                        
-                        <input type="text" class="form-control mb-2 book_title"   name="lm_catalog_book_title[]" placeholder="Book Title" />
-                    <input type="hidden"  class="book_id"  name="book_id[]" />
-                       
-                        <input type="number" class="form-control mb-2" id="book_quantity" placeholder="Quantity" name="quantity[]"/>
-                       
-                        <div class="input-group mb-2">
-                            <input type="text" class="form-control due_date border-end-0" placeholder="YYYY-MM-DD" id="due_date" name="due_date[]"/>
-                            <span class="input-group-text border border-black border-start-0">
-                                <i class="fa fa-calendar update_due_date_calendar_icon" style="color:#1e3a8a;cursor:pointer"></i>
-                            </span>
-                        </div>
-                    </div>`);
-
-                entry.find(".remove-book-btn").on("click", () => {entry.remove();});
-
-                // --- THE KEY CHANGE ---
-                // Add the new elements to the form container.
-                $(container).append(entry);
-                    entry.find(".book_title").autocomplete({
-                    minLength: 3,
-                    source: RentalTransactionInstance.searchBookTitle,
-                    select: (event, ui) => RentalTransactionInstance.setBookTitleInputFieldValuesAfterSelection(event, ui),
-                    appendTo: entry
-                });
-                // Manually apply validation rules to the new inputs.
-                entry.find('input[name="lm_catalog_book_title[]"]').rules("add", {
-                    required: true,
-                    pattern: "^[a-zA-Z ()0-9]+$",
-                    messages: { required: "Book name is required", pattern: "Invalid format" }
-                    });
-                entry.find('input[name="book_id[]"]').rules("add", {
-                    required: true,
-                    pattern: "^[a-zA-Z ()0-9]+$",
-                    messages: {
-                        required: "Invalid Format",
-                        numbersOnly: "Digits only"
-                    }
-                });
-
-                entry.find('input[name="quantity[]"]').rules("add", {
-                    required: true,
-                    numbersOnly: true,
-                    min: 1,
-                    messages: {
-                        required: "Quantity is required",
-                        numbersOnly: "Digits only",
-                        min: "Quantity must be at least 1"
-                    }
-                });
-                
-                entry.find('input[name="due_date[]"]').rules("add", {
-                    required: true,
-                    dateISO: true,
-                    futureDate: true,
-                    messages: {
-                        required: "Due date is required",
-                        dateISO: "Use YYYY-MM-DD",
-                        futureDate: "Due date must be after today"
-                    }
-                });
-                // --- END OF KEY CHANGE ---
-                
-                const dateInput = entry.find(".due_date")[0];
-                new tempusDominus.TempusDominus(dateInput, {
-                    localization: { format: "yyyy-MM-dd" },
-                    restrictions: { minDate: new tempusDominus.DateTime(new Date()) },
-                    display: { components: { calendar: true, date: true, month: true, year: true } }
-                });
-
-                entry.find(".due_date").inputmask("9999-99-99");
-                updateRemoveButtons();
+    const resetInputRow = () => {
+        container.find('input').val('');
+        container.find('.due_date').each(function() {
+            $(this).inputmask("99-99-9999");
+            new tempusDominus.TempusDominus(this, {
+                localization: { format: "MM-dd-YYYY" },
+                restrictions: { minDate: new tempusDominus.DateTime(now),
+                                maxDate: new tempusDominus.DateTime(maxDate)
+                },
+                display: { components: { calendar: true, date: true, month: true, year: true } }
             });
+        });
+        if ($form.data('validator')) {
+        $form.validate().resetForm();           // clears error messages
+        $form.find('.text-danger').remove();    // clears error <span> elements
+    }
+    };
 
-            $(s.borrowCancel).on("click", () => this.resetBorrowModal(container, updateRemoveButtons));
-            
-            $(s.borrowSubmit).on("click", () => {
-                // The form.valid() call will now check all elements, including the dynamically added ones.
-                if (!$(s.borrowForm).valid()) return;
-                const payload = this.collectBorrowData(container);
-                if (!$(s.borrowForm).valid()) return;
-                this.ajaxBorrow(payload, container, updateRemoveButtons);
-            });
+    //Add-to-table handler
+    $('#add_book_btn').on('click', () => {
+        // validate only the book-entry fields, not the whole form
+        if (!$form.valid()) return;
 
-            $(s.borrowModal).on("hidden.bs.modal", () => {
-                this.resetBorrowModal(container, updateRemoveButtons);
-                clearValidationErrors(s.borrowModal);
-            });
+        const title   = $form.find('[name="lm_catalog_book_title[]"]').val();
+        const id      = $form.find('[name="book_id[]"]').val();
+        console.log("ID ",id);
+        console.log("title"+title);
+        const qty     = $form.find('[name="quantity[]"]').val();
+        const dueDate = $form.find('[name="due_date[]"]').val();
+        const parts = dueDate.split("-");
+        const dueDateISO = `${parts[2]}-${parts[0]}-${parts[1]}`;
 
-            updateRemoveButtons();
+        // append to table
+        const rowCount = $tableBody.children().length;
+        $tableBody.append(`
+            <tr>
+                <td>${rowCount + 1}</td>
+                <td>${title}<input type="hidden" name="book_title[]" value="${title}"></td>
+                <td>${qty}<input type="hidden" name="quantity_hidden[]" value="${qty}"></td>
+                <td>${dueDate}<input type="hidden" name="due_date_hidden[]" value="${dueDateISO}"></td>
+                <td>
+                    <input type="hidden" name="book_id_hidden[]" value="${id}">
+                    <button type="button" class="btn btn-sm btn-danger remove-book-row">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `);
+        $tableBody.find('.remove-book-row').last().on('click', function() {
+            $(this).closest('tr').remove();
+            // Re-number S.No
+            $tableBody.find('tr').each((i, tr) => $(tr).children().first().text(i + 1));
+        });
+
+        // clear input row for next entry
+        $form.find('[name="lm_catalog_book_title[]"], [name="quantity[]"], [name="due_date[]"], [name="book_id[]"]').val('');
+    });
+
+    // remove row
+    $tableBody.on('click', '.remove-row', function() {
+        $(this).closest('tr').remove();
+        // re-number rows
+        $tableBody.children('tr').each((i,tr) => $(tr).children().first().text(i+1));
+    });
+
+    // Save button: build payload from table rows
+    
+    
+    if (!$form.data('validator')) {
+        $form.validate({
+            rules: {
+                "member_name": { required: true },
+                "lm_catalog_book_title[]": { required: true, pattern: "^[a-zA-Z ()0-9]+$" },
+                "quantity[]": { required: true, numbersOnly: true, min: 1 },
+                "due_date[]": { required: true,  futureDate: true }
+            },
+            messages: {
+                "member_name": { required: "Member name is required" },
+                "lm_catalog_book_title[]": { required: "Book name is required", pattern: "Invalid format" },
+                "quantity[]": { required: "Quantity is required", numbersOnly: "Digits only", min: "Quantity must be at least 1" },
+                "due_date[]": { required: "Due date is required",  futureDate: "Due date must be after today" }
+            },
+            errorElement: "span",
+            errorClass: "text-danger small",
+            errorPlacement: function(error, element) {
+    const $wrapper = element.closest('.input-with-error');
+    if ($wrapper.length) {
+        error.appendTo($wrapper); // always below input
+    } else {
+        error.insertAfter(element);
+    }
+}
+        });
+    }
+
+    this.resetBorrowModal = function() {
+    const $form = $(s.borrowForm);              // your borrow form
+    const $tableBody = $('#added_books_table tbody');
+
+    // 1. Clear all form inputs
+    $form[0].reset();
+
+    // 2. Clear hidden fields (like book_id)
+    $form.find('input[type="hidden"]').val('');
+
+    // 3. Clear added books table
+    $tableBody.empty();
+
+    // 4. Reset datepickers/input masks
+    $form.find('.due_date').each(function() {
+        $(this).inputmask("99-99-9999");
+        new tempusDominus.TempusDominus(this, {
+            localization: { format: "MM-dd-YYYY" },
+            restrictions: { minDate: new tempusDominus.DateTime(now),
+                            maxDate: new tempusDominus.DateTime(maxDate)
+             },
+            display: { components: { calendar: true, date: true, month: true, year: true } }
+        });
+    });
+     if ($form.data('validator')) {
+        $form.validate().resetForm();           // clears error messages
+        $form.find('.text-danger').remove();    // clears error <span> elements
+    }
+    // 5. Optionally close the modal (if using Bootstrap)
+     $(s.borrowModal).modal('hide');
+};
+
+    // Save Button
+    $(s.borrowSubmit).on('click', () => {
+        const rowCount = $tableBody.children().length;
+        if (rowCount === 0) {
+            Swal.fire({ icon: "warning", text: "Add at least one book to borrow." });
+            return;
+        }
+
+        if (!$form.validate().element('#member_name')) return;
+
+        const books = [];
+    $tableBody.find('tr').each(function() {
+        const $tds = $(this).children();
+        books.push({
+            bookId: +$tds.eq(4).find('input[name="book_id_hidden[]"]').val(), // fetch bookId
+            quantity: +$tds.eq(2).find('input[name="quantity_hidden[]"]').val(),
+            returnDueDate: $tds.eq(3).find('input[name="due_date_hidden[]"]').val()
+        });
+    });
+
+        const payload = {
+            memberId: +$('#member_id').val(),
+            books
         };
 
-                this.resetBorrowModal = function (container, updater) {
-                    $(s.borrowForm)[0].reset();
-                    $(s.memberIdError).text("");                  // 🔑 clear member id error
-                    $(s.borrowModal).find(".text-danger.small").text("");
-                    container.innerHTML = "";
-                    $(s.addBookBtn).trigger("click");
-                    updater();
-                };
+        this.ajaxBorrow(payload, $tableBody, () => {
+            $tableBody.empty();
+            resetInputRow();
+        });
+    });
 
-                jQuery.validator.addMethod("numbersOnly", function (value, element) {
-                    return this.optional(element) || /^\d+$/.test(value);
-                }, "Please enter digits only.");
+    // Cancel/Reset
+    $(s.borrowCancel).on('click', () => {
+        $tableBody.empty();
+        resetInputRow();
+        $form[0].reset();
+    });
 
-                jQuery.validator.addMethod("futureDate", function (value, element) {
-                    if (this.optional(element)) return true;
-                    // must be YYYY-MM-DD and after today
-                    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
-                    if (!m) return false;
-                    const inputDate = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00`);
-                    const today     = new Date();
-                    today.setHours(0,0,0,0);
-                    return inputDate > today;
-                }, "Enter a valid date (YYYY-MM-DD) greater than today.");
+    // Initialize datepicker/inputmask on initial row
+    container.find('.due_date').each(function() {
+        $(this).inputmask("99-99-9999");
+        new tempusDominus.TempusDominus(this, {
+            localization: { format: "yyyy-MM-dd" },
+            restrictions: { minDate: new tempusDominus.DateTime(now),
+                            maxDate: new tempusDominus.DateTime(maxDate)
+             },
+            display: { components: { calendar: true, date: true, month: true, year: true } }
+        });
+    });
 
-            
 
-        this.collectBorrowData = function (container) {
-            const books = [];
-            container.querySelectorAll(".book-entry").forEach(entry => {
-                books.push({
-                    bookId: +entry.querySelector('[name="book_id[]"]').value,
-                    quantity: +entry.querySelector('[name="quantity[]"]').value,
-                    returnDueDate: entry.querySelector('[name="due_date[]"]').value
-                });
-            });
-            
-            return {
-                memberId: +$(s.memberId).val().trim(),
-                books
-            };
-        };
+};
 
         this.ajaxBorrow = function (payload, container, updater) {
             $(s.loader).show();
+            console.log(payload);
+            
             $.ajax({
                 url: `${apiBase}/borrowBooks`,
                 type: "POST",
@@ -552,7 +625,7 @@ const RentalTransaction = function () {
                 success: (res) => {
                     $(s.loader).hide();
                     $(s.borrowModal).modal("hide");
-                    this.resetBorrowModal(container, updater);
+                    this.resetBorrowModal();
                     Swal.fire({ icon: "success", title: "Borrowed", text: `✅ ${res.object}`, timer: 2000, showConfirmButton: false })
                         .then(() => $(s.applyFiltersBtn).click());
                 },

@@ -134,6 +134,7 @@ const Penalty = function () {
       $(s.lmPenaltyFilterValue).prop("disabled", false);
     } else {
       $(s.lmPenaltyFilterValue).prop("disabled", true).val("");
+      $("#clear_filter_value").hide(); 
     }
   };
 
@@ -143,7 +144,7 @@ const Penalty = function () {
     $(s.lmPenaltyFilterValue).val("");
     $(s.lmPenaltyStatus).val("all");
     $(s.lmPenaltyLength).val("10");
-
+    $("#clear_filter_value").hide();  
     if ($.fn.DataTable.isDataTable(s.userTable)) {
       $(s.userTable).DataTable().clear().destroy();
       $(s.userTable).hide();
@@ -220,6 +221,7 @@ const Penalty = function () {
         if ($.fn.DataTable.isDataTable(s.userTable)) $(s.userTable).DataTable().destroy();
         $(s.userTable).DataTable({
           data: [],
+          columns: this.columnsConfig(true),
           sort: false,
           destroy: true,
           dom: '<"top"p>t<"bottom"ip>',

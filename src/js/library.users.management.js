@@ -50,6 +50,8 @@ const UserManagement = function () {
     updateState:"#update_state",
     updateCountry:"#update_country",
     updatePincode:"#update_pincode",
+    updateHiddenMemberEmail: "#hidden_update_member_email",
+    updateHiddenMemberNumber:"#hidden_update_mobile_number",
 
     // membership status modal
     membershipModal: "#membership_modal",
@@ -556,7 +558,7 @@ const UserManagement = function () {
               this.showLoader(false);
               $(s.memberModal).modal("hide");
               this.resetForm(s.addForm);
-              Swal.fire({ icon: "success", title: "Member Added", text: "✅ " + res.object, timer: 2000, showConfirmButton: false })
+              Swal.fire({ icon: "success", title: "Member Added", text: "✅ " + res.object, timer: 4000, showConfirmButton: false })
                 .then(() => $(s.applyFiltersBtn).click());
             },
             error: (xhr, textStatus, errorThrown) => {
@@ -594,7 +596,7 @@ const UserManagement = function () {
               }
               else{
               const msg = xhr.responseJSON?.object || "Something went wrong.";
-              Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 4000, showConfirmButton: false });}
+              Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });}
             }
           });
         }
@@ -666,7 +668,39 @@ const UserManagement = function () {
             error: (xhr) => {
               this.showLoader(false);
               const msg = xhr.responseJSON?.message || "Something went wrong.";
+              if( xhr.responseJSON?.message === "FAILURE"){
+              //  hiddenmobileNumber
+              if (xhr.responseJSON?.object.startsWith("Email")) {
+                  // Handle email-related error
+                  $(s.updateHiddenMemberEmail).val(0);
+                $(s.updateHiddenMemberEmail).rules('add',
+                  {
+                    messages:{
+                      min:xhr.responseJSON?.object
+                    }
+                  }
+                );
+                 console.log(xhr.responseJSON?.object);
+                $(s.updateForm).validate().element(s.updateHiddenMemberEmail)
+                $(s.updateHiddenMemberEmail).val(1);
+              }
+                else if (xhr.responseJSON?.object.startsWith("Mobile")) {
+                $(s.updateHiddenMemberNumber).val(0);
+                  $(s.updateHiddenMemberNumber).rules('add',
+                    {
+                      messages:{
+                        min:xhr.responseJSON?.object
+                      }
+                    }
+                  );  
+                  console.log(xhr.responseJSON?.object);
+                  $(s.updateForm).validate().element(s.updateHiddenMemberNumber)
+                  $(s.updateHiddenMemberNumber).val(1);
+             }
+              }
+              else{
               Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });
+              }
             }
           });
         }

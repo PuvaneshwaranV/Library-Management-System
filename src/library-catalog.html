@@ -1,82 +1,88 @@
 <div class="container-fluid ">
   <div class="d-flex flex-column mb-3 p-4 rounded-2" style="background-color: #ffffff;">
-    <div class="modal fade" id="borrow_modal" tabindex="-1" aria-labelledby="borrow_modal_label" aria-hidden="true" data-bs-backdrop="static">
-      <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-body position-relative mx-3">
-            <h3 class="modal-title" id="borrow_modal_label">
-              <!-- <i class="fa-solid fa-database me-3"></i> -->
-              <img src="../assets/borrow Primary.png" alt="borrow book" height="35" width="35">
-              Borrow Book
-            </h3>
-            <button type="button" class="btn-close-custom position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"
-              aria-label="Close">
-              <i class="fa-regular fa-circle-xmark"></i>
-            </button>
-            <hr class="border border-1 border-dark opacity-100" />  
+   <div class="modal fade" id="borrow_modal" tabindex="-1"
+     aria-labelledby="borrow_modal_label" aria-hidden="true"
+     data-bs-backdrop="static">
+  <div class="modal-dialog modal-xl">   <!-- ✅ wider modal -->
+    <div class="modal-content">
+      <div class="modal-body px-4 py-3">
+        <h3 class="modal-title mb-3" id="borrow_modal_label">
+          <img src="../assets/borrow Primary.png" alt="borrow book" height="35" width="35">
+          Borrow Book
+        </h3>
+        <button type="button"
+                class="btn-close-custom position-absolute top-0 end-0 m-3"
+                data-bs-dismiss="modal" aria-label="Close">
+          <i class="fa-regular fa-circle-xmark"></i>
+        </button>
+        <hr class="border border-1 border-dark opacity-100" />
 
-              <form id="borrow_form" class="mx-5 my-4" >
-                <!-- Member ID -->
-                <div class="mb-3 position-relatives">
-                  <label for="member_name" class="form-label ">
-                Member Name
-              </label>
-                  <input type="text" class="form-control" id="member_name" name="member_name" placeholder="Member Name" />
-                  <input type="hidden" id="member_id" name="member_id" />
-                  <!-- <div id="member_id_error" class="text-danger small"></div> -->
-                </div>
-
-                <!-- Book fields container -->
-                <div id="books_container">
-                  <div class="book-entry mb-3 border p-3 rounded position-relative">
-                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 remove-book-btn"
-                      style="display:none;">
-                      <i class="fa-solid fa-trash"></i>
-                    </button>
-                    
-                    <label for="lm_catalog_book_title" class="form-label ">
-                Book Title
-              </label>
-                    <input type="text" class="form-control mb-2 book_title"   name="lm_catalog_book_title[]" placeholder="Book Title" />
-                    <input type="hidden"  class="book_id"  name="book_id[]" />
-                    <!-- <div class="text-danger small error_book_id"></div> -->
-                    
-                    <input type="number" class="form-control mb-2" id="book_quantity" placeholder="Book Quantity" name="quantity[]" />
-                    <!-- <div class="text-danger small error_quantity"></div> -->
-                    
-                    <div class="input-group  mb-2">
-                      <input type="text" class="form-control due_date border-1 border-black border-end-0"
-                        placeholder="YYYY-MM-DD" id="due_date" name="due_date[]" />
-                      <span class="input-group-text border-1 border-black border-start-0"><i
-                          class="fa fa-calendar due_date_calendar_icon"
-                          style="color: #1e3a8a; cursor: pointer"></i></span>
-                    </div>
-                    <!-- <div class="text-danger small error_due_date"></div> -->
-                  </div>
-                </div>
-
-                <!-- Add another book button -->
-                <button id="add_book_btn" type="button" class="btn btn-warning text-white w-100 mb-3">
-                  + Add Another Book
-                </button>
-
-                <div class="row">
-                  <div class="col-6">
-                    <button id="cancel" type="button" class="btn btn-secondary w-100  " >
-                      Reset
-                    </button>
-                  </div>
-                  <div class="col-6">
-                    <button id="add_btn" type="button" class="btn btn-dark w-100">
-                      Save
-                    </button>
-                  </div>
-                </div>
-              </form>
+        <!-- ========== Member ========== -->
+        <form id="borrow_form">
+          <div class="mb-3">
+            <label class="form-label">Member Name</label>
+            <input type="text" class="form-control" id="member_name" name="member_name" />
+            <input type="hidden" id="member_id" name="member_id" />
           </div>
-        </div>
+
+          <!-- ========== Book entry (single row for adding) ========== -->
+          <div id="book_input_row" class="row g-2 position-relative">
+            <div class="col-md-4 ">
+              <label class="form-label">Book Title</label>
+              <div class="input-with-error">
+              <input type="text" class="form-control book_title" name="lm_catalog_book_title[]" />
+              <input type="hidden" class="book_id" name="book_id[]" /></div>
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Quantity</label>
+              <div class="input-with-error">
+              <input type="number" class="form-control" name="quantity[]" min="1" max="10" /></div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Due Date</label>
+              <div class="input-with-error">
+              <div class="input-group">
+                <input type="text" class="form-control brder-1 border-black border-end-0 due_date" name="due_date[]" placeholder="MM-DD-YYYY" />
+                <span class="input-group-text border-1 border-black border-start-0"><i class="fa fa-calendar " style="color: #1e3a8a; cursor: pointer"></i></span>
+              </div></div>
+            </div>
+            <div class="col-md-3 position-absolute " id="add_book_div">
+              <button type="button" id="add_book_btn" class="btn btn-warning text-white w-100">
+                + Add to Table
+              </button>
+            </div>
+          </div>
+
+          <!-- ========== Table for added books ========== -->
+          <div class="table-responsive mt-4">
+            <table id="added_books_table" class="table table-bordered align-middle text-center">
+              <thead class="table-light">
+                <tr>
+                  <th>S.No</th>
+                  <th>Book Title</th>
+                  <th>Quantity</th>
+                  <th>Due Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="row justify-content-end mt-4">
+            <div class="col-2">
+              <button id="cancel" type="button" class="btn btn-secondary w-100">Reset</button>
+            </div>
+            <div class="col-2">
+              <button id="add_btn" type="button" class="btn btn-dark w-100">Save</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
+</div>
+
     <div class="modal fade" id="update_rental_modal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">

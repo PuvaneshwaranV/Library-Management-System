@@ -36,8 +36,8 @@
       }
 
       this.addEditBookValidationMessages = {
-          title: { required: "Book title is required", pattern:  "Must start with alphabet and Minimum length two",},
-          author: { required: "Author name is required", pattern: "Must start with alphabet and Minimum length two", },
+          title: { required: "Book title is required", pattern:  "Must start with a letter and can contain letters, numbers, or spaces (2-31 characters)",},
+          author: { required: "Author name is required", pattern: "Must start with a letter and may contain only letters and spaces (2-31 characters)", },
           language: { required: "Language is required" },
           quantity: { required: "Book quantity is required",pattern: "Book Quantity must between 1-999", }
       }

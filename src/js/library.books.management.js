@@ -237,6 +237,80 @@ const selectors = {
           }
           $(selectors.dataTable).DataTable({
             data: [],
+              columns: [
+              {
+            title: "S.No",
+            data: null,                // no field from the data source
+            orderable: false,
+            searchable: false,
+            render: (data, type, row, meta) => meta.row + 1 // row index + 1
+            },
+              { title: "Book ID", data: "bookId",
+                render:(d,t,r) => `#${r.bookId}`
+               },
+              { title: "Title", data: "title" },
+              { title: "Language", data: "language" },
+              { title: "Author", data: "author" },
+              { title: "Registration Date", data: "bookRegistrationDate",
+                width: "200px"
+               },
+              { title: "Book Quantity", data: "totalCount" },
+              { title: "Borrowed Quantity", data: "borrowedCount" },
+              { title: "Available Quantity", data: "availableStockCount" },
+              {
+                title: "Status",
+                data: "bookStatus",
+                render: (d, t, row) => {
+                  const bgColor = row.bookStatus === "Available" ? "#d4edda" : "#f8d7da"; // light green / light red
+                  const textColor = row.bookStatus === "Available" ? "#155724" : "#721c24"; // dark text for contrast
+
+                  return `<p style="
+                      background-color: ${bgColor}; 
+                      color: ${textColor}; 
+                      border-radius: 12px; 
+                      padding: 2px 12px; 
+                      margin: 0 auto;
+                      width: 100px;
+                      text-align: center;
+                      font-weight: 500;
+                  ">${row.bookStatus}</p>`;
+                },
+                className: "text-center", // center the column itself
+                
+              },
+              {
+                title: "Action",
+                data: null,
+                orderable: false,
+                 className: "text-center action-cell", 
+                 createdCell: function (td, cellData, rowData, row, col) {
+                    // add your own custom class and width here
+                    $(td)
+                      .addClass("action-cell")          // custom class
+                      .css({
+                          "min-width": "100px",
+                          "white-space": "nowrap",
+                          "display": "flex",
+                          "justify-content": "center",
+                          "align-items": "center",
+                          "gap": "16px"
+                      });
+                },
+                render: (d, t, row) => `
+                  
+                    <i class="fa-solid fa-pen-to-square text-grey cursor-pointer i-btn-dark  update-book" data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Edit" data-id="${row.bookId}" ></i>
+                  
+                 
+                    <i class="fa-solid fa-trash text-danger delete-book cursor-pointer" data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Delete" data-id="${row.bookId}" ></i>
+                  `,
+                   className: "text-center",
+                   
+              },
+            ],    
             sort: false,
             destroy: true,
             dom: '<"top">t<"bottom"ip>',
@@ -349,12 +423,13 @@ const selectors = {
       $(selectors.filterValue).val("");
       $(selectors.filterStatus).val("all");
       $(selectors.filterLength).val("10");
-
+      $("#clear_filter_value").hide();
       if ($.fn.DataTable.isDataTable(selectors.dataTable)) {
         $(selectors.dataTable).DataTable().clear().destroy();
         $(selectors.dataTable).hide();
         $(selectors.lmFilterChanged).css("display","none");
       }
+      $(selectors.filterValue).prop("disabled", true).val("");
     });
   };
 
@@ -382,7 +457,7 @@ const selectors = {
 
   this.toggleFilterInput = function () {
   // use the top-level constant directly
-  $(document).on("change", selectors.filterType, function () {
+  $(document).on("change", selectors.filterType, function ()  {
     const selected = $(selectors.filterType).val();
 
     if (selected && selected.toLowerCase() !== "all") {
@@ -391,7 +466,7 @@ const selectors = {
     } else {
       // disable and clear when “all” is chosen
       $(selectors.filterValue).prop("disabled", true).val("");
-      $(selectors.lmFilterChanged).css("display","block");
+      $("#clear_filter_value").hide();
     }
   });
 };
