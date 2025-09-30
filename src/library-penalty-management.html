@@ -172,12 +172,12 @@
           <input
             type="text"
             id="lm_penalty_filter_value"
-            class="form-control lm_penalty_filters text-secondary w-auto"
+            class="form-control lm_penalty_filters text-secondary w-auto text-truncate pe-4"
             placeholder="🔍 Enter Value"
           />
           <span
             id="clear_filter_value"
-            class="position-absolute end-0 top-50 translate-middle-y me-2 text-secondary"
+            class="position-absolute end-0 top-50  translate-middle-y me-2 text-secondary"
             style="cursor:pointer; display:none; font-size: 30px; padding-top: 20px; "
           >
             &times;
@@ -185,7 +185,7 @@
         </div>
       </div>
       <div class="d-flex justify-content-end gap-2">
-        <button id="lm_penalty_reset_filters" class="btn btn-secondary" style="display:none;">Reset</button>
+        <button id="lm_penalty_reset_filters" class="btn btn-warning text-white" style="display:none;">Reset</button>
         <button id="lm_penalty_apply_filters" class="btn btn-dark">Submit</button>
       </div>
     </div>

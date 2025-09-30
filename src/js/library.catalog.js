@@ -97,11 +97,11 @@ const RentalTransaction = function () {
           if (res.object.data.length !== 0) {
             autoCompleteResponse(
               res.object.data.map((eachBook) => {
-                const { bookId, title } = eachBook;
+                const { bookId, title, author } = eachBook;
                 return {
                   id: bookId,
-                  value: `${title} (${bookId})`,
-                  label: `${title} (${bookId})`,
+                  value: `${title} (${author})`,
+                  label: `${title} (${author})`,
                 };
               })
             );
@@ -316,7 +316,17 @@ const RentalTransaction = function () {
         { title: "Returned Qty", data: "bookReturnedQuantity" },
         { title: "Borrowed Date", data: "borrowedDate" },
         { title: "Return Due Date", data: "returnDueDate" },
-        { title: "Actual Return Date", data: "actualReturnedDate" },
+        { title: "Actual Return Date", data: "actualReturnedDate",
+          render:(d,t,r) =>{
+            if(r.actualReturnedDate === null){
+              return `Not returned`;
+            }
+            else{
+              return `${r.actualReturnedDate}`
+            }
+          }
+
+         },
         {
           title: "Status",
           data: "bookRentalStatus",
@@ -463,6 +473,7 @@ const RentalTransaction = function () {
     // base validation for member + single input row
     if (!$form.data("validator")) {
       $form.validate({
+        ignore:[],
         rules: {
           member_name: { required: true },
           "lm_catalog_book_title[]": {

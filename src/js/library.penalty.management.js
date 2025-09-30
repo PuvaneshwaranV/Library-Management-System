@@ -1,4 +1,5 @@
 const Penalty = function() {
+
     /**
      * 
      * Defining Selectors 
@@ -54,8 +55,11 @@ const Penalty = function() {
         $(document).off("click", ".lm_penalty_pay").on("click", ".lm_penalty_pay", this.openPayModal.bind(this));
     };
 
-
-    // ------------------ Filter / DataTable logic ------------------
+    /**
+     * 
+     * DataTable filter function
+     * 
+     */
     this.changeFilterValue = function() {
         const s = this.selectors;
         if ($.fn.DataTable.isDataTable(s.userTable)) {
@@ -207,7 +211,11 @@ const Penalty = function() {
         });
     };
 
-    // ------------------ Form Reset ------------------
+    /**
+     * 
+     * Form reset function
+     * 
+     */
     this.resetPenaltyForm = () => {
         const s = this.selectors;
         const $form = $(s.lmPenaltyForm);
@@ -217,7 +225,11 @@ const Penalty = function() {
         }
     };
 
-    // ------------------ Form Validation ------------------
+    /**
+     * 
+     * Validate form
+     * 
+     */
     this.validateForm = () => {
         const s = this.selectors;
         const $form = $(s.lmPenaltyForm);
@@ -254,7 +266,6 @@ const Penalty = function() {
     // ------------------ CRUD ------------------
     this.addPenalty = function() {
         if ($(this.selectors.lmPenaltyForm).valid()) {
-            // ✅ Show SweetAlert confirmation
             Swal.fire({
                 title: "Add this penalty?",
                 text: "Please confirm the penalty details before saving.",
@@ -267,9 +278,7 @@ const Penalty = function() {
                 if (result.isConfirmed) {
                     const s = this.selectors;
                     $(s.loader).show();
-                    console.log("HI");
-
-                    let params = {
+                        let params = {
                         TransactionId: parseInt($(s.lmPenaltyTransactionId).val().trim()),
                         amount: parseInt($(s.lmPenaltyAmount).val().trim()),
                         reason: $(s.lmPenaltyReason).val().trim(),
@@ -392,7 +401,16 @@ const Penalty = function() {
             },
             { title: "Amount", data: "amount" },
             { title: "Penalty Added Flag", data: "penaltyAddedFlag" },
-            { title: "Penalty Amount", data: "penaltyAmount" },
+            { title: "Penalty Amount", data: "penaltyAmount",
+                render:(data,type,row) =>{
+                    if(row.penaltyAmount === null){
+                        return `0`;
+                    }
+                    else{
+                        return `${row.penaltyAmount}`;
+                    }
+                }
+             },
             { title: "Reason", data: "reason" },
             {
                 title: "Status",
@@ -410,7 +428,16 @@ const Penalty = function() {
                         ">${row.status}</span>`
                 },
             },
-            { title: "Payment Date", data: "paymentDate" },
+            { title: "Payment Date", data: "paymentDate",
+                render:(data,type,row) =>{
+                    if(row.paymentDate === null){
+                        return `Not Paid`;
+                    }
+                    else{
+                        return `${row.paymentDate}`;
+                    }
+                }
+             },
         ];
 
         if (withActions) {

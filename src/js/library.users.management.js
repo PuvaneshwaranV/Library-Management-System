@@ -174,7 +174,7 @@ const UserManagement = function() {
                     success: (res) => {
                         if ($.fn.DataTable.isDataTable(s.userTable)) $(s.userTable).DataTable().destroy();
                         $(s.userTable).DataTable({
-                            data: res.object ? .data || [],
+                            data: res.object ?.data || [],
                             sort: false,
                             destroy: true,
                             dom: '<"top d-flex justify-content-end "<"dt-left"> <"dt-right d-flex align-items-center"p>>t<"bottom"ip>',
@@ -353,7 +353,7 @@ const UserManagement = function() {
                     address_line2: { pattern: "Invalid adress format" },
                     state: { required: "State is required", pattern: "Letters ans spaces only allowed" },
                     country: { required: "Country is required", pattern: "Letters ans spaces only allowed" },
-                    pincode: { required: "Zipcode is required", pattern: "Must be 5 Digits" }
+                    pincode: { required: "Zipcode is required", pattern: "Must be 5 Digits only" }
                 },
                 errorPlacement: function(error, element) {
                     if (element.closest(".input-group").length) {
@@ -389,7 +389,7 @@ const UserManagement = function() {
                     update_country: { required: true, pattern: /^[A-Za-z \s]+$/ },
                     update_pincode: {
                         required: true,
-                        pattern: /^\d{5}(-\d{4})?$/ // US ZIP or ZIP+4
+                        pattern: /^\d{5}$/ 
                     },
                     update_membership_end_date: { required: true, pattern: /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\d{4}$/, notPastDate: true }
                 },
@@ -411,7 +411,7 @@ const UserManagement = function() {
                     update_country: { required: "Country is required", pattern: "Letters ans spaces only allowed" },
                     update_pincode: {
                         required: "Zipcode is required",
-                        pattern: "Use 5 digits or 5-4 format (e.g. 12345 or 12345-6789)"
+                        pattern: "Use 5 digits only"
                     },
                     update_membership_end_date: { required: "End date is required", pattern: "Use MM-DD-YYYY", notPastDate: "Date cannot be earlier than today." }
                 },
@@ -583,33 +583,33 @@ const UserManagement = function() {
                     },
                     error: (xhr, textStatus, errorThrown) => {
                         this.showLoader(false);
-                        console.log(xhr.responseJSON ? .message);
-                        if (xhr.responseJSON ? .message === "FAILURE") {
+                        console.log(xhr.responseJSON ?.message);
+                        if (xhr.responseJSON ?.message === "FAILURE") {
                             //  hiddenmobileNumber
-                            if (xhr.responseJSON ? .object.startsWith("Email")) {
+                            if (xhr.responseJSON ?.object.startsWith("Email")) {
                                 // Handle email-related error
                                 $(s.hiddenMemberEmail).val(0);
                                 $(s.hiddenMemberEmail).rules('add', {
                                     messages: {
-                                        min: xhr.responseJSON ? .object
+                                        min: xhr.responseJSON ?.object
                                     }
                                 });
-                                console.log(xhr.responseJSON ? .object);
+                                console.log(xhr.responseJSON ?.object);
                                 $(s.addForm).validate().element(s.hiddenMemberEmail)
                                 $(s.hiddenMemberEmail).val(1);
-                            } else if (xhr.responseJSON ? .object.startsWith("Mobile")) {
+                            } else if (xhr.responseJSON ?.object.startsWith("Mobile")) {
                                 $(s.hiddenmobileNumber).val(0);
                                 $(s.hiddenmobileNumber).rules('add', {
                                     messages: {
-                                        min: xhr.responseJSON ? .object
+                                        min: xhr.responseJSON ?.object
                                     }
                                 });
-                                console.log(xhr.responseJSON ? .object);
+                                console.log(xhr.responseJSON ?.object);
                                 $(s.addForm).validate().element(s.hiddenmobileNumber)
                                 $(s.hiddenmobileNumber).val(1);
                             }
                         } else {
-                            const msg = xhr.responseJSON ? .object || "Something went wrong.";
+                            const msg = xhr.responseJSON ?.object || "Something went wrong.";
                             Swal.fire({ icon: "error", title: "Oops...", text: "❌ " + msg, timer: 2000, showConfirmButton: false });
                         }
                     }
@@ -682,28 +682,28 @@ const UserManagement = function() {
                     },
                     error: (xhr) => {
                         this.showLoader(false);
-                        const msg = xhr.responseJSON ? .message || "Something went wrong.";
-                        if (xhr.responseJSON ? .message === "FAILURE") {
+                        const msg = xhr.responseJSON ?.message || "Something went wrong.";
+                        if (xhr.responseJSON ?.message === "FAILURE") {
                             //  hiddenmobileNumber
-                            if (xhr.responseJSON ? .object.startsWith("Email")) {
+                            if (xhr.responseJSON ?.object.startsWith("Email")) {
                                 // Handle email-related error
                                 $(s.updateHiddenMemberEmail).val(0);
                                 $(s.updateHiddenMemberEmail).rules('add', {
                                     messages: {
-                                        min: xhr.responseJSON ? .object
+                                        min: xhr.responseJSON ?.object
                                     }
                                 });
-                                console.log(xhr.responseJSON ? .object);
+                                console.log(xhr.responseJSON ?.object);
                                 $(s.updateForm).validate().element(s.updateHiddenMemberEmail)
                                 $(s.updateHiddenMemberEmail).val(1);
-                            } else if (xhr.responseJSON ? .object.startsWith("Mobile")) {
+                            } else if (xhr.responseJSON ?.object.startsWith("Mobile")) {
                                 $(s.updateHiddenMemberNumber).val(0);
                                 $(s.updateHiddenMemberNumber).rules('add', {
                                     messages: {
-                                        min: xhr.responseJSON ? .object
+                                        min: xhr.responseJSON ?.object
                                     }
                                 });
-                                console.log(xhr.responseJSON ? .object);
+                                console.log(xhr.responseJSON ?.object);
                                 $(s.updateForm).validate().element(s.updateHiddenMemberNumber)
                                 $(s.updateHiddenMemberNumber).val(1);
                             }
@@ -748,7 +748,7 @@ const UserManagement = function() {
             success: (res) => {
                 if ($.fn.DataTable.isDataTable(s.userTable)) $(s.userTable).DataTable().destroy();
                 $(s.userTable).DataTable({
-                    data: res.object ? .data || [],
+                    data: res.object ?.data || [],
                     sort: false,
                     destroy: true,
                     dom: '<"top d-flex justify-content-between align-items-center"<"dt-left"> <"dt-right d-flex align-items-center"p>>t<"bottom"ip>',
@@ -919,7 +919,7 @@ const UserManagement = function() {
                     // bind AFTER init and AFTER modal is visible
                     $('#calendar_icon_change').off('click').on('click', e => {
                         e.stopPropagation();
-                        const isOpen = this.statusEndDp.display ? .isVisible(); // v6/v7 API
+                        const isOpen = this.statusEndDp.display ?.isVisible(); // v6/v7 API
                         if (isOpen) {
                             this.statusEndDp.hide(); // close it
                         } else {
@@ -1030,8 +1030,6 @@ const UserManagement = function() {
                 if (m.memberMobileNumber) {
                     $(s.updateMobileNumber).val(m.memberMobileNumber.replace(/^\+91\s?/, "").replace(/\D/g, ""));
                 }
-
-
                 try {
 
                     $('#update_member_modal').on('shown.bs.modal', () => {
@@ -1103,8 +1101,15 @@ const UserManagement = function() {
 
                 // Status with color
                 const statusText = m.memberShipStatus || "N/A";
-                const statusColor = statusText.toLowerCase() === "active" ? "green" : "red";
-                $(s.profileStatus).text(`Status: ${statusText}`).css("color", statusColor);
+                const $statusEl = $(s.profileStatus);
+
+                $statusEl.text(`Status: ${statusText}`).removeClass("text-success text-danger text-muted");
+
+                if (statusText.toLowerCase() === "active") {
+                    $statusEl.addClass("text-success"); // Bootstrap green
+                } else  {
+                    $statusEl.addClass("text-danger"); // Bootstrap red
+                }
 
                 $(s.profileEmail).text(m.memberEmail || "N/A");
                 $(s.profileMobile).text(m.memberMobileNumber || "N/A");
