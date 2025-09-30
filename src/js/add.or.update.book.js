@@ -138,10 +138,6 @@
     initValidation() {
       const form = $(this.Selectors.form);
       this.customValidationMethods();
-      // if (form.data("validator")) {
-      //   form.removeData("validator").removeData("unobtrusiveValidation");
-      // }
-
       form.validate({ ignore: [], onkeyup: false, rules: this.addEditBookValidationRules, messages: this.addEditBookValidationMessages });
     }
 
@@ -166,6 +162,9 @@
     open(data = null) {
       if (data) {
         this.bookId = data.bookId;
+        if ($(this.Selectors.form).data("validator")) {
+          $(this.Selectors.form).validate().resetForm();
+        }
         this.prevQty = data.totalCount;
         $(this.Selectors.titleInput).val(data.title);
         $(this.Selectors.authorInput).val(data.author);

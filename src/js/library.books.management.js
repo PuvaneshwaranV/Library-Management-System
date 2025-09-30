@@ -132,12 +132,18 @@ const selectors = {
             searchable: false,
             render: (data, type, row, meta) => meta.row + 1 // row index + 1
             },
-              { title: "Book ID", data: "bookId",
+              { title: "Book Id", data: "bookId",
                 render:(d,t,r) => `#${r.bookId}`
                },
-              { title: "Title", data: "title" },
-              { title: "Language", data: "language" },
-              { title: "Author", data: "author" },
+              { title: "Title", data: "title",
+                className:"text-capitalize"
+               },
+              { title: "Language", data: "language",
+                className:"text-capitalize"
+               },
+              { title: "Author", data: "author",
+                className:"text-capitalize"
+               },
               { title: "Registration Date", data: "bookRegistrationDate",
                 width: "200px"
                },
@@ -150,17 +156,22 @@ const selectors = {
                 render: (d, t, row) => {
                   const bgColor = row.bookStatus === "Available" ? "#d4edda" : "#f8d7da"; // light green / light red
                   const textColor = row.bookStatus === "Available" ? "#155724" : "#721c24"; // dark text for contrast
-
+                  let bookstatus ="";
+                  if(row.bookStatus ==="Available"){
+                    bookstatus = "In Stock"
+                  }
+                  else
+                    bookstatus = "Checked Out"
                   return `<p style="
                       background-color: ${bgColor}; 
                       color: ${textColor}; 
                       border-radius: 12px; 
                       padding: 2px 12px; 
                       margin: 0 auto;
-                      width: 100px;
+                      width: 115px;
                       text-align: center;
                       font-weight: 500;
-                  ">${row.bookStatus}</p>`;
+                  ">${bookstatus}</p>`;
                 },
                 className: "text-center", // center the column itself
                 
@@ -187,7 +198,7 @@ const selectors = {
                   
                     <i class="fa-solid fa-pen-to-square text-grey cursor-pointer i-btn-dark  update-book" data-bs-toggle="tooltip"
                     data-bs-placement="top"
-                    title="Edit" data-id="${row.bookId}" ></i>
+                    title="Edit Book Details" data-id="${row.bookId}" ></i>
                   
                  
                     <i class="fa-solid fa-trash text-danger delete-book cursor-pointer" data-bs-toggle="tooltip"
@@ -245,12 +256,18 @@ const selectors = {
             searchable: false,
             render: (data, type, row, meta) => meta.row + 1 // row index + 1
             },
-              { title: "Book ID", data: "bookId",
+              { title: "Book Id", data: "bookId",
                 render:(d,t,r) => `#${r.bookId}`
                },
-              { title: "Title", data: "title" },
-              { title: "Language", data: "language" },
-              { title: "Author", data: "author" },
+              { title: "Title", data: "title",
+                className:"text-capitalize"
+               },
+              { title: "Language", data: "language",
+                className:"text-capitalize"
+               },
+              { title: "Author", data: "author",
+                className:"text-capitalize"
+               },
               { title: "Registration Date", data: "bookRegistrationDate",
                 width: "200px"
                },

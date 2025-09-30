@@ -1,13 +1,12 @@
-
-  const Dashboard = function () {
-    this.selectors = {
+const Dashboard = function () {
+    this.Selectors = {
       loader: "#loader",
-      mainContainer: "#dashboardContainer",
-      bookStatusChart: "#bookStatusChart",
-      rentalsChart: "#rentalsChart",
-      membersChart: "#membersChart",
-      totalMembers: "#totalMembers",
-      activePenalties: "#activePenalties",
+      mainContainer: "#dashboard_container",
+      bookStatusChart: "#book_status_chart",
+      rentalsChart: "#rentals_chart",
+      membersChart: "#members_chart",
+      totalMembers: "#total_members",
+      activePenalties: "#active_penalties",
       refreshBtn: "#dashboard_refresh_btn"
     };
 
@@ -18,16 +17,14 @@
    
     // ---------------- INIT -----------------
     this.init = () => {
-      const s = this.selectors;
-
       // Hide dashboard until data is ready
-      $(s.mainContainer).hide();
-      $(s.loader).show();
+      $(this.Selectors.mainContainer).hide();
+      $(this.Selectors.loader).show();
 
       // Optional manual refresh
       $(document)
-        .off("click", s.refreshBtn)
-        .on("click", s.refreshBtn, () => this.fetchAndRender());
+        .off("click", this.Selectors.refreshBtn)
+        .on("click", this.Selectors.refreshBtn, () => this.fetchAndRender());
 
       // Initial load
       this.fetchAndRender();
@@ -69,9 +66,8 @@
 
     // -------------- CORE ---------------
     this.fetchAndRender = () => {
-      const s = this.selectors;
-      $(s.loader).show();
-      $(s.mainContainer).hide();
+      $(this.Selectors.loader).show();
+      $(this.Selectors.mainContainer).hide();
 
       // Fire all three requests together
       Promise.allSettled([
@@ -82,12 +78,12 @@
         .then(([membersRes, penaltyRes, booksRes]) => {
           // -------- Members --------
           if (membersRes.status === "fulfilled" && membersRes.value?.object) {
-            $(s.totalMembers).text(membersRes.value.object.fetchedRecords || 0);
+            $(this.Selectors.totalMembers).text(membersRes.value.object.fetchedRecords || 0);
           }
 
           // -------- Penalties --------
           if (penaltyRes.status === "fulfilled" && penaltyRes.value?.object) {
-            $(s.activePenalties).text(penaltyRes.value.object.fetchedRecords || 0);
+            $(this.Selectors.activePenalties).text(penaltyRes.value.object.fetchedRecords || 0);
           }
 
           // -------- Books (Available vs Borrowed) --------
@@ -106,8 +102,8 @@
         })
         .catch(err => console.error("Dashboard fetch error:", err))
         .finally(() => {
-          $(s.loader).hide();
-          $(s.mainContainer).show();
+          $(this.Selectors.loader).hide();
+          $(this.Selectors.mainContainer).show();
         });
     };
 
@@ -119,7 +115,7 @@
     };
 
     this.initBookStatusChart = (available, borrowed) => {
-      const ctx = $(this.selectors.bookStatusChart)[0];
+      const ctx = $(this.Selectors.bookStatusChart)[0];
       if (!ctx) return;
       this._destroyIfExists(this.bookStatusInstance);
 
@@ -142,7 +138,7 @@
     };
 
     this.initRentalsChart = () => {
-      const ctx = $(this.selectors.rentalsChart)[0];
+      const ctx = $(this.Selectors.rentalsChart)[0];
       if (!ctx) return;
       this._destroyIfExists(this.rentalsInstance);
 
@@ -168,7 +164,7 @@
     };
 
     this.initMembersChart = () => {
-      const ctx = $(this.selectors.membersChart)[0];
+      const ctx = $(this.Selectors.membersChart)[0];
       if (!ctx) return;
       this._destroyIfExists(this.membersInstance);
 

@@ -98,7 +98,7 @@
             </button>
             <hr class="border border-1 border-dark opacity-100" />
 
-            <form class="mx-5 my-4">
+            <form class="mx-5 my-4" id="update_single_book_form">
               <div class="mb-3">
                 <label for="update_transactionId" class="form-label ">
               Transaction Id
@@ -116,7 +116,7 @@
                 <label for="update_quantity" class="form-label ">
               Book Quantity
             </label>
-                <input type="number" class="form-control" id="update_quantity" placeholder="Book Quantity" min="1" />
+                <input type="number" class="form-control" id="update_quantity" name="update_quantity" placeholder="Book Quantity" min="1" max="999" />
               </div>
               <div class="row">
                 <div class="col-6">

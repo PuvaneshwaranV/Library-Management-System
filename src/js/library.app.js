@@ -206,7 +206,7 @@ const App = function () {
         ];
 
         cardMap.forEach(card => {
-            const $card = $("#dashboardContainer").find(card.selector);
+            const $card = $("#dashboard_container").find(card.selector);
             $card.css("cursor", "pointer");
             $card.on("click", () => {
                 const filterString = encodeURIComponent(JSON.stringify(card.filter));
