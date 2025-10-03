@@ -100,18 +100,18 @@
 
             <form class="mx-5 my-4" id="update_single_book_form">
               <div class="mb-3">
-                <label for="update_transactionId" class="form-label ">
-              Transaction Id
-            </label>
-                <input type="text" class="form-control" id="update_transactionId"  placeholder="Transaction ID"
+                
+                <input type="hidden" class="form-control" id="update_transactionId"  placeholder="Transaction ID"
                   disabled />
               </div>
               <div class="mb-3">
-                <label for="update_bookId" class="form-label ">
-              Book Id
-            </label>
-                <input type="text" class="form-control" id="update_bookId"  placeholder="Book ID" disabled />
+              
+                <input type="hidden" class="form-control" id="update_bookId"  placeholder="Book ID" disabled />
               </div>
+              <div class="mb-4">
+                <h4>Are you sure about returning the book "<span id="lm_returning_book_title" class="text-capitalize text-secondary fw-bold" ></span>"?</h4>
+              </div>
+              
               <div class="mb-3">
                 <label for="update_quantity" class="form-label ">
               Book Quantity

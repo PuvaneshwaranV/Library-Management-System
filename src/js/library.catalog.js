@@ -41,6 +41,7 @@ const RentalTransaction = function () {
     updateDueInput: "#update_due_date", // <-- input in update modal
     updateCalendarIcon: ".update_due_date_calendar_icon", // <-- icon in update modal
     updateQuantityName: ".update_quantity",
+    lmReturningBookTitle: "#lm_returning_book_title",
 
     // PDF
     pdfBtn: "#transaction_pdf",
@@ -279,6 +280,8 @@ const RentalTransaction = function () {
     if ($.fn.DataTable.isDataTable(s.table)) {
       $(s.table).DataTable().destroy();
     }
+    console.log(data);
+    
     $(s.table).DataTable({
       data,
       autoWidth: false,
@@ -350,14 +353,14 @@ const RentalTransaction = function () {
         {
           title: "Action",
           data: null,
-          orderable: false,
+          orderable: false,      
           render: (d, t, row) =>
             row.bookRentalStatus === "Borrowed"
               ? `<button class="btn btn-md  update-rental"
                                         data-bs-toggle="tooltip"
                                        data-id="${row.transactionId}"
                                        data-bookid="${row.bookId}"
-                                       data-quantity="${row.quantity}" title="Return Book">
+                                       data-quantity="${row.quantity}" data-booktittle="${row.bookTittle}" title="Return Book">
                                        <img src="../../assets/returning.png" alt="return book" height="25" width="25">
                                    </button>`
               : `<span data-bs-toggle="tooltip" title="Already Returned"><button class="btn btn-md border-0" disabled>
@@ -890,6 +893,7 @@ const RentalTransaction = function () {
     $(document).on("click", ".update-rental", function () {
       $(s.updateTransaction).val($(this).data("id"));
       $(s.updateBookId).val($(this).data("bookid"));
+      $("#lm_returning_book_title").text($(this).data("booktittle"));
       $(s.updateQuantity).val($(this).data("quantity"));
       $(s.updateRentalModal).modal("show");
     });
