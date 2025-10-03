@@ -42,6 +42,15 @@ const RentalTransaction = function () {
     updateCalendarIcon: ".update_due_date_calendar_icon", // <-- icon in update modal
     updateQuantityName: ".update_quantity",
     lmReturningBookTitle: "#lm_returning_book_title",
+    lmPenaltyModal: "#lm_penalty_modal",
+    lmPenaltyForm: "#lm_penalty_add_form",
+    lmPenaltyTransactionId: "#lm_penalty_transactionid",
+    lmPenaltyAmount: "#lm_penalty_amount",
+    lmPenaltyReason: "#lm_penalty_reason",
+    lmPenaltyReset: "#lm_penalty_reset",
+    lmPenaltyReset: "#lm_penalty_reset",
+    lmPenaltyReset: "#lm_penalty_reset",
+    lmPenaltyAddBtn: "#lm_penalty_add_btn",
 
     // PDF
     pdfBtn: "#transaction_pdf",
@@ -63,6 +72,7 @@ const RentalTransaction = function () {
     this.bindPDFHandler();
     this.bindDatePickers();
     this.rentalFilter();
+    this.addPenaltyHandlers();
 
     $("#member_name").autocomplete({
       minLength: 3,
@@ -210,6 +220,113 @@ const RentalTransaction = function () {
       .off("input")
       .on("input", () => this.changeFilterInput());
   };
+
+
+  this.addPenaltyHandlers = function(){
+      this.validateForm();
+      $(s.lmPenaltyModal).on("hidden.bs.modal", this.resetPenaltyForm.bind(this));
+      $(s.lmPenaltyAddBtn).on("click", this.addPenalty.bind(this));
+      $(s.lmPenaltyReset).on("click", this.resetPenaltyForm.bind(this));
+  };
+
+ $(document).on("click", "#lm_add_penalty_modal_btn", function () {
+    const transactionId = $(this).data("id");
+    $("#lm_penalty_transactionid").val(transactionId);
+});
+
+  /**
+     * 
+     * Form reset function
+     * 
+     */
+    this.resetPenaltyForm = () => {
+        const $form = $(s.lmPenaltyForm);
+        $form.trigger("reset");
+        if ($form.length) {
+            if ($form.data("validator")) $form.validate().resetForm();
+        }
+    };
+
+    /**
+     * 
+     * Validate form
+     * 
+     */
+    this.validateForm = () => {
+        const $form = $(s.lmPenaltyForm);
+
+        if ($form.data("validator")) {
+            $form.removeData("validator").removeData("unobtrusiveValidation");
+        }
+
+        jQuery.validator.addMethod(
+            "pattern",
+            function(value, element, param) {
+                const re = new RegExp(param);
+                return this.optional(element) || re.test(value);
+            },
+            "Invalid format."
+        );
+
+        $form.validate({
+            ignore: [],
+            onkeyup: false,
+            rules: {
+                lm_penalty_transactionid: { required: true, pattern: /^[1-9][0-9]*$/ },
+                lm_penalty_amount: { required: true, pattern: /^[1-9][0-9]*$/, maxlength:3 },
+                lm_penalty_reason: { required: true, pattern: /^[a-zA-Z ]+$/, minlength: 5 },
+            },
+            messages: {
+                lm_penalty_transactionid: { required: "Transaction Id is required", pattern: "Transaction Id must be +ve Number" },
+                lm_penalty_amount: { required: "Penalty amount is required", pattern: "Penalty amount must be +ve Number", maxlength:"Penalty amount not excced the 999" },
+                lm_penalty_reason: { required: "Penalty reason is required", pattern: "Penalty reason Only Letters", minlength: "Minimum 5 characters" },
+            },
+        });
+    };
+
+    // ------------------ CRUD ------------------
+    this.addPenalty = function() {
+        if ($(s.lmPenaltyForm).valid()) {
+            Swal.fire({
+                title: "Add this penalty?",
+                text: "Please confirm the penalty details before saving.",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Yes, Add",
+                cancelButtonText: "Cancel",
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(s.loader).show();
+                        let params = {
+                        TransactionId: parseInt($(s.lmPenaltyTransactionId).val().trim()),
+                        amount: parseInt($(s.lmPenaltyAmount).val().trim()),
+                        reason: $(s.lmPenaltyReason).val().trim(),
+                    };
+
+                    $.ajax({
+                        url: "http://localhost:8080/LibraryManagementSystem/Penalty/add",
+                        type: "POST",
+                        data: params,
+                        success: () => {
+                            $(s.loader).hide();
+                            $(s.lmPenaltyModal).modal("hide");
+                            Swal.fire({
+                                icon: "success",
+                                title: "Added",
+                                text: "✅ Penalty Added Successfully",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            }).then(() => $(s.lmPenaltyApplyFilters).click());
+                            this.resetPenaltyForm();
+                        },
+                        error: (xhr) => this.showAjaxError(xhr),
+                    });
+                }
+            });
+        }
+    };
+
   /**
    *
    */
@@ -365,7 +482,15 @@ const RentalTransaction = function () {
                                    </button>`
               : `<span data-bs-toggle="tooltip" title="Already Returned"><button class="btn btn-md border-0" disabled>
                                        <img src="../../assets/already return.png" alt="already returned" height="25" width="25">
-                                   </button></span>`,
+                                   </button></span>
+                                  
+                          <span data-bs-toggle="tooltip" title="Add Penalty">
+                          <img  data-id="${row.transactionId}" style="cursor:pointer;"  data-bs-toggle="modal" 
+                          data-bs-target="#lm_penalty_modal" id="lm_add_penalty_modal_btn" width="30" height="30" src="https://img.icons8.com/ios/100/add-dollar.png" alt="add-dollar"/>
+                          </span>
+                
+                        `,
+              
         },
       ],
       initComplete: function () {

@@ -88,15 +88,19 @@
                     <input type="text" class="form-control" id="address_line2" name="address_line2" placeholder="Address Line 2" />
                   </div>
                   <div class="col-4">
-                    <label for="state">State <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="state" name="state" placeholder="State" />
+                    <label for="city">City <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="city" name="city" placeholder="City" />
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <div class="col-4">
+                    <label for="state">State <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="state" name="state" placeholder="State" />
+                  </div>
+                  <div class="col-4">
                     <label for="country">Country <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="country" name="country" placeholder="Country" />
+                    <input type="text" class="form-control" id="country" value="America" name="country" placeholder="Country" disabled/>
                   </div>
                   <div class="col-4">
                     <label for="pincode">Zipcode <span class="text-danger">*</span></label>
@@ -104,16 +108,16 @@
                   </div>
                 </div>
               <div class="row justify-content-end">
-                <div class="col-3">
-                  <button
+                <div class="col-2">
+                <button
                     id="member_cancel_btn"
-                    type="button"
+                    type="button" data-bs-dismiss="modal"
                     class="btn btn-secondary w-100"
                   >
-                    Reset
+                    Cancel  
                   </button>
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                   <button
                     id="member_add_btn"
                     type="button"
@@ -224,15 +228,19 @@
                   <input type="text" class="form-control" id="update_address_line2" name="update_address_line2" placeholder="Address Line 2" />
                 </div>
                 <div class="col-4">
-                  <label for="update_state">State <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="update_state" name="update_state" placeholder="State" />
+                  <label for="update_city">City <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_city" name="update_city" placeholder="City" />
                 </div>
               </div>
 
               <div class="row mb-3">
                 <div class="col-4">
+                  <label for="update_state">State <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="update_state" name="update_state" placeholder="State" />
+                </div>
+                <div class="col-4">
                   <label for="update_country">Country <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="update_country" name="update_country" placeholder="Country" />
+                  <input type="text" class="form-control" id="update_country" name="update_country"  placeholder="Country" />
                 </div>
                 <div class="col-4">
                   <label for="update_pincode">Zipcode <span class="text-danger">*</span></label>

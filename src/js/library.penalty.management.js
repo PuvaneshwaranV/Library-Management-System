@@ -170,21 +170,6 @@ const Penalty = function() {
                     lengthMenu: [10, 25, 50, 100],
                     language: { emptyTable: "No data found" },
                     columns: this.columnsConfig(true),
-                    initComplete: function() {
-                        const dtRight = $('.dt-right');
-                        if (dtRight.children('#lm_add_penalty_modal_btn').length === 0) {
-                            dtRight.prepend(`
-                        <button id="lm_add_penalty_modal_btn"
-                          class="btn btn-warning text-white "
-                          data-bs-toggle="modal"
-                          data-bs-target="#lm_penalty_modal"
-                        >
-                          <i class="fa-solid fa-dollar-sign fa-lg me-1" style="color: #ffffff"></i>
-                          Add Penalty
-                        </button>
-                    `);
-                        }
-                    },
                     drawCallback: function() {
                         const tipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
                         tipEls.forEach((el) => {
@@ -316,16 +301,7 @@ const Penalty = function() {
     };
 
     this.payPenalty = function() {
-        Swal.fire({
-            title: "Pay this penalty?",
-            text: "Please confirm the penalty details before Paying.",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Yes, Pay",
-            cancelButtonText: "Cancel",
-            reverseButtons: true,
-        }).then((result) => {
-            if (result.isConfirmed) {
+       
                 const s = this.selectors;
                 $(s.loader).show();
 
@@ -351,8 +327,7 @@ const Penalty = function() {
                     },
                     error: (xhr) => this.showError(xhr),
                 });
-            }
-        });
+            
     };
 
     // ------------------ Error handling ------------------
@@ -411,7 +386,9 @@ const Penalty = function() {
                     }
                 }
              },
-            { title: "Reason", data: "reason" },
+            { title: "Reason", data: "reason",
+                className:"text-capitalize"
+             },
             {
                 title: "Status",
                 data: "status",
@@ -427,6 +404,7 @@ const Penalty = function() {
                         font-weight: 500;
                         ">${row.status}</span>`
                 },
+                
             },
             { title: "Payment Date", data: "paymentDate",
                 render:(data,type,row) =>{
@@ -453,11 +431,11 @@ const Penalty = function() {
                   title="Pay Penalty" data-bs-target="#lm_penalty_pay_modal"
                   data-id="${row.penaltyId}" data-amount="${row.amount}">
                   Pay Now
-              </button>` : `<span data-bs-toggle="tooltip" data-bs-placement="top" class="text-center" title="Already Paid">
-                  <button class="btn btn-md  border-0" style="width:80px;" disabled>
-                    <i class="fa-solid fa-dollar-sign text-grey" ></i>
-                  </button>
-              </span>`,
+              </button>` : `
+                  <span data-bs-toggle="tooltip" data-bs-placement="top"  title="Already Paid" ><button disabled class="btn btn-sm text-center  border-0" style="background-color:#1e3a8a;color:#fff;width:80px;" >
+                    Paid
+                  </button></span>
+              `,
 
             });
         }

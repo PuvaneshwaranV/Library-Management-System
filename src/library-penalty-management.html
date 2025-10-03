@@ -85,49 +85,45 @@
       aria-labelledby="lm_penalty_pay_modal_label"
       aria-hidden="true" data-bs-backdrop="static"
     >
-      <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-body position-relative mx-3">
-            <h3 class="modal-title" id="lm_penalty_pay_modal_label">
-              <i class="fa-solid fa-dollar-sign me-3"></i>Pay Penalty
-            </h3>
-            <button
-              type="button"
-              class="btn-close-custom position-absolute top-0 end-0 m-3"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            >
-              <i class="fa-regular fa-circle-xmark"></i>
-            </button>
-            <hr class="border border-1 border-dark opacity-100" />
-            <form class="mx-5 my-4">
+          <div class="modal-body position-relative ">
+            <form class="mx-1 my-4">
               <div class="mb-3">
-                <label for="lm_penalty_pay_penaltyid" class="form-label ">
-              Penalty Id
-            </label>
+               
                 <input
-                  type="text"
+                  type="hidden"
                   class="form-control"
                   id="lm_penalty_pay_penaltyid"
                   placeholder="Penalty ID" disabled
                 />
               </div>
               <div class="mb-3">
-                <label for="lm_penalty_pay_amount" class="form-label ">
-              Penalty Amount
-            </label>
                 <input
-                  type="text"
+                  type="hidden"
                   class="form-control"
                   id="lm_penalty_pay_amount"
                   placeholder="Amount" disabled
                 />
               </div>
-              <div class="row">
+              <div class="mb-5"> 
+                <h4 class="text-success text-center fw-bold">Please confirm the penalty details before pay.</h4>
+              </div>
+              <div class="row d-flex justify-content-center">
+                <div class="col-3">
+                    <button
+                      type="button"
+                      class="btn btn-secondary w-100"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      Cancel
+                    </button>
+                </div>
                 
-                <div class="col-12">
+                <div class="col-3">
                   <button id="lm_penalty_pay_btn" type="button" class="btn btn-dark w-100">
-                    Pay
+                    Pay 
                   </button>
                 </div>
               </div>
@@ -187,6 +183,7 @@
       <div class="d-flex justify-content-end gap-2">
         <button id="lm_penalty_reset_filters" class="btn btn-warning text-white" style="display:none;">Reset</button>
         <button id="lm_penalty_apply_filters" class="btn btn-dark">Submit</button>
+        
       </div>
     </div>
     

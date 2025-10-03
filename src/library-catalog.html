@@ -81,7 +81,81 @@
       </div>
     </div>
   </div>
-</div>
+  </div>
+
+  <div
+      class="modal fade"
+      id="lm_penalty_modal"
+      tabindex="-1"
+      aria-labelledby="lm_penalty_modal_label"
+      data-bs-backdrop="static"
+      aria-hidden="true" data-bs-backdrop="static"
+    >
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-body position-relative mx-3">
+            <h3 class="modal-title" id="lm_penalty_modal_label">
+              <i class="fa-solid fa-dollar-sign me-3"></i>Add Penalty
+            </h3>
+            <button
+              type="button"
+              class="btn-close-custom position-absolute top-0 end-0 m-3"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              <i class="fa-regular fa-circle-xmark"></i>
+            </button>
+            <hr class="border border-1 border-dark opacity-100" />  
+            <form class="mx-5 my-4" id="lm_penalty_add_form">
+              <div class="mb-3">
+                
+                <input
+                  type="hidden"
+                  class="form-control"
+                  id="lm_penalty_transactionid"
+                  name="lm_penalty_transactionid"
+                  placeholder="Transaction ID"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="lm_penalty_reason" class="form-label ">
+              Penalty Reason
+            </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="lm_penalty_reason"
+                  name="lm_penalty_reason"
+                  placeholder="Penalty Reason"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="lm_penalty_amount" class="form-label ">
+              Penalty Amount
+            </label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="lm_penalty_amount"
+                  name="lm_penalty_amount"
+                  placeholder="Penalty Amount"
+                />
+              </div>
+              <div class="row d-flex justify-content-end">
+                <div class="col-3">
+                  <button  type="button" data-bs-dismiss="modal" class="btn btn-secondary ">Cancel</button>
+                </div>
+                <div class="col-3">
+                  <button id="lm_penalty_add_btn" type="button" class="btn btn-dark w-100">
+                    Save
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="modal fade" id="update_rental_modal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
       <div class="modal-dialog modal-dialog-scrollable">
@@ -249,7 +323,7 @@
       <!-- Borrow / Return Buttons (right) -->
       <div class="d-flex gap-2">
         <button id="reset_rental_filters" class="btn btn-warning text-white" style="display:none;">Reset</button>
-        <button id="apply_rental_filters" class="btn btn-dark">Submit</button>
+        <button id="apply_rental_filters" class="btn btn-dark">Submit</button>  
       </div>  
       </div>
       <div class="d-flex justify-content-end ">
@@ -259,6 +333,7 @@
     </div>
     <!-- ✅ End single row -->
   </div>
+
 
   <div id="loader">
     <div class="circle-loader"></div>

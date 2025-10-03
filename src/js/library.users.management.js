@@ -335,9 +335,10 @@ const UserManagement = function() {
                     member_work_status: { required: true },
                     mobile_number: { required: true, pattern: this.patterns.mobile },
                     membership_end_date: { required: true, pattern: /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\d{4}$/, notPastDate: true },
-                    address_line1: { required: true, pattern: /^[a-zA-z0-9 ,\\]{3,}$/ },
+                    address_line1: { required: true, pattern: /^[a-zA-z0-9 /,\\]{3,}$/ },
                     address_line2: { pattern: /^[a-zA-z0-9 ,\\]{3,}$/ },
-                    state: { required: true, pattern: /^[a-zA-z ]{3,}$/ },
+                    city: { required: true, pattern: /^[a-zA-z ]+$/, minlength:3 },
+                    state: { required: true, pattern: /^[a-zA-z ]+$/, minlength:3 },
                     country: { required: true, pattern: /^[a-zA-z ]{3,}$/ },
                     pincode: { required: true, pattern: /^\d{5}$/ }
                 },
@@ -351,7 +352,8 @@ const UserManagement = function() {
                     membership_end_date: { required: "End date is required", pattern: "Use MM-DD-YYYY", notPastDate: "Date cannot be earlier than today." },
                     address_line1: { required: "Address is required", pattern: "Invalid adress format" },
                     address_line2: { pattern: "Invalid adress format" },
-                    state: { required: "State is required", pattern: "Letters ans spaces only allowed" },
+                    city: { required: "city is required", pattern: "Letters and spaces only allowed", minlength:"Minimum 3 characters required" },
+                    state: { required: "State is required", pattern: "Letters and spaces only allowed", minlength:"Minimum 3 characters required" },
                     country: { required: "Country is required", pattern: "Letters ans spaces only allowed" },
                     pincode: { required: "Zipcode is required", pattern: "Must be 5 Digits only" }
                 },
@@ -383,7 +385,7 @@ const UserManagement = function() {
                         required: true,
                         pattern: this.patterns.mobile
                     },
-                    update_address_line1: { required: true, pattern: /^[a-zA-z0-9 ,\\]{3,}$/ },
+                    update_address_line1: { required: true, pattern: /^[a-zA-z0-9 /,\\]{3,}$/ },
                     update_address_line2: { pattern: /^[a-zA-z0-9 ,\\]{3,}$/ },
                     update_state: { required: true, pattern: /^[A-Za-z \s]+$/ },
                     update_country: { required: true, pattern: /^[A-Za-z \s]+$/ },
@@ -549,6 +551,7 @@ const UserManagement = function() {
                 const memberAddress = [
                     $("#address_line1").val().trim(),
                     $("#address_line2").val().trim(),
+                    $("#city").val().trim(),
                     $("#state").val().trim(),
                     $("#country").val().trim(),
                     $("#pincode").val().trim()
@@ -638,6 +641,7 @@ const UserManagement = function() {
                 const memberAddress = [
                     $(s.updateAddressLine1).val().trim(),
                     $(s.updateAddressLine2).val().trim(),
+                    $("#update_city").val().trim(),
                     $(s.updateState).val().trim(),
                     $(s.updateCountry).val().trim(),
                     $(s.updatePincode).val().trim()
@@ -1015,20 +1019,22 @@ const UserManagement = function() {
 
                 let a1 = "",
                     a2 = "",
+                    city = "",
                     state = "",
                     country = "",
                     zip = "";
                 if (m.memberaddress) {
                     const parts = m.memberaddress.split("-");
-                    [a1, a2, state, country, zip] = parts;
+                    [a1, a2, city, state, country, zip] = parts;
                 }
                 $(s.updateAddressLine1).val(a1 || "");
                 $(s.updateAddressLine2).val(a2 || "");
+                $("#update_city").val(city || "");
                 $(s.updateState).val(state || "");
                 $(s.updateCountry).val(country || "");
                 $(s.updatePincode).val(zip || "");
                 if (m.memberMobileNumber) {
-                    $(s.updateMobileNumber).val(m.memberMobileNumber.replace(/^\+91\s?/, "").replace(/\D/g, ""));
+                    $(s.updateMobileNumber).val(m.memberMobileNumber.replace(/^\+\d{1,3}\s?/, "").replace(/\D/g, ""));
                 }
                 try {
 
@@ -1112,11 +1118,40 @@ const UserManagement = function() {
                 }
 
                 $(s.profileEmail).text(m.memberEmail || "N/A");
-                $(s.profileMobile).text(m.memberMobileNumber || "N/A");
+                let mobile = m.memberMobileNumber || "N/A";
+                if (mobile && mobile !== "N/A") {
+                    // Extract country code if included (assume starts with +)
+                    let formatted = mobile;
+                    const countryCodeMatch = mobile.match(/^\+?\d{1,3}/);
+                    let countryCode = "";
+                    if (countryCodeMatch) {
+                        countryCode = countryCodeMatch[0]; // +91, +1, etc.
+                        formatted = mobile.replace(countryCode, "").trim();
+                    }
+                    // Keep only digits
+                    formatted = formatted.replace(/\D/g, "");
+                    if (formatted.length === 10) {
+                        formatted = `(${formatted.substring(0,3)})-${formatted.substring(3,6)}-${formatted.substring(6)}`;
+                    }
+                    mobile = countryCode ? `${countryCode} ${formatted}` : formatted;
+                }
+                $(s.profileMobile).text(mobile);
                 $(s.profileWork).text(m.memberWorkStatus || "N/A");
 
-                const start = m.memberShipStartDate ? `Start: ${m.memberShipStartDate}` : "";
-                const end = m.memberShipEndDate ? ` | End: ${m.memberShipEndDate}` : "";
+                const formatDate = (dateStr) => {
+                    if (!dateStr) return "";
+                    const parts = dateStr.split("-");
+                    if (parts.length === 3) {
+                        // input assumed dd-mm-yyyy or yyyy-mm-dd?
+                        // If API gives yyyy-mm-dd → rearrange
+                        if (parts[0].length === 4) {
+                            return `${parts[1]}-${parts[2]}-${parts[0]}`;
+                        } 
+                    }
+                    return dateStr;
+                };
+                const start = m.memberShipStartDate ? `Start: ${formatDate(m.memberShipStartDate)}` : "";
+                const end = m.memberShipEndDate ? ` | End: ${formatDate(m.memberShipEndDate)}` : "";
                 $(s.profileMembership).text(`${start}${end}`);
 
                 // Address formatting: replace hyphens with commas
