@@ -132,10 +132,10 @@ const selectors = {
             searchable: false,
             render: (data, type, row, meta) => meta.row + 1 // row index + 1
             },
-              { title: "Book Id", data: "bookId",
-                render:(d,t,r) => `#${r.bookId}`
-               },
-              { title: "Title", data: "title",
+              // { title: "Book Id", data: "bookId",
+              //   render:(d,t,r) => `#${r.bookId}`
+              //  },
+              { title: "Book Title", data: "title",
                 className:"text-capitalize"
                },
               { title: "Language", data: "language",

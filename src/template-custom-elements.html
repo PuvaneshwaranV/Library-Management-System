@@ -15,11 +15,11 @@
           <form class="mx-3 my-4" id="book_form">
             <div class="mb-3">
               <label for="lm_book_add_edit_title" class="form-label">Book Title</label>
-              <input type="text" class="form-control text-capitalize" id="lm_book_add_edit_title" name="title" placeholder="Book Title" />
+              <input type="text" class="form-control text-capitalize" id="lm_book_add_edit_title" name="lm_book_add_edit_title" placeholder="Book Title" />
             </div>
             <div class="mb-3">
-              <label for="author" class="form-label">Author Name</label>
-              <input type="text" class="form-control text-capitalize" id="author" name="author" placeholder="Author Name" />
+              <label for="lm_book_add_edit_author" class="form-label">Author Name</label>
+              <input type="text" class="form-control text-capitalize" id="lm_book_add_edit_author" name="lm_book_add_edit_author" placeholder="Author Name" />
             </div>
             <div class="row">
               <div class="mb-3 col-6 pe-0">
@@ -40,7 +40,7 @@
             
             <div class="row justify-content-end" id="form_actions">
               <div class="col-3" id="reset_col">
-                <button id="reset_btn" type="button" class="btn btn-secondary w-100">Reset</button>
+                <button id="cancel_btn" type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Cancel</button>
               </div>
               <div class="col-3" id="save_col">
                 <button id="save_btn" type="button" class="btn btn-dark w-100">Save</button>
