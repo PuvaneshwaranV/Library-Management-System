@@ -14,7 +14,6 @@ $(document).ready(()=>{
 
 
 
-// ---------------------------------------------------------
 const Books = function () {
 
   
@@ -24,7 +23,7 @@ const selectors = {
   dataTable:           "#user_table",
 
   // Filter section
-  filterApplyBtn:      "#apply_filters",
+  filterApplyBtn:      "#lm_book_apply_filters",
   filterResetBtn:      "#reset_filters",
   filterType:          "#filter_type",
   filterValue:         "#filter_value",
@@ -132,9 +131,6 @@ const selectors = {
             searchable: false,
             render: (data, type, row, meta) => meta.row + 1 // row index + 1
             },
-              // { title: "Book Id", data: "bookId",
-              //   render:(d,t,r) => `#${r.bookId}`
-              //  },
               { title: "Book Title", data: "title",
                 className:"text-capitalize"
                },

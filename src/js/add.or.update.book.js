@@ -24,7 +24,6 @@
       this.APIURL = "http://localhost:8080/LibraryManagementSystem/Books";
 
       this.bookId = null;
-      this.prevQty = 0;
       
       this.addEditBookValidationRules ={
 
@@ -63,16 +62,6 @@
     saveBookBtnEventAction(event){
       const form = $(this.Selectors.form);
         if (form.valid()){
-          // quantity must not drop below previous when updating
-          if (
-            this.bookId &&
-            parseInt($(this.Selectors.lmBookAddEditQuantity).val(), 10) < this.prevQty
-          ) {
-            form.validate().showErrors({
-              quantity: `Not less than ${this.prevQty}`,
-            });
-            return;
-          }
   
           const payload = {
             title: $(this.Selectors.lmBookAddEditTitle).val().trim(),
@@ -118,8 +107,6 @@
           });
         }
         
-
-     //   $(this.Selectors.modal).on("hidden.bs.modal", () => this.reset());
         $(this.Selectors.resetButton).on("click", () => this.reset());
     }
 
@@ -145,7 +132,6 @@
     reset() {
 
       this.bookId = null;
-      this.prevQty = 0;
 
       $(this.Selectors.form).trigger("reset");
       if ($(this.Selectors.form).data("validator")) {
@@ -165,18 +151,22 @@
         if ($(this.Selectors.form).data("validator")) {
           $(this.Selectors.form).validate().resetForm();
         }
-        this.prevQty = data.totalCount;
+        $(this.Selectors.form).validate().settings.rules.lm_book_add_edit_quantity.pattern = /^[0-9]{1,3}$/;
+        $(this.Selectors.form).validate().settings.messages.lm_book_add_edit_quantity.pattern =
+          "Book Quantity must be between 0-999";
         $(this.Selectors.lmBookAddEditTitle).val(data.title);
         $(this.Selectors.lmBookAddEditAuthor).val(data.author);
         $(this.Selectors.lmBookAddEditLanguage).val(data.language.toLowerCase());
-        $(this.Selectors.lmBookAddEditQuantity).val(data.totalCount);
         $(this.Selectors.saveButton).text("Update");
         $(this.Selectors.lmBookAddEdit).text("Update Book");
         $(this.Selectors.resetColumn).show();
        
       } else {
         this.reset();
-      }
+        $(this.Selectors.form).validate().settings.rules.lm_book_add_edit_quantity.pattern = /^[1-9][0-9]{0,2}$/;
+        $(this.Selectors.form).validate().settings.messages.lm_book_add_edit_quantity.pattern =
+          "Book Quantity must be between 1-999";
+          }
       $(this.Selectors.modal).modal("show");
     }
   }
