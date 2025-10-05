@@ -23,10 +23,10 @@ const selectors = {
   dataTable:           "#user_table",
 
   // Filter section
-  filterApplyBtn:      "#lm_book_apply_filters",
-  filterResetBtn:      "#reset_filters",
-  filterType:          "#filter_type",
-  filterValue:         "#filter_value",
+  lmBookFilterApplyBtn:      "#lm_book_apply_filters",
+  lmBookFilterResetBtn:      "#reset_filters",
+  lmBookFilterType:          "#filter_type",
+  lmBookFilterValue:         "#filter_value",
   filterStatus:        "#filter_status",
   filterLength:        "#custom_length",
   filters:             ".filters",
@@ -80,23 +80,23 @@ const selectors = {
   };
 
   this.displayBooksTable = function () {
-    $(document).on("click", selectors.filterApplyBtn, function () {
+    $(document).on("click", selectors.lmBookFilterApplyBtn, function () {
       $(selectors.loader).show();
       $(selectors.dataTable).hide();
       $(selectors.lmFilterChanged).css("display","none");
-      $(selectors.filterResetBtn).css("display","none");
-      const filterType  = $(selectors.filterType).val();
-      const filterValue = $(selectors.filterValue).val().trim();
+      $(selectors.lmBookFilterResetBtn).css("display","none");
+      const lmBookFilterType  = $(selectors.lmBookFilterType).val();
+      const lmBookFilterValue = $(selectors.lmBookFilterValue).val().trim();
       const status      = $(selectors.filterStatus).val();
       const length      = $(selectors.filterLength).val();
 
       let params = { start: 0, length };
 
-      if (status !== "all" && filterType !== "all" && filterValue !== "") {
-        params = { start: 0, length, searchColumn: filterType, searchValue: filterValue, BookAvailablity: status };
-      } else if (status === "all" && filterType !== "all" && filterValue !== "") {
-        params = { start: 0, length, searchColumn: filterType, searchValue: filterValue };
-      } else if (status !== "all" && filterType === "all" && filterValue === "") {
+      if (status !== "all" && lmBookFilterType !== "all" && lmBookFilterValue !== "") {
+        params = { start: 0, length, searchColumn: lmBookFilterType, searchValue: lmBookFilterValue, BookAvailablity: status };
+      } else if (status === "all" && lmBookFilterType !== "all" && lmBookFilterValue !== "") {
+        params = { start: 0, length, searchColumn: lmBookFilterType, searchValue: lmBookFilterValue };
+      } else if (status !== "all" && lmBookFilterType === "all" && lmBookFilterValue === "") {
         params = { start: 0, length, BookAvailablity: status };
       }
 
@@ -416,8 +416,8 @@ const selectors = {
             success: function () {
               $(selectors.loader).hide();
               Swal.fire({ icon: "success", title: "Deleted!", text: "The book was removed.", timer: 2000, showConfirmButton: false });
-              $(selectors.filterResetBtn).click();
-              $(selectors.filterApplyBtn).click();
+              $(selectors.lmBookFilterResetBtn).click();
+              $(selectors.lmBookFilterApplyBtn).click();
             },
             error: function () {
               $(selectors.loader).hide();
@@ -431,9 +431,9 @@ const selectors = {
 
   // -------------------------------------------------------
   this.resetFiltersApplied = function () {
-    $(document).on("click", selectors.filterResetBtn, function () {
-      $(selectors.filterType).val("all");
-      $(selectors.filterValue).val("");
+    $(document).on("click", selectors.lmBookFilterResetBtn, function () {
+      $(selectors.lmBookFilterType).val("all");
+      $(selectors.lmBookFilterValue).val("");
       $(selectors.filterStatus).val("all");
       $(selectors.filterLength).val("10");
       $("#clear_filter_value").hide();
@@ -442,7 +442,7 @@ const selectors = {
         $(selectors.dataTable).hide();
         $(selectors.lmFilterChanged).css("display","none");
       }
-      $(selectors.filterValue).prop("disabled", true).val("");
+      $(selectors.lmBookFilterValue).prop("disabled", true).val("");
     });
   };
 
@@ -452,33 +452,33 @@ const selectors = {
         $(selectors.dataTable).DataTable().clear().destroy();
         $(selectors.dataTable).hide();
         $(selectors.lmFilterChanged).css("display","block");
-        $(selectors.filterResetBtn).css("display","block");
+        $(selectors.lmBookFilterResetBtn).css("display","block");
       }
     })
   }
   
   this.changeFilterValue = function(){
-    $(document).on("input", selectors.filterValue, function(){
+    $(document).on("input", selectors.lmBookFilterValue, function(){
       if ($.fn.DataTable.isDataTable(selectors.dataTable)) {
         $(selectors.dataTable).DataTable().clear().destroy();
         $(selectors.dataTable).hide();
         $(selectors.lmFilterChanged).css("display","block");
-        $(selectors.filterResetBtn).css("display","block");
+        $(selectors.lmBookFilterResetBtn).css("display","block");
       }
     })
   }
 
   this.toggleFilterInput = function () {
   // use the top-level constant directly
-  $(document).on("change", selectors.filterType, function ()  {
-    const selected = $(selectors.filterType).val();
+  $(document).on("change", selectors.lmBookFilterType, function ()  {
+    const selected = $(selectors.lmBookFilterType).val();
 
     if (selected && selected.toLowerCase() !== "all") {
-      $(selectors.filterValue).prop("disabled", false);
+      $(selectors.lmBookFilterValue).prop("disabled", false);
       $(selectors.lmFilterChanged).css("display","block");
     } else {
       // disable and clear when “all” is chosen
-      $(selectors.filterValue).prop("disabled", true).val("");
+      $(selectors.lmBookFilterValue).prop("disabled", true).val("");
       $("#clear_filter_value").hide();
     }
   });
