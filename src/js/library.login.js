@@ -20,7 +20,7 @@ const LibraryLogin = function () {
      * Set temporary login Credentials for login
      * 
      */
-
+    
     this.setTemporaryLoginCredentials = function () {
         if (localStorage.getItem("lmTemporaryLoginCredentials")) {
             const temporaryLoginCredentials = [

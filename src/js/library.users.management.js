@@ -755,17 +755,17 @@ const UserManagement = function() {
                     data: res.object ?.data || [],
                     sort: false,
                     destroy: true,
+                    autoWidth: false,
                     dom: '<"top d-flex justify-content-between align-items-center"<"dt-left"> <"dt-right d-flex align-items-center"p>>t<"bottom"ip>',
                     lengthMenu: [10, 25, 50, 100],
                     language: { emptyTable: "No data found" },
                     columns: [
                         { title: "S.No", data: null, orderable: false, searchable: false, render: (d, t, row, meta) => meta.row + 1 },
-                        {
-                            title: "Member Id",
-                            data: "memberId",
-                            render: (d, t, r) => `#${r.memberId}`
-                        },
-                        { title: "Full Name", data: "memberName" },
+                        { title: "Full Name", data: null,
+                            render:(d,t,r) => {
+                                return `${r.memberName} (${r.memberId})`
+                            }
+                         },
                         {
                             title: "Membership Start Date",
                             data: "memberShipStartDate",
@@ -828,25 +828,25 @@ const UserManagement = function() {
                             data: null,
                             orderable: false,
                             render: (d, t, row) => `
-                <i class="fa-solid fa-pen-to-square text-grey  update-member i-btn-dark me-3 cursor-pointer" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit Member Details" ></i>
+                                <i class="fa-solid fa-pen-to-square text-grey  update-member i-btn-dark me-3 cursor-pointer" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit Member Details" ></i>
                             
-                              <i class="fa-solid fa-eye  cursor-pointer  view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile"></i>`
+                                <i class="fa-solid fa-eye  cursor-pointer  view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile"></i>`
                         }
                     ],
                     initComplete: function() {
                         const dtRight = $('.dt-right');
                         if (dtRight.children('#addMemberBtn').length === 0) {
                             dtRight.prepend(`
-                    <button
-                        id="addMemberBtn"
-                        class="btn btn-warning text-white me-2 mb-0 pagination-button"
-                        data-bs-toggle="modal" 
-                        data-bs-target="#member_modal"
-                    >
-                        <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i>
-                        Add Member
-                    </button>
-                `);
+                                <button
+                                    id="addMemberBtn"
+                                    class="btn btn-warning text-white me-2 mb-0 pagination-button"
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#member_modal"
+                                >
+                                    <i class="fa-solid fa-circle-plus fa-lg me-1" style="color: #ffffff"></i>
+                                    Add Member
+                                </button>
+                            `);
                         }
                     },
                     drawCallback: function() {

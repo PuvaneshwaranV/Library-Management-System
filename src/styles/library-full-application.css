@@ -10,7 +10,9 @@ body > .d-flex { /* ✅ The Bootstrap flex wrapper */
   display: flex !important;
   flex-direction: row !important; /* ensure it's a flex container */
 }
-
+/* table::selection{
+  background-color: red;
+} */
 .tilt-neon-body {
   background-color: #f3f4f6;
   color: #111827;

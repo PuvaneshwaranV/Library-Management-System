@@ -158,18 +158,86 @@ const Penalty = function() {
             data: params,
             dataType: "json",
             success: (res) => {
-                if ($.fn.DataTable.isDataTable(s.userTable)) $(s.userTable).DataTable().destroy();
+               // if ($.fn.DataTable.isDataTable(s.userTable)) $(s.userTable).DataTable().destroy();
                 const rows = res.object && Array.isArray(res.object.data) ? res.object.data : [];
                 $(s.userTable).DataTable({
                     data: rows,
+                     autoWidth: false,
                     sort: false,
                     destroy: true,
-                    processing: true,
-                    serverSide: false,
+                    
                     dom: '<"top d-flex justify-content-end gap-2"<"dt-left"> <"dt-right gap-2 d-flex align-items-center"p>>t<"bottom"ip>',
                     lengthMenu: [10, 25, 50, 100],
                     language: { emptyTable: "No data found" },
-                    columns: this.columnsConfig(true),
+                    columns: [
+                    { title: "S.No", data: null, orderable: false, searchable: false, render: (data, type, row, meta) => meta.row + 1 },
+                    {
+                        title: "Member Name (Id)",
+                        data: null,
+                        render: (d, t, r) => {
+                            return `${r.memberName} (${r.memberId})`
+                    }
+                    },
+                    {
+                        title: "Book Title (Id)",
+                        data: null,
+                        render: (d, t, r) => {
+                            return `${r.title} (${r.bookId})`
+                        }
+                    },
+                    { title: "Amount", data: "amount" },
+                    { title: "Reason", data: "reason",
+                        className:"text-capitalize"
+                    },
+                    {
+                        title: "Status",
+                        data: "status",
+                        className : "text-center",
+                        render: (data, type, row) => {
+
+                            const bgColor = row.status === "Paid" ? "#d4edda" : "#f8d7da"; // light green / light red
+                            const textColor = row.status === "Paid" ? "#155724" : "#721c24"; // dark text for contrast
+                            return `<span class=" text-center  px-2" style="background-color:${bgColor};color:${textColor};
+                                display:inline-block;
+                                border-radius: 12px; 
+                                padding: 2px 0px; 
+                                width: 100px;
+                                font-weight: 500;
+                                ">${row.status}</span>`
+                        },
+                        
+                    },
+                    { title: "Payment Date", data: "paymentDate",
+                        render:(data,type,row) =>{
+                            if(row.paymentDate === null){
+                                return `Not Paid`;
+                            }
+                            else{
+                                return `${row.paymentDate}`;
+                            }
+                        }
+                    },
+                    {
+                        title: "Action",
+                        data: null,
+                        className : "text-center",
+                        orderable: false,
+                        render: (data, type, row) =>
+                            row.status === "Pending" ?
+                            `<button class="btn btn-sm lm_penalty_pay text-center"
+                        data-bs-toggle="tooltip" data-bs-placement="top"
+                        style="background-color:#1e3a8a;color:#fff; width:80px;"
+                        title="Pay Penalty" data-bs-target="#lm_penalty_pay_modal"
+                        data-id="${row.penaltyId}" data-amount="${row.amount}">
+                        Pay Now
+                    </button>` : `
+                        <span data-bs-toggle="tooltip" data-bs-placement="top"  title="Already Paid" ><button disabled class="btn btn-sm text-center  border-0" style="background-color:#1e3a8a;color:#fff;width:80px;" >
+                            Paid
+                        </button></span>
+                    `,
+                        
+                    }
+                ],
                     drawCallback: function() {
                         const tipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
                         tipEls.forEach((el) => {
@@ -181,10 +249,76 @@ const Penalty = function() {
                 $(s.userTable).show();
             },
             error: () => {
-                if ($.fn.DataTable.isDataTable(s.userTable)) $(s.userTable).DataTable().destroy();
+               // if ($.fn.DataTable.isDataTable(s.userTable)) $(s.userTable).DataTable().destroy();
                 $(s.userTable).DataTable({
                     data: [],
-                    columns: this.columnsConfig(true),
+                    columns:[
+            { title: "S.No", data: null, orderable: false, searchable: false, render: (data, type, row, meta) => meta.row + 1 },
+            {
+                title: "Member Name (Id)",
+                data: null,
+                render: (d, t, r) => {
+                    return `${r.memberName} (${r.memberId})`
+            }
+            },
+            {
+                title: "Book Title (Id)",
+                data: null,
+                render: (d, t, r) => {
+                    return `${r.title} (${r.bookId})`
+                }
+            },
+            { title: "Amount", data: "amount" },
+            { title: "Reason", data: "reason",
+                className:"text-capitalize"
+             },
+            {
+                title: "Status",
+                data: "status",
+                render: (data, type, row) => {
+
+                    const bgColor = row.status === "Paid" ? "#d4edda" : "#f8d7da"; // light green / light red
+                    const textColor = row.status === "Paid" ? "#155724" : "#721c24"; // dark text for contrast
+                    return `<span class=" text-center  px-2" style="background-color:${bgColor};color:${textColor};
+                        display:inline-block;
+                        border-radius: 12px; 
+                        padding: 2px 0px; 
+                        width: 100px;
+                        font-weight: 500;
+                        ">${row.status}</span>`
+                },
+                
+            },
+            { title: "Payment Date", data: "paymentDate",
+                render:(data,type,row) =>{
+                    if(row.paymentDate === null){
+                        return `Not Paid`;
+                    }
+                    else{
+                        return `${row.paymentDate}`;
+                    }
+                }
+             },
+             {
+                title: "Action",
+                data: null,
+                orderable: false,
+                render: (data, type, row) =>
+                    row.status === "Pending" ?
+                    `<button class="btn btn-sm lm_penalty_pay text-center"
+                  data-bs-toggle="tooltip" data-bs-placement="top"
+                  style="background-color:#1e3a8a;color:#fff; width:80px;"
+                  title="Pay Penalty" data-bs-target="#lm_penalty_pay_modal"
+                  data-id="${row.penaltyId}" data-amount="${row.amount}">
+                  Pay Now
+              </button>` : `
+                  <span data-bs-toggle="tooltip" data-bs-placement="top"  title="Already Paid" ><button disabled class="btn btn-sm text-center  border-0" style="background-color:#1e3a8a;color:#fff;width:80px;" >
+                    Paid
+                  </button></span>
+              `,
+                
+            }
+        ],
                     sort: false,
                     destroy: true,
                     dom: '<"top"p>t<"bottom"ip>',
@@ -355,37 +489,20 @@ const Penalty = function() {
         const baseCols = [
             { title: "S.No", data: null, orderable: false, searchable: false, render: (data, type, row, meta) => meta.row + 1 },
             {
-                title: "Penalty Id",
-                data: "penaltyId",
-                render: (d, t, r) => `#${r.penaltyId}`
+                title: "Member Name (Id)",
+                data: null,
+                render: (d, t, r) => {
+                    return `${r.memberName} (${r.memberId})`
+            }
             },
             {
-                title: "Transaction Id",
-                data: "transactionId",
-                render: (d, t, r) => `#${r.transactionId}`
-            },
-            {
-                title: "Member Id",
-                data: "memberId",
-                render: (d, t, r) => `#${r.memberId}`
-            },
-            {
-                title: "Book Id",
-                data: "bookId",
-                render: (d, t, r) => `#${r.bookId}`
+                title: "Book Title (Id)",
+                data: null,
+                render: (d, t, r) => {
+                    return `${r.title} (${r.bookId})`
+                }
             },
             { title: "Amount", data: "amount" },
-            { title: "Penalty Added Flag", data: "penaltyAddedFlag" },
-            { title: "Penalty Amount", data: "penaltyAmount",
-                render:(data,type,row) =>{
-                    if(row.penaltyAmount === null){
-                        return `0`;
-                    }
-                    else{
-                        return `${row.penaltyAmount}`;
-                    }
-                }
-             },
             { title: "Reason", data: "reason",
                 className:"text-capitalize"
              },
@@ -422,6 +539,7 @@ const Penalty = function() {
             baseCols.push({
                 title: "Action",
                 data: null,
+                width: "90px",
                 orderable: false,
                 render: (data, type, row) =>
                     row.status === "Pending" ?
@@ -436,7 +554,7 @@ const Penalty = function() {
                     Paid
                   </button></span>
               `,
-
+                
             });
         }
 
