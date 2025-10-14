@@ -153,7 +153,7 @@ const Dashboard = function () {
         this.bookStatusInstance = new Chart(ctx, {
             type: "doughnut",
             data: {
-                labels: ["Available", "Borrowed"],
+                labels: ["Available", "Checked Out"],
                 datasets: [
                     {
                         data: [available, borrowed],

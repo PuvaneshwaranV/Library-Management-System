@@ -163,7 +163,6 @@ const UserManagement = function() {
                 $(s.userTable).hide();
                 localStorage.removeItem("dashboardFilter");
                 const filter = JSON.parse(decodeURIComponent(filterParam));
-                // 🔹 Make your AJAX call with these filter values
                 $(this.selectors.resetFiltersBtn).css("display", "block");
                 $("#member_filter_status").val("active").trigger("change");
                 $("#member_length").val("50").trigger("change");
@@ -177,20 +176,21 @@ const UserManagement = function() {
                             data: res.object ?.data || [],
                             sort: false,
                             destroy: true,
+                            autoWidth: false,
                             dom: '<"top d-flex justify-content-end "<"dt-left"> <"dt-right d-flex align-items-center"p>>t<"bottom"ip>',
                             lengthMenu: [10, 25, 50, 100],
                             language: { emptyTable: "No data found" },
-                            columns: [
+                             columns: [
                                 { title: "S.No", data: null, orderable: false, searchable: false, render: (d, t, row, meta) => meta.row + 1 },
-                                {
-                                    title: "Member Id",
-                                    data: "memberId",
-                                    render: (d, t, r) => `#${r.memberId}`
+                                { title: "Full Name", data: null,
+                                    render:(d,t,r) => {
+                                        return `${r.memberName} (${r.memberId})`
+                                    }
                                 },
-                                { title: "Full Name", data: "memberName" },
                                 {
                                     title: "Membership Start Date",
                                     data: "memberShipStartDate",
+
                                     render: (d, t, row) => {
                                         const backendDate = row.memberShipStartDate;
                                         const [year, month, day] = backendDate.split("-");
@@ -198,7 +198,16 @@ const UserManagement = function() {
                                         return `${formatted}`
                                     }
                                 },
-                                { title: "Membership End Date", data: "memberShipEndDate" },
+                                {
+                                    title: "Membership End Date",
+                                    data: "memberShipEndDate",
+                                    render: (d, t, row) => {
+                                        const backendDate = row.memberShipEndDate;
+                                        const [year, month, day] = backendDate.split("-");
+                                        const formatted = `${month}-${day}-${year}`;
+                                        return `${formatted}`
+                                    }
+                                },
                                 {
                                     title: "Membership Status",
                                     data: "memberShipStatus",
@@ -206,27 +215,31 @@ const UserManagement = function() {
 
                                         const bgColor = row.memberShipStatus === "ACTIVE" ? "#d4edda" : "#f8d7da"; // light green / light red
                                         const textColor = row.memberShipStatus === "ACTIVE" ? "#155724" : "#721c24"; // dark text for contrast
-
+                                        let status = "";
+                                        if (row.memberShipStatus === "DEACTIVE") {
+                                            status = "Inactive";
+                                        } else {
+                                            status = "Active";
+                                        }
                                         return `<span style="
-                                  display:inline-block;
-                                  background-color: ${bgColor}; 
-                                  color: ${textColor}; 
-                                  border-radius: 12px; 
-                                  padding: 2px 0px; 
-                                
-                                  width: 100px;
-                                  font-weight: 500;
-                                  cursor:pointer;
-                              " class="status-click"
-                              data-id="${row.memberId}"
-                              data-bs-toggle="tooltip" data-bs-placement="top" title="Change Status" data-status="${row.memberShipStatus}"
-                              >${row.memberShipStatus}</span>`;
+                                                display:inline-block;
+                                                background-color: ${bgColor}; 
+                                                color: ${textColor}; 
+                                                border-radius: 12px; 
+                                                padding: 2px 0px;               
+                                                width: 100px;
+                                                font-weight: 500;
+                                                cursor:pointer;
+                                            " class="status-click"
+                                            data-id="${row.memberId}"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Change Status" data-status="${row.memberShipStatus}"
+                                            >${status} <i class="fa-solid fa-pen-to-square text-dark" ></i></span>`;
                                     },
                                     className: "text-center",
                                     width: "50px !important"
                                 },
                                 {
-                                    title: "Work Status",
+                                    title: "Designation",
                                     data: "memberWorkStatus",
                                     className: "text-capitalize"
                                 },
@@ -235,11 +248,9 @@ const UserManagement = function() {
                                     data: null,
                                     orderable: false,
                                     render: (d, t, row) => `
-                            
-                              <i class="fa-solid fa-pen-to-square text-grey  update-member i-btn-dark me-3 cursor-pointer" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit" ></i>
-                            
-                              <i class="fa-solid fa-eye  cursor-pointer  view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile"></i>
-                            `
+                                        <i class="fa-solid fa-pen-to-square text-grey  update-member i-btn-dark me-3 cursor-pointer" data-bs-toggle="tooltip" data-bs-target="${s.updateMemberModal}" data-id="${row.memberId}" title="Edit Member Details" ></i>
+                                    
+                                        <i class="fa-solid fa-eye  cursor-pointer  view-member" data-bs-toggle="tooltip" data-bs-target="${s.viewMemberModal}" data-id="${row.memberId}" title="View Profile"></i>`
                                 }
                             ],
                             initComplete: function() {

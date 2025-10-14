@@ -362,10 +362,10 @@ const RentalTransaction = function () {
     this.toggleFilterInput = function () {
         const selected = $(s.filterType).val();
         if (selected && selected.toLowerCase() !== "all") {
-            $(s.filterValue).prop("disabled", false);
+            
             $(s.resetFiltersBtn).css("display", "block");
         } else {
-            $(s.filterValue).prop("disabled", true).val("");
+          
             $("#clear_filter_value").hide();
         }
         if ($.fn.DataTable.isDataTable(s.table)) {
@@ -399,7 +399,6 @@ const RentalTransaction = function () {
         const params = this.buildFilterParams(
             $(s.filterLength).val(),
             $(s.filterStatus).val(),
-            $(s.filterType).val().trim(),
             $(s.filterValue).val().trim()
         );
         $.ajax({
@@ -412,11 +411,11 @@ const RentalTransaction = function () {
         });
     };
 
-    this.buildFilterParams = function (length, status, col, field) {
+    this.buildFilterParams = function (length, status, field) {
         const base = { start: 0, length, order: "asec" };
         if (status !== "all") base.bookRentalStatus = status;
-        if (col !== "all") {
-            base.searchColumn = col;
+        if (field !== "") {
+            base.searchColumn = "memberId";
             base.searchField = field;
         }
         return base;
@@ -568,8 +567,7 @@ const RentalTransaction = function () {
         $(s.table).show();
     };
 
-    this.resetFilters = function () {
-        $(s.filterType).val("all");
+    this.resetFilters = function () {;
         $(s.filterValue).val("");
         $(s.filterStatus).val("all");
         $(s.filterLength).val("10");
@@ -577,7 +575,7 @@ const RentalTransaction = function () {
             $(s.table).DataTable().clear().destroy();
             $(s.table).hide();
         }
-        $(s.filterValue).prop("disabled", true).val("");
+      
         $(s.lmFilterChanged).css("display", "none");
         $("#clear_filter_value").hide();
     };

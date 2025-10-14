@@ -199,7 +199,7 @@ const Books = function () {
                                             : "#721c24"; // dark text for contrast
                                     let bookstatus = "";
                                     if (row.bookStatus === "Available") {
-                                        bookstatus = "In Stock";
+                                        bookstatus = "Available";
                                     } else bookstatus = "Checked Out";
                                     return `<p style="
                       background-color: ${bgColor}; 
